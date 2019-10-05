@@ -69,11 +69,10 @@ public class GameJamGame extends Game {
 		assetManager = new AssetManager();
 
 		// UI
-		loadTextureAtlas("data/default/uiskin.atlas");
-		assetManager.load("data/default/uiskin.json", Skin.class, new SkinLoader.SkinParameter("data/default/uiskin.atlas"));
+		loadTextureAtlas("data/rustyrobotui/rusty-robot-ui.atlas");
+		assetManager.load("data/rustyrobotui/rusty-robot-ui.json", Skin.class, new SkinLoader.SkinParameter("data/rustyrobotui/rusty-robot-ui.atlas"));
 		assetManager.finishLoading();
-		skin = getAsset("data/default/uiskin.json");
-		skin.getFont("default-font").getData().setScale(3, 3);
+		skin = getAsset("data/rustyrobotui/rusty-robot-ui.json");
 
 		// Screens
 		screens.put(ScreenNames.Title, new TitleScreen(this));

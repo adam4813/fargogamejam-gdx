@@ -20,7 +20,7 @@ public class LoadingScreen extends ScreenAdapter {
 		this.game = game;
 		game.loadAssets();
 		batch = new SpriteBatch();
-		font = game.getSkin().getFont("default-font");
+		font = game.getSkin().getFont("title");
 		glyphLayout.setText(font, loadingString);
 	}
 
