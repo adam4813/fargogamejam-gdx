@@ -2,6 +2,7 @@ package fgm.fgj.gamejamgame;
 import java.lang.reflect.Array;
 import java.util.Random;
 import java.util.Arrays;
+import fgm.fgj.gamejamgame.Species;
 
 public class Planet {
 
