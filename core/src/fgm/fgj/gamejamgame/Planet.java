@@ -1,5 +1,5 @@
 package fgm.fgj.gamejamgame;
-import java.lang.reflect.Array;
+import java.util.List;
 import java.util.Random;
 import java.util.Arrays;
 import fgm.fgj.gamejamgame.Species;
@@ -8,16 +8,16 @@ public class Planet {
 
 	// instance variables
 
-	int fuel;
-	int metals;
-	int water;
-	int[] temperatureRange;
-	int minTemperature;
-	int maxTemperature;
-	int atmosphericPressure;
-	int gravity;
-	String[] atmosphericComposition;
-	Species[] speciesPresent;
+	private int fuel;
+	private int metals;
+	private int water;
+	private int[] temperatureRange;
+	private int minTemperature;
+	private int maxTemperature;
+	private int atmosphericPressure;
+	private int gravity;
+	private String[] atmosphericComposition;
+	private List<Species> speciesPresent;
 
 	// constructor
 

@@ -7,10 +7,10 @@ public class SolarSystem {
 
 	// Instance Variables
 
-	int numberOfPlanets;
-	int pirateThreat;
-	int solarRadiation;
-	int debrisRating;
+	private int numberOfPlanets;
+	private int pirateThreat;
+	private int solarRadiation;
+	private int debrisRating;
 
 
 	// constructor
