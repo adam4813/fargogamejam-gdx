@@ -7,10 +7,15 @@ public enum StarType {
 	WHITE,
 	BLUE,
 	ORANGE,
-	RED;
+	RED,
+	BG_YELLOW,
+	BG_BROWN,
+	BG_BLUE,
+	BG_GREEN,
+	BG_RED;;
 
 	public static StarType getRandomStarType() {
 		Random random = new Random();
-		return values()[random.nextInt(values().length)];
+		return values()[random.nextInt(values().length - 5)];
 	}
 }
