@@ -10,21 +10,36 @@ public class SolarSystem {
 	int debrisRating;
 	List<SolarSystem> linkedSolarSystems;
 	List<Integer> fuelCosts;
+	public StarType starType;
+	public float starSize = 1;
 
 	/**
 	 * Instantiates a solar system based on the provided parameters.
 	 * @param name the name referred to in the info panel.
+	 * @param starType the graphic displayed for the star.
+	 * @param starSize the scale factor of the graphic.
 	 * @param linkedSolarSystems the systems available to travel to.
 	 * @param planets the bodies that can be visted for events.
 	 * @param pirateThreat the chances a pirate may attack.
 	 * @param solarRadiation the value the life support systems of the ship needs to exceed to be safe.
 	 * @param debrisRating the chances a debris encounter may occur.
 	 */
-	public SolarSystem(String name, List<SolarSystem> linkedSolarSystems, List<Integer> fuelCosts, List<Planet> planets, int pirateThreat, int solarRadiation, int debrisRating) {
+	public SolarSystem(String name, StarType starType, float starSize, List<SolarSystem> linkedSolarSystems, List<Integer> fuelCosts, List<Planet> planets, int pirateThreat, int solarRadiation, int debrisRating) {
 		if(name == null){
 			if(name.equals("")){
 				throw new IllegalArgumentException("Solar systems must have a given name.");
 			}
+		}
+		if(starType == null){
+			throw new IllegalArgumentException("Solar systems must have a star type.");
+		}else{
+			this.starType = starType;
+		}
+		if(starSize > .5f && starSize < 3.5f){
+			this.starSize = starSize;
+		}else{
+			/* Assume they meant a reasonable scale factor. */
+			this.starSize = 1.5f;
 		}
 		if(linkedSolarSystems == null){
 			/* Cannot have a null list of systems the solar system is linked to. Assume they meant to have none in the list. */

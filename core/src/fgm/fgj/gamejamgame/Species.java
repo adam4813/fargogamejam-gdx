@@ -1,27 +1,24 @@
 package fgm.fgj.gamejamgame;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class Species {
 
 	// instance variables
-	boolean isFood;
-	boolean isSentient;
-	boolean isHostile;
-	int mass;
-	String name;
-	int[] temperatureToleranceRange;
-	int minTemperatureTolerance;
-	int maxTemperatureTolerance;
-	String[] atmosphericComposition;
-	int[] atmosphericPressureToleranceRange;
-	int minAtmosphericPressureTolerance;
-	int maxAtmosphericPressureTolerance;
-	int[] gravityToleranceRange;
-	int maxGravityTolerance;
-	int minGravityTolerance;
-	int hitpoints;
-	int damage;
+	private boolean isFood;
+	private boolean isSentient;
+	private boolean isHostile;
+	private int mass;
+	private String name;
+	AtmosphericComposition atmosphericCompositionTolerance;
+	private int temperatureTolerance;
+	private String[] atmosphericComposition;
+	private int atmosphericPressureTolerance;
+	private int gravityTolerance;
+	private int hitPoints;
+	private int damage;
 
 	// constructor
 	public Species() {
@@ -31,39 +28,22 @@ public class Species {
 		this.isHostile = rand.nextBoolean();
 		this.mass = rand.nextInt(10000);
 
-		this.temperatureToleranceRange = getTemperatureToleranceRange();
-		this.minTemperatureTolerance = this.temperatureToleranceRange[0];
-		this.maxTemperatureTolerance = this.temperatureToleranceRange[1];
+		this.temperatureTolerance = rand.nextInt(5);
+		this.gravityTolerance = rand.nextInt(5);
+		this.atmosphericPressureTolerance = rand.nextInt(5);
+		this.atmosphericCompositionTolerance = getAtmosphericCompositionTolerance();
 
-		this.atmosphericComposition = getAtmosphericComposition();
-
-		this.atmosphericPressureToleranceRange = getPressureToleranceRange();
-		this.minAtmosphericPressureTolerance = this.atmosphericPressureToleranceRange[0];
-		this.maxAtmosphericPressureTolerance = this.atmosphericPressureToleranceRange[1];
-
-		this.gravityToleranceRange = getGravityToleranceRange();
-		this.minGravityTolerance = this.gravityToleranceRange[0];
-		this.maxGravityTolerance = this.gravityToleranceRange[1];
-
-		this.hitpoints = rand.nextInt(100);
+		this.hitPoints = rand.nextInt(80) + 20;
 		this.damage = 0;
 	}
 
 	// methods
 
-	private int[] getTemperatureToleranceRange() {
-
+	private AtmosphericComposition getAtmosphericCompositionTolerance() {
+		return AtmosphericComposition.getRandomAtmosphere();
 	}
 
-	private int[] getPressureToleranceRange() {
-
-	}
-
-	private int[] getGravityToleranceRange() {
-
-	}
-
-	private String[] getAtmosphericComposition() {
-
+	public int getHitPoints() {
+		return this.hitPoints;
 	}
 }

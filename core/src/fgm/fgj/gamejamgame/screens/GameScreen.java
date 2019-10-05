@@ -8,21 +8,13 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
-import java.util.ArrayList;
-import java.util.Random;
-
-import fgm.fgj.gamejamgame.AnimatedSprite;
 import fgm.fgj.gamejamgame.GameJamGame;
-
-import static fgm.fgj.gamejamgame.GameJamGame.SCREEN_HEIGHT;
-import static fgm.fgj.gamejamgame.GameJamGame.SCREEN_WIDTH;
 
 public class GameScreen extends ScreenAdapter {
 	private final Stage stage;
 	private final PerspectiveCamera camera;
 
 	private GameJamGame game;
-	private final ArrayList<AnimatedSprite> animatedStars = new ArrayList<>();
 
 	private final Engine engine = new Engine();
 
@@ -39,22 +31,9 @@ public class GameScreen extends ScreenAdapter {
 		camera.update();
 	}
 
-	Random random = new Random();
-
-	private void buildAnimatedStar(String filename) {
-		animatedStars.add(new AnimatedSprite(game.getAsset(filename),
-			random.nextFloat() * SCREEN_WIDTH, random.nextFloat() * SCREEN_HEIGHT, 64, 64, 15, .1f, random.nextInt(15)));
-		animatedStars.get(animatedStars.size() - 1).setScale(Math.max(random.nextFloat() * 2.5f, 1));
-	}
-
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(stage);
-		buildAnimatedStar("data/stars/yellow.png");
-		buildAnimatedStar("data/stars/white.png");
-		buildAnimatedStar("data/stars/blue.png");
-		buildAnimatedStar("data/stars/orange.png");
-		buildAnimatedStar("data/stars/red.png");
 	}
 
 	@Override
@@ -63,9 +42,6 @@ public class GameScreen extends ScreenAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 		SpriteBatch spriteBatch = game.getSpriteBatch();
 		spriteBatch.begin();
-		for (AnimatedSprite animatedStar : animatedStars) {
-			animatedStar.draw(spriteBatch, delta);
-		}
 		spriteBatch.end();
 		engine.update(delta);
 		stage.act(delta);

@@ -24,6 +24,15 @@ public class TitleMenu {
 			}
 		});
 
+		TextButton starMapButton = new TextButton("Star Map", game.getSkin());
+		starMapButton.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				super.clicked(event, x, y);
+				game.showScreen(ScreenNames.StarMap);
+			}
+		});
+
 		TextButton quitButton = new TextButton("Quit Game", game.getSkin());
 		quitButton.addListener(new ClickListener() {
 			@Override
@@ -34,6 +43,7 @@ public class TitleMenu {
 		});
 
 		table.add(startButton).padBottom(20).row();
+		table.add(starMapButton).padBottom(20).row();
 		table.add(quitButton);
 	}
 

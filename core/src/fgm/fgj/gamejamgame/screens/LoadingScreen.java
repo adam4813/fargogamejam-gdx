@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import fgm.fgj.gamejamgame.GameJamGame;
 import fgm.fgj.gamejamgame.ScreenNames;
+import fgm.fgj.gamejamgame.StarField;
 
 public class LoadingScreen extends ScreenAdapter {
 	private final SpriteBatch batch;
@@ -20,13 +21,14 @@ public class LoadingScreen extends ScreenAdapter {
 		this.game = game;
 		game.loadAssets();
 		batch = new SpriteBatch();
-		font = game.getSkin().getFont("default-font");
+		font = game.getSkin().getFont("title");
 		glyphLayout.setText(font, loadingString);
 	}
 
 	@Override
 	public void render(float delta) {
 		if (game.assetsLoaded()) {
+			StarField.initStarTextures(game);
 			game.showScreen(ScreenNames.Title);
 			return;
 		}

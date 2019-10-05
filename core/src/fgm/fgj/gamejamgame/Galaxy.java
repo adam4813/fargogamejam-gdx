@@ -2,17 +2,21 @@ package fgm.fgj.gamejamgame;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Random;
 
 /** Represents the world map of the game. */
 public class Galaxy {
 	/** Represents the node that the ship is at, also serving as a root node for the solar systems. */
 	private SolarSystem shipLocation;
+	public List<Species> bestiary;
 
 	/**
 	 * Instantiates the galaxy generating a new map based on the solar system quantity.
 	 */
 	public Galaxy(int solarSystemQuantity){
 		this.shipLocation = generateGalaxyMap();
+		this.bestiary = generateBestiary();
 	}
 
 	/** Returns the root node of the galaxy */
@@ -35,8 +39,28 @@ public class Galaxy {
 	public static SolarSystem generateGalaxyMap(){
 		return generateSolarSystem();
 	}
+	private List<Species> generateBestiary() {
+		List<Species> speciesList = new ArrayList();
+		for(int i=0; i==5; i++){
+			speciesList.add(new Species());
+		}
+		return speciesList;
+	}
 
-	public static Planet generatePlanet(){
+	public Species getRandomSpeciesFromBestiary() {
+		Random random = new Random();
+		return this.bestiary.get(random.nextInt(this.bestiary.size()));
+	}
+
+	private CrewMember generateCrewMember() {
+		Species species = getRandomSpeciesFromBestiary();
+		int hitPoints = species.getHitPoints();
+		Specialization specialization = Specialization.getRandomSpecialization();
+		CrewMember newCrewMember = new CrewMember(species, hitPoints, specialization);
+		return newCrewMember;
+	}
+
+	public static Planet generatePlanet() {
 		String name = "Earth";
 		AtmosphericComposition airType = AtmosphericComposition.EARTH_LIKE;
 		List<Species> speciesPresent = new ArrayList<>();
@@ -46,6 +70,6 @@ public class Galaxy {
 		int fuel = 50;
 		int metals = 40;
 		int water = 100;
-		return new Planet(name, airType, speciesPresent, gravity, atmospherePressure,temperature, fuel, metals, water);
+		return new Planet(name, airType, speciesPresent, gravity, atmospherePressure, temperature, fuel, metals, water);
 	}
 }

@@ -9,12 +9,16 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import fgm.fgj.gamejamgame.screens.GameScreen;
-import fgm.fgj.gamejamgame.screens.LoadingScreen;
-import fgm.fgj.gamejamgame.screens.TitleScreen;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
+
+import fgm.fgj.gamejamgame.screens.GameScreen;
+import fgm.fgj.gamejamgame.screens.LoadingScreen;
+import fgm.fgj.gamejamgame.screens.StarMapScreen;
+import fgm.fgj.gamejamgame.screens.TitleScreen;
 
 public class GameJamGame extends Game {
 	public static final int SCREEN_WIDTH = 1280;
@@ -65,21 +69,20 @@ public class GameJamGame extends Game {
 		assetManager = new AssetManager();
 
 		// UI
-		loadTextureAtlas("data/default/uiskin.atlas");
-		assetManager.load("data/default/uiskin.json", Skin.class, new SkinLoader.SkinParameter("data/default/uiskin.atlas"));
+		loadTextureAtlas("data/rustyrobotui/rusty-robot-ui.atlas");
+		assetManager.load("data/rustyrobotui/rusty-robot-ui.json", Skin.class, new SkinLoader.SkinParameter("data/rustyrobotui/rusty-robot-ui.atlas"));
 		assetManager.finishLoading();
-		skin = getAsset("data/default/uiskin.json");
-		skin.getFont("default-font").getData().setScale(3, 3);
+		skin = getAsset("data/rustyrobotui/rusty-robot-ui.json");
 
 		// Screens
 		screens.put(ScreenNames.Title, new TitleScreen(this));
 		screens.put(ScreenNames.Loading, new LoadingScreen(this));
 		screens.put(ScreenNames.Game, new GameScreen(this));
+		screens.put(ScreenNames.StarMap, new StarMapScreen(this));
 		showScreen(ScreenNames.Loading);
 
 		spriteBatch = new SpriteBatch();
 	}
-
 
 	@Override
 	public void dispose() {
@@ -101,5 +104,21 @@ public class GameJamGame extends Game {
 		loadTexture("data/stars/red.png");
 		loadTexture("data/stars/blue.png");
 		loadTexture("data/stars/orange.png");
+		loadTexture("data/stars/bg-star-blue.png");
+		loadTexture("data/stars/bg-star-brown.png");
+		loadTexture("data/stars/bg-star-green.png");
+		loadTexture("data/stars/bg-star-red.png");
+		loadTexture("data/stars/bg-star-yellow.png");
+	}
+
+	public ArrayList<StarMapStar> getNearbyStars() {
+		ArrayList<StarMapStar> stars = new ArrayList<>();
+		Random random = new Random();
+		int starCount = random.nextInt(10);
+		Gdx.app.log("GJG", String.valueOf(starCount));
+		for (int i = 0; i < starCount; i++) {
+			stars.add(new StarMapStar(new SolarSystem(StarType.getRandomStarType(), random.nextFloat() * 2.5f), random.nextFloat(), random.nextFloat()));
+		}
+		return stars;
 	}
 }
