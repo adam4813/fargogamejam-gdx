@@ -5,5 +5,5 @@ import java.util.List;
 public class Galaxy {
 	private SolarSystem solarSystem;
 	private List<SolarSystem> solarSystems;
-	private SolarSystem shipLocation;
+	private static SolarSystem shipLocation;
 }
