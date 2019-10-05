@@ -16,8 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GameJamGame extends Game {
-	static final int SCREEN_WIDTH = 1280;
-	static final int SCREEN_HEIGHT = 720;
+	public static final int SCREEN_WIDTH = 1280;
+	public static final int SCREEN_HEIGHT = 720;
 	private Skin skin;
 	private final Map<ScreenNames, Screen> screens = new HashMap<>();
 
@@ -87,5 +87,10 @@ public class GameJamGame extends Game {
 
 	public void loadAssets() {
 		// load game assets here
+		loadTexture("data/stars/yellow.png");
+		loadTexture("data/stars/white.png");
+		loadTexture("data/stars/red.png");
+		loadTexture("data/stars/blue.png");
+		loadTexture("data/stars/orange.png");
 	}
 }
