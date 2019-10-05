@@ -29,6 +29,8 @@ public class SolarSystem {
 			if(name.equals("")){
 				throw new IllegalArgumentException("Solar systems must have a given name.");
 			}
+		}else{
+			this.name = name;
 		}
 		if(starType == null){
 			throw new IllegalArgumentException("Solar systems must have a star type.");
