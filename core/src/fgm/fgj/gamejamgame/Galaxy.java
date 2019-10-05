@@ -27,13 +27,15 @@ public class Galaxy {
 
 	public static SolarSystem generateSolarSystem(){
 		String name = "Sun";
+		StarType starType = StarType.BG_YELLOW;
+		float starSize = 1;
 		List<SolarSystem> links = new ArrayList<>();
 		List<Integer> fuelCosts = new ArrayList<>();
 		List<Planet> planets = new ArrayList<>();
 		int pt = 0;
 		int sr = 0;
 		int dr = 0;
-		return new SolarSystem(name, links, fuelCosts, planets, pt, sr, dr);
+		return new SolarSystem(name, starType, starSize, links, fuelCosts, planets, pt, sr, dr);
 	}
 
 	public static SolarSystem generateGalaxyMap(){
