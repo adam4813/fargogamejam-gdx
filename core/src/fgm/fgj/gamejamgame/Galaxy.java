@@ -1,8 +1,11 @@
 package fgm.fgj.gamejamgame;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 /** Represents the world map of the game. */
 public class Galaxy {
@@ -19,10 +22,28 @@ public class Galaxy {
 		nameParts.add("GO");
 		nameParts.add("GU");
 	}
-	/** Instantiates the galaxy generating a new map based on the solar system quantity. */
-	public Galaxy(int solarSystemQuantity){
-		this.shipLocation = generateGalaxyMap();
-		this.bestiary = generateBestiary();
+	/** Instantiates the galaxy generating a new map based on the solar system quantity unless root is provided. */
+	public Galaxy(int solarSystemQuantity, SolarSystem root, Ship player, List<Species> bestiary){
+		if(solarSystemQuantity < 1){
+			throw new IllegalArgumentException("A galaxy must consist of at least 1 solar system.");
+		}
+		if(root == null){
+			this.shipLocation = generateGalaxyMap(solarSystemQuantity);
+		}else{
+			this.shipLocation = root;
+		}
+		if(player == null){
+			throw new IllegalArgumentException("A galaxy must have a player.");
+		}else{
+			this.player = player;
+		}
+		if(bestiary == null){
+			this.bestiary = generateBestiary();
+		}else if(bestiary.size() < 1){
+			this.bestiary = generateBestiary();
+		}else{
+			this.bestiary = bestiary;
+		}
 	}
 
 	/** @return the player/ship status. */
@@ -41,9 +62,8 @@ public class Galaxy {
 	 */
 	public static String generateName(){
 		StringBuilder solarName = new StringBuilder();
-		int nameSize = (int)(Math.random() * 5);
+		int nameSize = (int)(Math.random() * 4) + 1;
 		for(int i = 0; i < nameSize; i++){
-
 			solarName.append(Galaxy.nameParts.get((int)(Math.random() * nameParts.size())));
 		}
 		solarName.append('-');
@@ -76,8 +96,31 @@ public class Galaxy {
 	 * Generates a galaxy by linking a bunch of solar systems.
 	 * @return a root solar system that the galaxy can be traversed from.
 	 */
-	public SolarSystem generateGalaxyMap(){
-		return generateSolarSystem();
+	public SolarSystem generateGalaxyMap(int solarSystemQuantity){
+		/* Temporary cache for created solar systems until they are linked and a single root node can be returned. */
+		List<SolarSystem> created = new ArrayList<>();
+		/* Create the solar systems. */
+		int ssQuantity = (int)Math.random() * 25 + 5;
+		for(int i = 0; i < ssQuantity; i++){
+			SolarSystem ss = this.generateSolarSystem();
+			created.add(ss);
+		}
+		/* Link the solar systems. */
+		for(SolarSystem ss : created){
+			int links = (int)Math.random() * 6;
+			for(int i = 0; i < links; i++){
+				int linkIndex = (int)Math.random() * created.size();
+				int fuelCost = (int)(Math.random() * 4) + 1;
+				if(!ss.linkedSolarSystems.contains(created.get(linkIndex))){
+					/* If the link doesn't already exist make it bidirectional to avoid unreachable solar systems.
+					* This also ensures that both ways have the same fuelCosts. */
+					ss.linkSolarSystem(created.get(linkIndex), fuelCost);
+					created.get(linkIndex).linkSolarSystem(ss, fuelCost);
+				}
+			}
+		}
+		/* Return one as a starting location. */
+		return created.get(0);
 	}
 
 	/**
