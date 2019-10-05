@@ -73,4 +73,8 @@ public class StarField {
 			animatedStar.draw(spriteBatch, delta);
 		}
 	}
+
+	public ArrayList<AnimatedSprite> getStars() {
+		return animatedStars;
+	}
 }
