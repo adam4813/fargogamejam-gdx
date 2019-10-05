@@ -8,10 +8,24 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class AnimatedSprite {
 	private Animation<TextureRegion> animation;
 	private float x, y;
+	private float scale = 1;
+	private int frameWidth;
+	private int frameHeight;
+
 	public AnimatedSprite(Texture texture, float x, float y, int frameWidth, int frameHeight, int frameNum, float frameDuration) {
+		this.frameWidth = frameWidth;
+		this.frameHeight = frameHeight;
 		buildAnimation(texture, frameWidth, frameHeight, frameNum, frameDuration);
 		this.x = x;
 		this.y = y;
+	}
+	public AnimatedSprite(Texture texture, float x, float y, int frameWidth, int frameHeight, int frameNum, float frameDuration, int startFrame) {
+		this(texture, x, y, frameWidth, frameHeight, frameNum, frameDuration);
+		elapsedTime += frameDuration * startFrame;
+	}
+
+	public void setScale(float scale) {
+		this.scale = scale;
 	}
 
 	private float elapsedTime;
@@ -31,6 +45,6 @@ public class AnimatedSprite {
 
 	public void draw(SpriteBatch spriteBatch, float delta) {
 		elapsedTime += delta;
-		spriteBatch.draw(animation.getKeyFrame(elapsedTime, true), x, y);
+		spriteBatch.draw(animation.getKeyFrame(elapsedTime, true), x, y, frameWidth * scale, frameHeight * scale);
 	}
 }

@@ -6,6 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import fgm.fgj.gamejamgame.screens.GameScreen;
@@ -20,6 +21,12 @@ public class GameJamGame extends Game {
 	public static final int SCREEN_HEIGHT = 720;
 	private Skin skin;
 	private final Map<ScreenNames, Screen> screens = new HashMap<>();
+
+	public SpriteBatch getSpriteBatch() {
+		return spriteBatch;
+	}
+
+	private SpriteBatch spriteBatch;
 
 	private AssetManager assetManager;
 
@@ -69,6 +76,8 @@ public class GameJamGame extends Game {
 		screens.put(ScreenNames.Loading, new LoadingScreen(this));
 		screens.put(ScreenNames.Game, new GameScreen(this));
 		showScreen(ScreenNames.Loading);
+
+		spriteBatch = new SpriteBatch();
 	}
 
 

@@ -21,7 +21,6 @@ import static fgm.fgj.gamejamgame.GameJamGame.SCREEN_WIDTH;
 public class TitleScreen extends ScreenAdapter {
 	private final Stage stage;
 	private final TitleMenu titleMenu;
-	private final SpriteBatch spriteBatch;
 
 	private final ArrayList<AnimatedSprite> animatedStars = new ArrayList<>();
 	private GameJamGame game;
@@ -30,7 +29,6 @@ public class TitleScreen extends ScreenAdapter {
 		this.game = game;
 		stage = new Stage();
 		titleMenu = new TitleMenu(game);
-		spriteBatch = new SpriteBatch();
 		stage.addActor(titleMenu.getTable());
 	}
 
@@ -44,7 +42,7 @@ public class TitleScreen extends ScreenAdapter {
 
 	private void buildAnimatedStar(String filename) {
 		animatedStars.add(new AnimatedSprite(game.getAsset(filename),
-			random.nextFloat() * SCREEN_WIDTH, random.nextFloat() * SCREEN_HEIGHT, 64, 64, 15, .1f));
+			random.nextFloat() * SCREEN_WIDTH, random.nextFloat() * SCREEN_HEIGHT, 64, 64, 15, .1f, random.nextInt() % 15 + 15));
 	}
 
 	@Override
@@ -61,6 +59,7 @@ public class TitleScreen extends ScreenAdapter {
 	public void render(float delta) {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		SpriteBatch spriteBatch = game.getSpriteBatch();
 		spriteBatch.begin();
 		for (AnimatedSprite animatedStar : animatedStars) {
 			animatedStar.draw(spriteBatch, delta);
