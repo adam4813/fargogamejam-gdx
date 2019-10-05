@@ -11,7 +11,7 @@ public class SolarSystem {
 	List<SolarSystem> linkedSolarSystems;
 	List<Integer> fuelCosts;
 	public StarType starType;
-	public float starSize = 1;
+	public float starSize;
 
 	/**
 	 * Instantiates a solar system based on the provided parameters.
