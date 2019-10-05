@@ -2,6 +2,9 @@ package fgm.fgj.gamejamgame;
 
 import java.util.Random;
 
+/**
+ * Base star types, BG types are for the background only.
+ */
 public enum StarType {
 	YELLOW,
 	WHITE,
