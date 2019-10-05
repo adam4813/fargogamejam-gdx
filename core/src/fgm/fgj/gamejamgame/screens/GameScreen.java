@@ -47,9 +47,27 @@ public class GameScreen extends ScreenAdapter {
 		animatedStars.get(animatedStars.size() - 1).setScale(Math.max(random.nextFloat() * 2.5f, 1));
 	}
 
+	private void buildAnimatedBGStar(String filename) {
+		int weightTowardSmall = (int) random.nextInt(10);
+		float max = 0.25f;
+		if (weightTowardSmall >= 1) {
+			max = 0.15f;
+		}
+		animatedStars.add(new AnimatedSprite(game.getAsset(filename),
+			random.nextFloat() * SCREEN_WIDTH, random.nextFloat() * SCREEN_HEIGHT, 64, 64, 5, .1f, random.nextInt(5)));
+		animatedStars.get(animatedStars.size() - 1).setScale(Math.max(random.nextFloat() * max, 0.05f));
+	}
+
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(stage);
+		for (int i = 0; i < 40; i++) {
+			buildAnimatedBGStar("data/stars/bg-star-blue.png");
+			buildAnimatedBGStar("data/stars/bg-star-brown.png");
+			buildAnimatedBGStar("data/stars/bg-star-green.png");
+			buildAnimatedBGStar("data/stars/bg-star-red.png");
+			buildAnimatedBGStar("data/stars/bg-star-yellow.png");
+		}
 		buildAnimatedStar("data/stars/yellow.png");
 		buildAnimatedStar("data/stars/white.png");
 		buildAnimatedStar("data/stars/blue.png");

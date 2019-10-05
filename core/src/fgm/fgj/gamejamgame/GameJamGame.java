@@ -101,5 +101,10 @@ public class GameJamGame extends Game {
 		loadTexture("data/stars/red.png");
 		loadTexture("data/stars/blue.png");
 		loadTexture("data/stars/orange.png");
+		loadTexture("data/stars/bg-star-blue.png");
+		loadTexture("data/stars/bg-star-brown.png");
+		loadTexture("data/stars/bg-star-green.png");
+		loadTexture("data/stars/bg-star-red.png");
+		loadTexture("data/stars/bg-star-yellow.png");
 	}
 }
