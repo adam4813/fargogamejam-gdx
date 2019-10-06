@@ -29,4 +29,12 @@ public class Ship {
 		this.lifeSupport = new LifeSupportSystem(3, supportedAtmosphericCompositions, 3);
 		this.pirateThreat = 0;
 	}
+
+	public void calculateHullDamage(int damageAmount) {
+		this.hullDamage = this.hullDamage + damageAmount;
+	}
+
+	public void repairHullDamage(int repairAmount) {
+		this.hullDamage = this.hullDamage - repairAmount;
+	}
 }

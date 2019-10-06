@@ -172,4 +172,8 @@ public class Galaxy {
 		int water = (int)Math.random() * 126;
 		return new Planet(name, airType, speciesPresent, gravity, atmospherePressure, temperature, fuel, metals, water);
 	}
+
+	public static GameEvent generateGameEvent(SolarSystem solarSystem, Planet planet, Ship ship) {
+		return new GameEvent(solarSystem, planet, ship);
+	}
 }
