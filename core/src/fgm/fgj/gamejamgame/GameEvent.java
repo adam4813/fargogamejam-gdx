@@ -1,5 +1,4 @@
 package fgm.fgj.gamejamgame;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -11,7 +10,7 @@ public class GameEvent {
 	String eventText;
 	String eventType;
 	Boolean didLose;
-	Boolean didWin = Boolean.FALSE;
+	Boolean didWin;
 
 	public GameEvent(SolarSystem solarSystem, Planet planet, Ship ship) {
 		if (ship == null) {
@@ -120,8 +119,27 @@ public class GameEvent {
 	}
 
 	private void handleDebrisEvent(Ship ship) {
+		// If crew has pilot, reduce potential damage amount
+		List<CrewMember> aliveCrewMembers = ship.listCrewMembers();
+		Boolean crewHasPilot = false;
+
+		for(int i = 0; i <= aliveCrewMembers.size(); i++){
+			CrewMember crewMember = aliveCrewMembers.get(i);
+			if (crewMember.specialization == Specialization.PILOT) {
+				crewHasPilot = true;
+			}
+		}
+
+		int maxPotentialDamage;
+
+		if (crewHasPilot) {
+			maxPotentialDamage = 10;
+		} else {
+			maxPotentialDamage = 20;
+		}
+
 		Random rand = new Random();
-		int damageAmount = rand.nextInt(20);
+		int damageAmount = rand.nextInt(maxPotentialDamage);
 		Boolean isShipDestroyed = ship.issueHullDamage(damageAmount);
 		if (isShipDestroyed) {
 			this.eventText = "Your ship was destroyed - Game Over";
