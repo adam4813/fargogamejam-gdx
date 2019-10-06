@@ -182,7 +182,7 @@ public class Galaxy {
 		if (hasArtifact) {
 			int artifactIndex = (int) (Math.random() * planetQuantity);
 			Planet artifactPlanet = planets.get(artifactIndex);
-			artifactPlanet.hasArtifact = true;
+			artifactPlanet.plantArtifact();
 		}
 		return new SolarSystem(name, starType, starSize, links, fuelCosts, planets, pirateThreat, solarRadiation, debrisRating);
 	}

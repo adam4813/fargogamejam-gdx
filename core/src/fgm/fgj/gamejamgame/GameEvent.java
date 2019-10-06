@@ -38,6 +38,8 @@ public class GameEvent {
 		int randomValue = (int)(Math.random() * 100);
 		if (this.didWin) {
 			this.eventType = "habitablePlanet";
+		}else if(planet.hasArtifact()){
+			this.eventType = "artifact";
 		}else if(randomValue < solarSystem.pirateThreat) {
 			this.eventType = "pirate";
 		}else if(randomValue < solarSystem.debrisRating + solarSystem.pirateThreat) {
@@ -58,8 +60,8 @@ public class GameEvent {
 
 	private void handleGameEvent(String eventType, EventContext eventContext, SolarSystem solarSystem, Planet planet, Ship ship) {
 		switch(eventType) {
-			case "habitablePlanet":
-				this.eventText = "You found a habitable planet! Do you want to settle?";
+			case "artifact":
+				handleArtifactEvent(ship);
 				break;
 			case "pirate":
 				handlePirateEvent(ship);
@@ -87,6 +89,12 @@ public class GameEvent {
 				this.eventText = "Your voyage was uneventful.";
 				break;
 		}
+	}
+
+	private void handleArtifactEvent(Ship ship) {
+		this.eventText = "You found the rare artifact!";
+		this.isPositive = true;
+		ship.getCargoBay().storeArtifact();
 	}
 
 	private void handlePirateEvent(Ship ship) {
