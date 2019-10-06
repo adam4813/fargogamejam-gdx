@@ -32,7 +32,7 @@ public class GameEvent {
 			ship.getCargoBay().decreaseFuel(1);
 		}else if(planet == null){
 			this.eventContext = EventContext.SOLAR_SYSTEM;
-			if(fuelCost > 1){
+			if(fuelCost > 0){
 				ship.getCargoBay().decreaseFuel(fuelCost);
 			}else{
 				throw new IllegalArgumentException("Fuel costs to visit another solar system cannot be less than 1.");
