@@ -222,7 +222,7 @@ public class GameEvent {
 
 	private void handleRecruitmentEvent(Planet planet, Ship ship) {
 		Random rand = new Random();
-		int recruitmentAmount = rand.nextInt(5);
+		int recruitmentAmount = rand.nextInt(4) + 1;
 
 		List<Species> speciesPresent = planet.speciesPresent;
 		Species crewSpecies = ship.getCrewSpecies();
