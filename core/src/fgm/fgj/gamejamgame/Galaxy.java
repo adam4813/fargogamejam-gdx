@@ -1,5 +1,7 @@
 package fgm.fgj.gamejamgame;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -162,7 +164,7 @@ public class Galaxy {
 	 *
 	 * @return a randomly generated solar system WITHOUT links to other systems.
 	 */
-	public SolarSystem generateSolarSystem(){
+	public SolarSystem generateSolarSystem(Boolean hasArtifact){
 		String name = Galaxy.generateName();
 		StarType starType = StarType.getRandomStarType();
 		float starSize = (float)(Math.random() * 3) + .5f;
@@ -176,6 +178,12 @@ public class Galaxy {
 		int pirateThreat = (int) (Math.random() * 6);
 		int solarRadiation = (int) (Math.random() * 6);
 		int debrisRating = (int) (Math.random() * 6);
+		// if the solar system has the artifact, put it on a random planet
+		if (hasArtifact) {
+			int artifactIndex = (int) (Math.random() * planetQuantity);
+			Planet artifactPlanet = planets.get(artifactIndex);
+			artifactPlanet.hasArtifact = true;
+		}
 		return new SolarSystem(name, starType, starSize, links, fuelCosts, planets, pirateThreat, solarRadiation, debrisRating);
 	}
 
@@ -187,8 +195,12 @@ public class Galaxy {
 		/* Temporary cache for created solar systems until they are linked and a single root node can be returned. */
 		List<SolarSystem> created = new ArrayList<>();
 		/* Create the solar systems. */
+		Random rand = new Random();
+		// One solar system gets an artifact
+		int artifactIndex = rand.nextInt(solarSystemQuantity);
 		for(int i = 0; i < solarSystemQuantity; i++){
-			SolarSystem ss = this.generateSolarSystem();
+			Boolean addArtifact = (i == artifactIndex);
+			SolarSystem ss = this.generateSolarSystem(addArtifact);
 			created.add(ss);
 		}
 		/* Link the solar systems. */

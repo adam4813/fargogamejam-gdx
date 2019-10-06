@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Random;
 
 import fgm.fgj.gamejamgame.AnimatedSprite;
+import fgm.fgj.gamejamgame.Galaxy;
 import fgm.fgj.gamejamgame.GameEvent;
 import fgm.fgj.gamejamgame.GameJamGame;
 import fgm.fgj.gamejamgame.OrbitField;
@@ -40,6 +41,7 @@ public class SolarSystemScreen implements Screen {
 	private final Stage stage;
 
 	private GameDialog worldInfo;
+	private GameDialog eventDialog;
 
 	private StarField backgroundStars;
 	private OrbitField orbitField;
@@ -58,6 +60,7 @@ public class SolarSystemScreen implements Screen {
 		root = new Table();
 		root.setFillParent(true);
 		stage.addActor(root);
+		//stage.setDebugAll(true);
 
 		// Camera Setup
 		float w = Gdx.graphics.getWidth();
@@ -88,13 +91,30 @@ public class SolarSystemScreen implements Screen {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
 				Gdx.app.log(TAG, "Doing and event on a planet!!");
-				GameEvent planetVisit = new GameEvent(game.getCurrentStar().solarSystem, targetPlantet, game.getShip());
-				Gdx.app.log(TAG, planetVisit.getEventText());
 				worldInfo.hide();
+				GameEvent gameEvent = Galaxy.generateGameEvent(game.getCurrentStar().solarSystem, targetPlantet, game.getShip());
+				Table eventBody = new Table();
+				eventBody.align(Align.center);
+				eventBody.setFillParent(true);
+				Label eventTextLabel = new Label(gameEvent.getEventText(), skin);
+				eventTextLabel.setWrap(true);
+				eventBody.add(eventTextLabel).grow().padLeft(128);
+				//eventBody.act(1);
+				eventDialog.show(stage, "Visit result" ,eventBody );
 				targetPlantet = null;
 			}
 		});
+
+		final GearTextButton okButton = new GearTextButton("Ok", skin);
+		okButton.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				Gdx.app.log(TAG, "Doing and event on a planet!!");
+				eventDialog.hide();
+			}
+		});
 		worldInfo = new GameDialog(game, "Planet Info", visitButton, cancelButton);
+		eventDialog = new GameDialog(game, "Event Result", okButton);
 	}
 
 	Planet targetPlantet;
@@ -118,7 +138,7 @@ public class SolarSystemScreen implements Screen {
 		SolarSystem currentSolarSystem = game.getCurrentStar().solarSystem;
 
 		{
-			currentStar = StarField.buildAnimatedStar(starTextures.get(currentSolarSystem.starType), -.1f * currentSolarSystem.starSize, .5f, STAR_SIZE * currentSolarSystem.starSize);
+			currentStar = StarField.buildAnimatedStar(starTextures.get(currentSolarSystem.starType), -.078f * currentSolarSystem.starSize, .5f, STAR_SIZE * currentSolarSystem.starSize);
 			Actor actor = new Actor();
 			starActors.add(actor);
 			float scale = currentStar.getScale();
@@ -155,9 +175,6 @@ public class SolarSystemScreen implements Screen {
 
 					Table body = new Table();
 					body.align(Align.center);
-					body.add(new Label("Line 1", skin)).padTop(20.0f).padBottom(10.0f).row();
-					body.add(new Label("Line 2", skin)).padTop(20.0f).padBottom(10.0f).row();
-					body.add(new Label("Line 3", skin)).padTop(20.0f).padBottom(10.0f);
 					body.act(1);
 					worldInfo.show(stage, planet.getName(), body);
 				}
@@ -170,6 +187,7 @@ public class SolarSystemScreen implements Screen {
 	public void render(float delta) {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+		camera.update();
 		ShapeRenderer shapeRenderer = game.getShapeRender();
 		shapeRenderer.setProjectionMatrix(camera.combined);
 		SpriteBatch spriteBatch = game.getSpriteBatch();

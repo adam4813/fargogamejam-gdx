@@ -23,8 +23,8 @@ import fgm.fgj.gamejamgame.screens.StarMapScreen;
 import fgm.fgj.gamejamgame.screens.TitleScreen;
 
 public class GameJamGame extends Game {
-	public static final int SCREEN_WIDTH = 1280;
-	public static final int SCREEN_HEIGHT = 720;
+	public static final int SCREEN_WIDTH = 1440;
+	public static final int SCREEN_HEIGHT = 900;
 	private Skin skin;
 	private final Map<ScreenNames, Screen> screens = new HashMap<>();
 
@@ -185,5 +185,9 @@ public class GameJamGame extends Game {
 
 	public Ship getShip() {
 		return galaxy.getShip();
+	}
+
+	public Galaxy getGalaxy() {
+		return galaxy;
 	}
 }

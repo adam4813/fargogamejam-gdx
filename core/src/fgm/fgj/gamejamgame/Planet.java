@@ -13,6 +13,7 @@ public class Planet {
 	int fuel;
 	int metals;
 	int water;
+	Boolean hasArtifact;
 
 	/**
 	 * Instantiates a new planet based on parameters given.

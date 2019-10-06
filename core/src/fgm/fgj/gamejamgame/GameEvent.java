@@ -144,7 +144,7 @@ public class GameEvent {
 			this.eventText = "Your ship took " + damageDealt + " damage from a radiation burst and was destroyed!";
 			this.didLose = true;
 		} else {
-			this.eventText = "Your ship took " + damageDealt + " damaged from a radiation burst!";
+			this.eventText = "Your ship took " + damageDealt + " damage from a radiation burst!";
 		}
 	}
 
@@ -310,6 +310,13 @@ public class GameEvent {
 
 			else if (eventKey == 4) {
 				this.eventText = "You traded with the planet '" + planet.getName() + ". " + handleTradeEvent(ship);
+			}
+
+			else if (eventKey == 5) {
+				List<CrewMember> crewMembers = ship.listCrewMembers();
+				int crewMemberIndex = rand.nextInt(crewMembers.size());
+				int foodEaten = rand.nextInt(3) + 1;
+				this.eventText = "Crew member '" + crewMembers.get(crewMemberIndex).getName() + "' returned from planet '" + planet.getName() + " famished and ate " + foodEaten + " extra food from the cargo bay.";
 			}
 
 			else {

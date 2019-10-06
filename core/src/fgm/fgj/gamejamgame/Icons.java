@@ -17,6 +17,7 @@ import static fgm.fgj.gamejamgame.IconType.RESOURCE_BLUE;
 import static fgm.fgj.gamejamgame.IconType.RESOURCE_BROWN;
 import static fgm.fgj.gamejamgame.IconType.RESOURCE_GRAY;
 import static fgm.fgj.gamejamgame.IconType.RESOURCE_GREEN;
+import static fgm.fgj.gamejamgame.IconType.RESOURCE_PURPLE;
 import static fgm.fgj.gamejamgame.IconType.RESOURCE_YELLOW;
 import static fgm.fgj.gamejamgame.IconType.SHIP_EQUIP_BUTTON;
 import static fgm.fgj.gamejamgame.IconType.SHIP_INFO_BUTTON;
@@ -72,6 +73,7 @@ public class Icons {
 		iconTypeMap.put(RESOURCE_BLUE, tmpFrames[0][i++]);
 		iconTypeMap.put(RESOURCE_GRAY, tmpFrames[0][i++]);
 		iconTypeMap.put(RESOURCE_GREEN, tmpFrames[0][i++]);
+		iconTypeMap.put(RESOURCE_PURPLE, tmpFrames[0][i++]);
 		iconTypeMap.put(SPECIALIZATION_BROWN, tmpFrames[0][i++]);
 		iconTypeMap.put(SPECIALIZATION_BLUE, tmpFrames[0][i++]);
 		iconTypeMap.put(SPECIALIZATION_YELLOW, tmpFrames[0][i++]);

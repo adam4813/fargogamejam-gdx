@@ -30,6 +30,7 @@ public enum IconType {
 	RESOURCE_BLUE,
 	RESOURCE_GRAY,
 	RESOURCE_GREEN,
+	RESOURCE_PURPLE,
 	SPECIALIZATION_BROWN,
 	SPECIALIZATION_BLUE,
 	SPECIALIZATION_YELLOW;
@@ -42,6 +43,6 @@ public enum IconType {
 
 	public static IconType getRandomSpecialization() {
 		Random random = new Random();
-		return values()[random.nextInt(3) + 25];
+		return values()[random.nextInt(3) + 26];
 	}
 }
