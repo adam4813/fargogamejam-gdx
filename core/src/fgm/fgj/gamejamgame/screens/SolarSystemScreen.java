@@ -92,7 +92,7 @@ public class SolarSystemScreen implements Screen {
 			public void changed(ChangeEvent event, Actor actor) {
 				Gdx.app.log(TAG, "Doing and event on a planet!!");
 				worldInfo.hide();
-				GameEvent gameEvent = Galaxy.generateGameEvent(game.getCurrentStar().solarSystem, 1, targetPlantet, game.getShip());
+				gameEvent = Galaxy.generateGameEvent(game.getCurrentStar().solarSystem, 1, targetPlantet, game.getShip());
 				Table eventBody = new Table();
 				eventBody.align(Align.center);
 				eventBody.setFillParent(true);
@@ -100,7 +100,7 @@ public class SolarSystemScreen implements Screen {
 				eventTextLabel.setWrap(true);
 				eventBody.add(eventTextLabel).grow().padLeft(128);
 				//eventBody.act(1);
-				eventDialog.show(stage, "Visit result" ,eventBody );
+				eventDialog.show(stage, gameEvent.isPositive() ? "Success" : "Uh-oh" ,eventBody );
 				targetPlantet = null;
 			}
 		});
@@ -111,6 +111,9 @@ public class SolarSystemScreen implements Screen {
 			public void changed(ChangeEvent event, Actor actor) {
 				Gdx.app.log(TAG, "Doing and event on a planet!!");
 				eventDialog.hide();
+				if (gameEvent.didLose()) {
+					game.showScreen(ScreenNames.Lose);
+				}
 			}
 		});
 		worldInfo = new GameDialog(game, "Planet Info", visitButton, cancelButton);
@@ -118,6 +121,7 @@ public class SolarSystemScreen implements Screen {
 	}
 
 	Planet targetPlantet;
+	GameEvent gameEvent;
 
 	@Override
 	public void show() {

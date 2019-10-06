@@ -99,14 +99,14 @@ public class StarMapScreen implements Screen {
 				populateStarField();
 
 				Gdx.app.log("STAR_MAP", "Doing and event after arriving!!");
-				GameEvent gameEvent = Galaxy.generateGameEvent(game.getCurrentStar().solarSystem, targetStarMapStar.fuelCost, null, game.getShip());
+				gameEvent = Galaxy.generateGameEvent(game.getCurrentStar().solarSystem, targetStarMapStar.fuelCost, null, game.getShip());
 				Table eventBody = new Table();
 				eventBody.align(Align.center);
 				eventBody.setFillParent(true);
 				Label eventTextLabel = new Label(gameEvent.getEventText(), game.getSkin());
 				eventTextLabel.setWrap(true);
 				eventBody.add(eventTextLabel).grow().padLeft(128);
-				eventDialog.show(stage, "Visit result" ,eventBody );
+				eventDialog.show(stage, gameEvent.isPositive() ? "Success" : "Uh-oh" ,eventBody );
 			}
 		});
 		worldInfo = new GameDialog(game, "Solar System Info", visitButton, cancelButton);
@@ -127,6 +127,9 @@ public class StarMapScreen implements Screen {
 			public void changed(ChangeEvent event, Actor actor) {
 				Gdx.app.log("STAR_MAP", "Doing and event on a planet!!");
 				eventDialog.hide();
+				if (gameEvent.didLose()) {
+					game.showScreen(ScreenNames.Lose);
+				}
 			}
 		});
 		eventDialog = new GameDialog(game, "Event Result", okButton);
@@ -135,6 +138,7 @@ public class StarMapScreen implements Screen {
 
 	private StarMapStar targetStarMapStar;
 	private Image shipInfoButton = new Image();;
+	private GameEvent gameEvent;
 
 	@Override
 	public void show() {
