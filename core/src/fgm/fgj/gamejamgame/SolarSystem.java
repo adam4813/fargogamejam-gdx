@@ -109,20 +109,6 @@ public class SolarSystem {
 		}
 	}
 
-	/**
-	 * Generates solar and body events and encounters.
-	 * @param p
-	 */
-	public void generateEvent(Planet p) {
-		//Encounter encounter;
-		if(p == null){
-			//TODO generate solar event
-		}else{
-			//TODO generate event based on the planet's attributes.
-		}
-		//return encounter;
-	}
-
 	public String getName() {
 		return name;
 	}
