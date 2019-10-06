@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Random;
 
 import fgm.fgj.gamejamgame.AnimatedSprite;
+import fgm.fgj.gamejamgame.GameEvent;
 import fgm.fgj.gamejamgame.GameJamGame;
 import fgm.fgj.gamejamgame.OrbitField;
 import fgm.fgj.gamejamgame.Planet;
@@ -87,6 +88,8 @@ public class SolarSystemScreen implements Screen {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
 				Gdx.app.log(TAG, "Doing and event on a planet!!");
+				GameEvent planetVisit = new GameEvent(game.getCurrentStar().solarSystem, targetPlantet, game.getShip());
+				Gdx.app.log(TAG, planetVisit.getEventText());
 				worldInfo.hide();
 				targetPlantet = null;
 			}

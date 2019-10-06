@@ -11,7 +11,7 @@ public class GameEvent {
 	String eventText;
 	String eventType;
 	Boolean didLose;
-	Boolean didWin;
+	Boolean didWin = Boolean.FALSE;
 
 	public GameEvent(SolarSystem solarSystem, Planet planet, Ship ship) {
 		if (ship == null) {
@@ -192,7 +192,8 @@ public class GameEvent {
 		Species ambushingSpecies = planet.getMostViolentSpecies();
 		// Get random crew member to the ambush will injure or kill
 		List<CrewMember> aliveCrewMembers = ship.listCrewMembers();
-		int randomCrewMemberIndex = (int) (Math.random() * aliveCrewMembers.size());
+		Random rand = new Random();
+		int randomCrewMemberIndex = rand.nextInt(aliveCrewMembers.size());
 		CrewMember randomCrewMember = aliveCrewMembers.get(randomCrewMemberIndex);
 		String crewMemberName = randomCrewMember.name;
 		if (randomCrewMember.dealDamage(ambushingSpecies.damage)) {
@@ -202,7 +203,7 @@ public class GameEvent {
 			this.eventText = "Crew member '" + crewMemberName + "' was injured. ";
 		}
 
-		int ammoRequired = (int) (ambushingSpecies.hitPoints / ship.getDamagePerAmmo()) * ambushingSpecies.hitPoints;
+		int ammoRequired = (int) (ambushingSpecies.hitPoints / ship.getDamagePerAmmo());
 		int currentAmmo = ship.getCargoBay().checkAmmo();
 		if (currentAmmo < ammoRequired) {
 			this.eventText += "Ran out of ammo, no food acquired. ";
@@ -214,5 +215,9 @@ public class GameEvent {
 			this.eventText += "Acquired " + ambushingSpecies.mass + " food.";
 		}
 		ship.getCargoBay().decreaseAmmo(ammoRequired);
+	}
+
+	public String getEventText() {
+		return this.eventText;
 	}
 }
