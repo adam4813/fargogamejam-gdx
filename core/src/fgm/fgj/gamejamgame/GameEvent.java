@@ -44,20 +44,28 @@ public class GameEvent {
 		int randomValue = (int)(Math.random() * 100);
 		if(planet != null && planet.hasArtifact()){
 			this.eventType = "artifact";
+			this.isPositive = true;
 		}else if(randomValue < solarSystem.pirateThreat) {
 			this.eventType = "pirate";
+			this.isPositive = false;
 		}else if(randomValue < solarSystem.debrisRating + solarSystem.pirateThreat) {
 			this.eventType = "debris";
+			this.isPositive = false;
 		}else if(randomValue < solarSystem.solarRadiation + solarSystem.pirateThreat + solarSystem.debrisRating) {
 			this.eventType = "radiation";
+			this.isPositive = false;
 		}else if(planet != null && planet.getMostViolentSpecies() != null && randomValue < planet.getMostViolentSpecies().damage + solarSystem.solarRadiation + solarSystem.pirateThreat + solarSystem.debrisRating) {
 			this.eventType = "ambush";
+			this.isPositive = false;
 		}else if (randomValue < 70) {
 			this.eventType = "resource";
+			this.isPositive = true;
 		}else if (randomValue < 95) {
 			this.eventType = "other";
+			this.isPositive = false;
 		}else {
 			this.eventType = "none";
+			this.isPositive = true;
 		}
 		handleGameEvent(this.eventType, this.eventContext, solarSystem, planet, ship);
 	}
@@ -254,8 +262,10 @@ public class GameEvent {
 				ship.removeCrewMember(randomCrewMember);
 
 				this.eventText = "Crew member '" + crewMemberName + "' deserted. ";
+				return;
 			}
 		}
+		this.eventText = "Crew members seem happy.";
 	}
 
 	private String handleTradeEvent(Ship ship) {
@@ -369,13 +379,14 @@ public class GameEvent {
 				} else {
 					this.eventText = "You found some ancient ruins. There were " + metalAmount + " units of metal inside";
 				}
-
+				this.isPositive = true;
 				ship.getCargoBay().increaseMetal(metalAmount);
 			}
 
 			else if (eventKey == 1) {
 				int damageAmount = rand.nextInt(10) + 1;
 				Boolean isShipDestroyed = ship.issueHullDamage(damageAmount);
+				this.isPositive = false;
 				if (isShipDestroyed) {
 					this.eventText = "An earthquake occurred. Your ship took" + damageAmount + " damage and was destroyed.";
 					this.didLose = Boolean.TRUE;
@@ -386,14 +397,17 @@ public class GameEvent {
 
 			else if (eventKey == 2) {
 				handleDesertionEvent(planet, ship);
+				this.isPositive = false;
 			}
 
 			else if (eventKey == 3) {
 				 handleRecruitmentEvent(planet, ship);
+				this.isPositive = true;
 			}
 
 			else if (eventKey == 4) {
 				this.eventText = "You traded with the planet '" + planet.getName() + ". " + handleTradeEvent(ship);
+				this.isPositive = true;
 			}
 
 			else if (eventKey == 5) {
@@ -401,26 +415,31 @@ public class GameEvent {
 				int crewMemberIndex = rand.nextInt(crewMembers.size());
 				int foodEaten = rand.nextInt(3) + 1;
 				this.eventText = "Crew member '" + crewMembers.get(crewMemberIndex).getName() + "' returned from planet '" + planet.getName() + " famished and ate " + foodEaten + " extra food from the cargo bay.";
+				this.isPositive = true;
 			}
 
 			else {
 				this.eventText = "Nothing happened";
+				this.isPositive = true;
 			}
 		} else if (eventContext == EventContext.SOLAR_SYSTEM) {
 			if (eventKey == 0) {
 				this.eventText = "There is a solar storm. You must leave this system temporarily.";
+				this.isPositive = false;
 			}
 
 			else if (eventKey == 1) {
 				int fuelAmount = rand.nextInt(3) + 1;
 				this.eventText = "You found an abandoned coal bunker floating in space. You were able to salvage " + fuelAmount + " units of fuel from it.";
 				ship.getCargoBay().increaseFuel(fuelAmount);
+				this.isPositive = true;
 			}
 
 			else if (eventKey == 2) {
 				int foodAmount = rand.nextInt(3) + 1;
 				this.eventText = "Rats ate " + foodAmount + " units of your food.";
 				ship.getCargoBay().decreaseFood(foodAmount);
+				this.isPositive = false;
 			}
 
 			else if (eventKey == 3) {
@@ -430,22 +449,27 @@ public class GameEvent {
 				ship.getCargoBay().increaseAmmo((int)(Math.random() * 6));
 				ship.getCargoBay().increaseFood((int)(Math.random() * 6));
 				ship.getCargoBay().increaseFuel((int)(Math.random() * 6));
+				this.isPositive = true;
 			}
 
 			else if (eventKey == 4) {
 				this.eventText = "You encountered another ship and traded with them. " + handleTradeEvent(ship);
+				this.isPositive = true;
 			}
 
 			else if (eventKey == 5) {
 				handleCrewMemberExchange(ship);
+				this.isPositive = true;
 			}
 
 			else {
 				this.eventText = "Nothing happened";
+				this.isPositive = true;
 			}
 
 		} else {
 			this.eventText = "Nothing happened";
+			this.isPositive = true;
 		}
 	}
 }
