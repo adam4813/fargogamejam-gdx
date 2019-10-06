@@ -12,4 +12,8 @@ public class Engine implements PartModules{
 		this.speed = speed;
 		this.efficiency = efficiency;
 	}
+
+	public int getSpeed() {
+		return this.speed;
+	}
 }

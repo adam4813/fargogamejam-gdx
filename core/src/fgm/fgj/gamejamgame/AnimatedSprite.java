@@ -55,7 +55,7 @@ public class AnimatedSprite {
 
 	public void draw(SpriteBatch spriteBatch, float delta) {
 		elapsedTime += delta;
-		spriteBatch.draw(animation.getKeyFrame(elapsedTime, true), x, y, frameWidth * scale, frameHeight * scale);
+		spriteBatch.draw(animation.getKeyFrame(elapsedTime, true), x - frameWidth / 2f * scale, y - frameHeight / 2f * scale, frameWidth * scale, frameHeight * scale);
 	}
 
 	public float getScale() {

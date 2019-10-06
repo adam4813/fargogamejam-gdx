@@ -8,13 +8,11 @@ import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import fgm.fgj.gamejamgame.screens.GameScreen;
 import fgm.fgj.gamejamgame.screens.LoadingScreen;
@@ -22,8 +20,8 @@ import fgm.fgj.gamejamgame.screens.StarMapScreen;
 import fgm.fgj.gamejamgame.screens.TitleScreen;
 
 public class GameJamGame extends Game {
-	public static final int SCREEN_WIDTH = 1280;
-	public static final int SCREEN_HEIGHT = 720;
+	public static final int SCREEN_WIDTH = 1920;
+	public static final int SCREEN_HEIGHT = 1080;
 	private Skin skin;
 	private final Map<ScreenNames, Screen> screens = new HashMap<>();
 
@@ -117,20 +115,19 @@ public class GameJamGame extends Game {
 	public ArrayList<StarMapStar> getNearbyStars() {
 		ArrayList<StarMapStar> stars = new ArrayList<>();
 		int starCount = galaxy.getShipLocation().linkedSolarSystems.size();
-		float angle = 360f / starCount;
+		double angle = Math.toRadians(360f / starCount);
 		Gdx.app.log("GJG", "Count " + String.valueOf(starCount));
 		int index = 0;
 		for (SolarSystem solarSystem : galaxy.getShipLocation().linkedSolarSystems) {
-			float itemAngle = angle * index++;
-			stars.add(new StarMapStar(solarSystem,(float)Math.cos(Math.toRadians(itemAngle)), (float)Math.sin(Math.toRadians(itemAngle))));
+			double itemAngle = angle * index++;
+			stars.add(new StarMapStar(solarSystem, (float) Math.cos(itemAngle) * 0.5f, (float) Math.sin(itemAngle) * 0.75f));
 		}
 		return stars;
 	}
 
 	public StarMapStar getCurrentStar() {
 		SolarSystem solarSystem = galaxy.getShipLocation();
-		StarMapStar star = new StarMapStar(solarSystem, 0f, 0f);
-		return star;
+		return new StarMapStar(solarSystem, 0f, 0f);
 	}
 
 	public void setCurrentSolarSystem(SolarSystem targetSolarSystem) {

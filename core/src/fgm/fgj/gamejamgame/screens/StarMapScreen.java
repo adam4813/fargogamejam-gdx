@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.ray3k.rustyrobot.GearTextButton;
 
 import java.util.ArrayList;
@@ -41,11 +42,11 @@ public class StarMapScreen implements Screen {
 
 	private Table root;
 	private Random random = new Random();
+	private ExtendViewport viewport;
 
 	public StarMapScreen(GameJamGame game) {
 		this.game = game;
 		stage = new Stage();
-		//stage.setDebugAll(true);
 		root = new Table();
 		root.setFillParent(true);
 		stage.addActor(root);
@@ -53,7 +54,11 @@ public class StarMapScreen implements Screen {
 		// Camera Setup
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
-		camera = new OrthographicCamera( w, h);
+		camera = new OrthographicCamera();
+		viewport = new ExtendViewport(w, h, camera);
+		camera.position.set(viewport.getMinWorldWidth() / 2f, viewport.getMinWorldHeight() / 2f, 0);
+		camera.update();
+		stage.setViewport(viewport);
 
 		// Ship screen button
 
@@ -97,13 +102,17 @@ public class StarMapScreen implements Screen {
 		backgroundStars = new StarField(starCount);
 		nearbyStarField = new StarField();
 
+		float spritePadding = 8f;
+		float spriteOffset = StarField.STAR_SPRITE_FRAME_SIZE / 4f + spritePadding;
+		float spriteWidth = StarField.STAR_SPRITE_FRAME_SIZE / 2f + spritePadding * 2;
+
 		{
 			StarMapStar currentStar = game.getCurrentStar();
 			AnimatedSprite animatedSprite = nearbyStarField.addStar(currentStar);
 			Actor actor = new Actor();
 			starActors.add(actor);
-			actor.setBounds(animatedSprite.getX(), animatedSprite.getY(), 64 * animatedSprite.getScale(), 64 * animatedSprite.getScale());
-			actor.setOrigin(32 * animatedSprite.getScale(), 32 * animatedSprite.getScale());
+			float scale = animatedSprite.getScale();
+			actor.setBounds(animatedSprite.getX() - spriteOffset * scale, animatedSprite.getY() - spriteOffset * scale, spriteWidth * scale, spriteWidth * scale);
 			actor.addListener(new ClickListener() {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
@@ -119,8 +128,8 @@ public class StarMapScreen implements Screen {
 			AnimatedSprite animatedSprite = nearbyStarField.addStar(star);
 			Actor actor = new Actor();
 			starActors.add(actor);
-			actor.setBounds(animatedSprite.getX(), animatedSprite.getY(), 64 * animatedSprite.getScale(), 64 * animatedSprite.getScale());
-			actor.setOrigin(32 * animatedSprite.getScale(), 32 * animatedSprite.getScale());
+			float scale = animatedSprite.getScale();
+			actor.setBounds(animatedSprite.getX() - spriteOffset * scale, animatedSprite.getY() - spriteOffset * scale, spriteWidth * scale, spriteWidth * scale);
 			actor.addListener(new ClickListener() {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
@@ -148,6 +157,7 @@ public class StarMapScreen implements Screen {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 		SpriteBatch spriteBatch = game.getSpriteBatch();
+		spriteBatch.setProjectionMatrix(camera.combined);
 		spriteBatch.begin();
 		backgroundStars.draw(spriteBatch, delta);
 		nearbyStarField.draw(spriteBatch, delta);
@@ -160,7 +170,7 @@ public class StarMapScreen implements Screen {
 	@Override
 	public void resize(int width, int height) {
 		stage.getViewport().setScreenSize(width, height);
-		camera.update();
+		viewport.update(width, height);
 	}
 
 	@Override
@@ -175,9 +185,7 @@ public class StarMapScreen implements Screen {
 
 	@Override
 	public void hide() {
-		for (Actor actor : starActors) {
-			stage.getActors().removeAll(starActors, true);
-		}
+		stage.getActors().removeAll(starActors, true);
 	}
 
 	@Override
