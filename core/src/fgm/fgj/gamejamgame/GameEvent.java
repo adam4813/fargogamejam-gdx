@@ -1,14 +1,23 @@
 package fgm.fgj.gamejamgame;
+import com.sun.org.apache.xpath.internal.operations.Bool;
+
+import java.util.List;
 import java.util.Random;
 
 public class GameEvent {
 
 	String eventText;
 	String eventType;
+	Boolean didLose;
+	Boolean didWin;
 
 	public GameEvent(SolarSystem solarSystem, Planet planet, Ship ship) {
 		if (ship == null) {
 			throw new IllegalArgumentException("You must provide a Ship");
+		}
+
+		if (checkWinCondition(planet, ship)) {
+			this.didWin = Boolean.TRUE;
 		}
 
 		Random rand = new Random();
@@ -16,7 +25,11 @@ public class GameEvent {
 
 		// assign probability of event
 
-		if (randomValue < solarSystem.pirateThreat) {
+		if (this.didWin) {
+			this.eventType = "habitablePlanet";
+		}
+
+		else if (randomValue < solarSystem.pirateThreat) {
 			this.eventType = "pirate";
 		}
 
@@ -56,6 +69,9 @@ public class GameEvent {
 	private void handleGameEvent(String eventType, EventContext eventContext, SolarSystem solarSystem, Planet planet, Ship ship) {
 
 		switch(eventType) {
+			case "habitablePlanet":
+				this.eventText = "You found a habitable planet! Do you want to settle?";
+				break;
 			case "pirate":
 				handlePirateEvent(ship);
 				break;
@@ -102,8 +118,13 @@ public class GameEvent {
 		if (solarSystem.solarRadiation > ship.getRadiationResistance()) {
 			Random rand = new Random();
 			int damageAmount = rand.nextInt(20);
-			ship.issueHullDamage(damageAmount);
-			this.eventText = "Your ship was ravaged by radiation!";
+			Boolean isShipDestroyed = ship.issueHullDamage(damageAmount);
+			if (isShipDestroyed) {
+				this.eventText = "Your ship was destroyed - Game Over";
+				this.didLose = Boolean.TRUE;
+			} else {
+				this.eventText = "Your ship was ravaged by radiation!";
+			}
 		}
 	}
 
@@ -127,5 +148,31 @@ public class GameEvent {
 		}
 
 		this.eventText = "You collected resources!";
+	}
+
+	private Boolean checkWinCondition(Planet planet, Ship ship) {
+		if (planet == null) {
+			return Boolean.FALSE;
+		}
+		int planetGravity = planet.gravity;
+		int planetAtmosphericPressure = planet.atmosphericPressure;
+		int planetTemperature = planet.temperature;
+		AtmosphericComposition planetAir = planet.airType;
+
+		List<CrewMember> crewMembers = ship.crewMembers;
+		CrewMember crewMember = crewMembers.get(0);
+		Species crewSpecies = crewMember.species;
+
+		int speciesGravityTolerance = crewSpecies.gravityTolerance;
+		int speciesAtmosphericPressureTolerance = crewSpecies.atmosphericPressureTolerance;
+		int speciesTemperatureTolerance = crewSpecies.temperatureTolerance;
+		AtmosphericComposition speciesAtmosphericCompositionTolerance = crewSpecies.atmosphericCompositionTolerance;
+
+		Boolean gravityMatch = (planetGravity == speciesGravityTolerance);
+		Boolean pressureMatch = (planetAtmosphericPressure == speciesAtmosphericPressureTolerance);
+		Boolean temperatureMatch = (planetTemperature == speciesTemperatureTolerance);
+		Boolean airTypeMatch = (planetAir == speciesAtmosphericCompositionTolerance);
+
+		return (gravityMatch && pressureMatch && temperatureMatch && airTypeMatch);
 	}
 }

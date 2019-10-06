@@ -1,11 +1,15 @@
 package fgm.fgj.gamejamgame;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static fgm.fgj.gamejamgame.AtmosphericComposition.getRandomAtmosphere;
+import static fgm.fgj.gamejamgame.WeaponType.BALLISTIC;
+
 public class Ship {
 	private int hullDamage;
-	private final List<CrewMember> crewMembers;
+	public List<CrewMember> crewMembers;
 	private Engine engine;
 	private Weapon weapon;
 	private CargoBay cargoBay;
