@@ -243,20 +243,37 @@ public class GameEvent {
 
 		if (eventContext == EventContext.PLANET) {
 			if (eventKey == 0) {
-				this.eventText = "You found some ancient ruins.";
-			} else if (eventKey == 1) {
-				this.eventText = "An earthquake has damaged your ship.";
-			} else if (eventKey == 2) {
+				int metalAmount = rand.nextInt(5) + 1;
+				this.eventText = "You found some ancient ruins. There were" + metalAmount + " units of metal inside";
+				ship.addCargo("metals", metalAmount);
+			}
+
+			else if (eventKey == 1) {
+				int damageAmount = rand.nextInt(10) + 1;
+				Boolean isShipDestroyed = ship.issueHullDamage(damageAmount);
+				if (isShipDestroyed) {
+					this.eventText = "Your ship was destroyed - Game Over";
+					this.didLose = Boolean.TRUE;
+				} else {
+					this.eventText = "An earthquake damaged your ship! It caused" + damageAmount + " damage.";
+				}
+			}
+
+			else if (eventKey == 2) {
 				 handleRecruitmentEvent(planet, ship);
 			}
 		} else if (eventContext == EventContext.SOLAR_SYSTEM) {
 			if (eventKey == 0) {
 				this.eventText = "There is a solar storm. You must leave this system temporarily.";
-			} else if (eventKey == 1) {
+			}
+
+			else if (eventKey == 1) {
 				int fuelAmount = rand.nextInt(3) + 1;
 				this.eventText = "You found an abandoned ship. You were able to salvage" + fuelAmount + " units of fuel from it.";
 				ship.addCargo("fuel", fuelAmount);
-			} else {
+			}
+
+			else {
 				this.eventText = "";
 			}
 		} else {
