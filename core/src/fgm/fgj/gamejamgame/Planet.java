@@ -13,7 +13,7 @@ public class Planet {
 	int fuel;
 	int metals;
 	int water;
-	Boolean hasArtifact;
+	private Boolean hasArtifact;
 
 	/**
 	 * Instantiates a new planet based on parameters given.
@@ -119,5 +119,13 @@ public class Planet {
 			}
 		}
 		return isHabitable;
+	}
+
+	public Boolean hasArtifact() {
+		return this.hasArtifact;
+	}
+
+	public void plantArtifact() {
+		this.hasArtifact = true;
 	}
 }

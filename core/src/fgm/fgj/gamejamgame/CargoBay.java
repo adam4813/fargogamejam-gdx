@@ -1,5 +1,7 @@
 package fgm.fgj.gamejamgame;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -18,6 +20,7 @@ public class CargoBay {
 	private int ammo;
 	private int food;
 	private final List<PartModules> parts;
+	private Boolean containsArtifact;
 
 	/**
 	 * @param value desired value
@@ -162,6 +165,10 @@ public class CargoBay {
 	}
 	public int checkFood() {
 		return this.food;
+	}
+
+	public void storeArtifact() {
+		this.containsArtifact = true;
 	}
 
 	public void addPart(PartModules part) {
