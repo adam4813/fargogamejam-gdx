@@ -20,6 +20,16 @@ public class Galaxy {
 		nameParts.add("GI");
 		nameParts.add("GO");
 		nameParts.add("GU");
+		nameParts.add("NA");
+		nameParts.add("NE");
+		nameParts.add("NI");
+		nameParts.add("NO");
+		nameParts.add("NU");
+		nameParts.add("LA");
+		nameParts.add("LE");
+		nameParts.add("LI");
+		nameParts.add("LO");
+		nameParts.add("LU");
 		firstNames = new ArrayList<>();
 		firstNames.add("Ariosh");
 		firstNames.add("Belephor");
