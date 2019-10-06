@@ -28,6 +28,7 @@ public class StarField {
 	}
 
 	private static final Map<StarType, Texture> starTextures = new EnumMap<StarType, Texture>(StarType.class);
+
 	public static void initStarTextures(GameJamGame game) {
 		starTextures.put(StarType.YELLOW, game.getAsset("data/stars/yellow.png"));
 		starTextures.put(StarType.WHITE, game.getAsset("data/stars/white.png"));
@@ -40,6 +41,7 @@ public class StarField {
 		starTextures.put(StarType.BG_GREEN, game.getAsset("data/stars/bg-star-green.png"));
 		starTextures.put(StarType.BG_RED, game.getAsset("data/stars/bg-star-red.png"));
 	}
+
 	public StarField() {
 	}
 
@@ -54,7 +56,7 @@ public class StarField {
 	}
 
 	static int STAR_SPRITE_FRAMES = 15;
-	static int STAR_SPRITE_FRAME_SIZE = 64;
+	public static int STAR_SPRITE_FRAME_SIZE = 64;
 
 	private AnimatedSprite buildAnimatedStar(Texture texture, float x, float y, float size) {
 		AnimatedSprite animatedSprite = new AnimatedSprite(texture,
@@ -64,6 +66,8 @@ public class StarField {
 		return animatedSprite;
 	}
 
+	public static int BG_STAR_SPRITE_FRAMES = 5;
+
 	private void buildAnimatedBGStar(Texture texture) {
 		int weightTowardSmall = (int) random.nextInt(10);
 		float max = 0.25f;
@@ -71,7 +75,7 @@ public class StarField {
 			max = 0.15f;
 		}
 		animatedStars.add(new AnimatedSprite(texture,
-			random.nextFloat() * SCREEN_WIDTH, random.nextFloat() * SCREEN_HEIGHT, 64, 64, 5, .1f, random.nextInt(5)));
+			random.nextFloat() * SCREEN_WIDTH, random.nextFloat() * SCREEN_HEIGHT, STAR_SPRITE_FRAME_SIZE, STAR_SPRITE_FRAME_SIZE, BG_STAR_SPRITE_FRAMES, .1f, random.nextInt(BG_STAR_SPRITE_FRAMES)));
 		animatedStars.get(animatedStars.size() - 1).setScale(Math.max(random.nextFloat() * max, 0.05f));
 	}
 
