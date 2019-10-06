@@ -7,10 +7,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import fgm.fgj.gamejamgame.GameJamGame;
-import fgm.fgj.gamejamgame.Icons;
-import fgm.fgj.gamejamgame.OrbitField;
 import fgm.fgj.gamejamgame.ScreenNames;
-import fgm.fgj.gamejamgame.StarField;
 
 public class LoadingScreen extends ScreenAdapter {
 	private final SpriteBatch batch;
@@ -30,9 +27,6 @@ public class LoadingScreen extends ScreenAdapter {
 	@Override
 	public void render(float delta) {
 		if (game.assetsLoaded()) {
-			StarField.initStarTextures(game);
-			OrbitField.initPlanetTextures(game);
-			Icons.initIconTextures(game);
 			game.showScreen(ScreenNames.Title);
 			return;
 		}

@@ -51,7 +51,11 @@ public class GameJamGame extends Game {
 	}
 
 	public boolean assetsLoaded() {
-		return assetManager.update();
+		boolean loaded = assetManager.update();
+		if (loaded) {
+			createdScreens();
+		}
+		return loaded;
 	}
 
 	public void loadTexture(String filename) {
@@ -83,16 +87,23 @@ public class GameJamGame extends Game {
 		skin = getAsset("data/rustyrobotui/rusty-robot-ui.json");
 
 		// Screens
+		screens.put(ScreenNames.Loading, new LoadingScreen(this));
+		showScreen(ScreenNames.Loading);
+
+		spriteBatch = new SpriteBatch();
+		shapeRenderer = new ShapeRenderer();
+	}
+
+	private void createdScreens() {
+		StarField.initStarTextures(this);
+		OrbitField.initPlanetTextures(this);
+		Icons.initIconTextures(this);
 		screens.put(ScreenNames.Title, new TitleScreen(this));
 		screens.put(ScreenNames.Loading, new LoadingScreen(this));
 		screens.put(ScreenNames.Game, new GameScreen(this));
 		screens.put(ScreenNames.StarMap, new StarMapScreen(this));
 		screens.put(ScreenNames.SolarSystem, new SolarSystemScreen(this));
 		screens.put(ScreenNames.Ship, new ShipScreen(this));
-		showScreen(ScreenNames.Loading);
-
-		spriteBatch = new SpriteBatch();
-		shapeRenderer = new ShapeRenderer();
 	}
 
 	@Override

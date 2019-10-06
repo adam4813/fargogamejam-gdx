@@ -22,6 +22,7 @@ public class TitleScreen extends ScreenAdapter {
 		stage = new Stage();
 		titleMenu = new TitleMenu(game);
 		stage.addActor(titleMenu.getTable());
+		//stage.setDebugAll(true);
 	}
 
 	@Override
