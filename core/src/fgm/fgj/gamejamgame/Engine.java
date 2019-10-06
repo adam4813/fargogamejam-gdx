@@ -31,4 +31,8 @@ public class Engine implements PartModules{
 			return def;
 		}
 	}
+
+	public int getEfficiency() {
+		return efficiency;
+	}
 }

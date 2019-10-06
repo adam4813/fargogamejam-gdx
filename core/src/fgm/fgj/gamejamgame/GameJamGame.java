@@ -126,6 +126,26 @@ public class GameJamGame extends Game {
 		loadTexture("data/planets/planetsheetGas02.png");
 		loadTexture("data/planets/planetsheetGas03.png");
 		loadTexture("data/icons.png");
+		loadTexture("data/modules/moduleEngine01.png");
+		loadTexture("data/modules/moduleEngine02.png");
+		loadTexture("data/modules/moduleEngine03.png");
+		loadTexture("data/modules/moduleEngine04.png");
+		loadTexture("data/modules/moduleEngine05.png");
+		loadTexture("data/modules/moduleLifeSupport01.png");
+		loadTexture("data/modules/moduleLifeSupport02.png");
+		loadTexture("data/modules/moduleLifeSupport03.png");
+		loadTexture("data/modules/moduleLifeSupport04.png");
+		loadTexture("data/modules/moduleLifeSupport05.png");
+		loadTexture("data/modules/moduleWeapon01.png");
+		loadTexture("data/modules/moduleWeapon02.png");
+		loadTexture("data/modules/moduleWeapon03.png");
+		loadTexture("data/modules/moduleWeapon04.png");
+		loadTexture("data/modules/moduleWeapon05.png");
+		loadTexture("data/modules/moduleCargo01.png");
+		loadTexture("data/modules/moduleCargo02.png");
+		loadTexture("data/modules/moduleCargo03.png");
+		loadTexture("data/modules/moduleCargo04.png");
+		loadTexture("data/modules/moduleCargo05.png");
 	}
 
 	private final Galaxy galaxy = new Galaxy(130, null,null, 1, null);

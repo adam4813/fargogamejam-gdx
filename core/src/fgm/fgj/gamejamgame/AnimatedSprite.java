@@ -24,7 +24,7 @@ public class AnimatedSprite {
 	public AnimatedSprite(Texture texture, float x, float y, int frameWidth, int frameHeight, int frameNum, float frameDuration) {
 		this.frameWidth = frameWidth;
 		this.frameHeight = frameHeight;
-		buildAnimation(texture, frameWidth, frameHeight, frameNum, frameDuration);
+		animation = buildAnimation(texture, frameWidth, frameHeight, frameNum, frameDuration);
 		this.x = x;
 		this.y = y;
 	}
@@ -40,7 +40,7 @@ public class AnimatedSprite {
 
 	private float elapsedTime;
 
-	private void buildAnimation(Texture texture, int frameWidth, int frameHeight, int frameNum, float frameDuration) {
+	public static Animation buildAnimation(Texture texture, int frameWidth, int frameHeight, int frameNum, float frameDuration) {
 
 		TextureRegion[][] tmpFrames = TextureRegion.split(texture, frameWidth, frameHeight);
 		TextureRegion[] animationFrames = new TextureRegion[frameNum];
@@ -50,7 +50,7 @@ public class AnimatedSprite {
 			animationFrames[index++] = tmpFrames[0][i];
 		}
 
-		animation = new Animation(frameDuration, animationFrames);
+		return new Animation<>(frameDuration, animationFrames);
 	}
 
 	public void draw(SpriteBatch spriteBatch, float delta) {

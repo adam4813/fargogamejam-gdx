@@ -57,7 +57,7 @@ public class ShipScreen implements Screen {
 	public ShipScreen(GameJamGame game) {
 		this.game = game;
 		stage = new Stage();
-		stage.setDebugAll(true);
+		//stage.setDebugAll(true);
 
 		// Camera Setup
 		float w = Gdx.graphics.getWidth();
@@ -147,6 +147,7 @@ public class ShipScreen implements Screen {
 	public void show() {
 		Gdx.input.setInputProcessor(stage);
 		crewPanel.displayCrew(ship.listCrewMembers());
+		modulesPanel.displayModules(game, ship);
 		TextureRegion textureRegion = Icons.getIcon(IconType.STARMAP_BUTTON);
 		starMapButton.setDrawable(new TextureRegionDrawable(textureRegion));
 	}

@@ -9,6 +9,19 @@ public class Ship {
 	private Engine engine;
 	private Weapon weapon;
 	private CargoBay cargoBay;
+
+	public Engine getEngine() {
+		return engine;
+	}
+
+	public Weapon getWeapon() {
+		return weapon;
+	}
+
+	public LifeSupportSystem getLifeSupport() {
+		return lifeSupport;
+	}
+
 	private LifeSupportSystem lifeSupport;
 
 	public Ship(List<CrewMember> crewMembers, Engine engine, Weapon weapon, LifeSupportSystem lss, CargoBay cargoBay) {

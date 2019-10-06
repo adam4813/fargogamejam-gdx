@@ -56,7 +56,7 @@ public class StarMapScreen implements Screen {
 		root = new Table();
 		root.setFillParent(true);
 		stage.addActor(root);
-		stage.setDebugAll(true);
+		//stage.setDebugAll(true);
 
 		// Camera Setup
 		float w = Gdx.graphics.getWidth();
