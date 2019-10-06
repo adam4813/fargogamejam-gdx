@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Planet {
-	public PlanetType planetType = PlanetType.getRandomPLanetType();
+	public PlanetType planetType;
 	String name;
 	AtmosphericComposition airType;
 	List<Species> speciesPresent;
@@ -27,6 +27,7 @@ public class Planet {
 	 * @param water the exploitable water available on the planet.
 	 */
 	public Planet(String name, AtmosphericComposition airType, List<Species> speciesPresent, int gravity, int atmosphericPressure, int temperature, int fuel, int metals, int water) {
+		this.planetType = PlanetType.getRandomPlanetType();
 		if(name != null){
 			if(!name.equals("")){
 				/* Just ensuring the name isn't empty. */

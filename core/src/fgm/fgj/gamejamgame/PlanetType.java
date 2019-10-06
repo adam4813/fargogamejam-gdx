@@ -12,7 +12,7 @@ public enum PlanetType {
 	GAS2,
 	GAS3;
 
-	public static PlanetType getRandomPLanetType() {
+	public static PlanetType getRandomPlanetType() {
 		Random random = new Random();
 		return values()[random.nextInt(values().length)];
 	}

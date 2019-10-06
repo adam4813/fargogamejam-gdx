@@ -8,15 +8,13 @@ import static fgm.fgj.gamejamgame.AtmosphericComposition.getRandomAtmosphere;
 import static fgm.fgj.gamejamgame.WeaponType.BALLISTIC;
 
 public class Ship {
-	private int hullDamage;
 	public List<CrewMember> crewMembers;
 	private Engine engine;
 	private Weapon weapon;
 	private CargoBay cargoBay;
 	private LifeSupportSystem lifeSupport;
-	private final int hitPoints;
 
-	public Ship(List<CrewMember> crewMembers, Engine engine, Weapon weapon, LifeSupportSystem lss, CargoBay cargoBay, int hitPoints, int hullDamage) {
+	public Ship(List<CrewMember> crewMembers, Engine engine, Weapon weapon, LifeSupportSystem lss, CargoBay cargoBay) {
 		if(crewMembers == null){
 			throw new IllegalArgumentException("A ship cannot be operated with a null crew.");
 		}else if(crewMembers.isEmpty()){
@@ -39,13 +37,11 @@ public class Ship {
 		this.weapon = weapon;
 		this.lifeSupport = lss;
 		this.cargoBay = cargoBay;
-		this.hitPoints = this.withinRangeOrDefault(hitPoints, 10, 100, 25);
-		this.hullDamage = this.withinRangeOrDefault(hullDamage, 0, hitPoints, 0);
 	}
 
 	public boolean issueHullDamage(int damageAmount) {
-		this.hullDamage = this.hullDamage + damageAmount;
-		if (this.hullDamage > this.hitPoints) {
+		this.engine.damageTaken = this.engine.damageTaken + damageAmount;
+		if (this.engine.damageTaken > this.engine.hitPoints) {
 			return true;
 		}
 		return false;
@@ -56,7 +52,7 @@ public class Ship {
 	}
 
 	public void repairHullDamage(int repairAmount) {
-		this.hullDamage = Math.max(this.hullDamage - repairAmount, 0);
+		this.engine.damageTaken = Math.max(this.engine.damageTaken - repairAmount, 0);
 	}
 
 	public int getRadiationResistance() {

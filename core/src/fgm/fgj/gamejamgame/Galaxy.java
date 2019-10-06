@@ -59,16 +59,15 @@ public class Galaxy {
 
 	public Ship generateShip(){
 		List<CrewMember> crewMembers = generateCrewMembers();
-		Engine engine = new Engine(0, 0);
+		Engine engine = new Engine(0, 0, 25, 0);
 		Weapon weapon = new Weapon(1, WeaponType.getRandomWeaponType());
 		List<AtmosphericComposition> supportedCompositions = new ArrayList<>();
 		supportedCompositions.add(crewMembers.get(0).species.atmosphericCompositionTolerance);
 		LifeSupportSystem lss = new LifeSupportSystem(supportedCompositions, 1, 2);
 		List<PartModules> parts = new ArrayList<>();
 		CargoBay cargoBay = new CargoBay(30, 30, 30, 30, 30, 30, 25, 0, 15, 25, 10, 15, parts);
-		int hitPoints = 25;
-		int hullDamage = 0;
-		return new Ship(crewMembers, engine, weapon, lss, cargoBay, hitPoints, hullDamage);
+
+		return new Ship(crewMembers, engine, weapon, lss, cargoBay);
 	}
 
 	/**
