@@ -119,7 +119,7 @@ public class GameJamGame extends Game {
 		int starCount = random.nextInt(10);
 		Gdx.app.log("GJG", String.valueOf( galaxy.getShipLocation().linkedSolarSystems.size()));
 		for (SolarSystem solarSystem : galaxy.getShipLocation().linkedSolarSystems) {
-			stars.add(new StarMapStar(solarSystem, random.nextFloat(), random.nextFloat()));
+			stars.add(new StarMapStar(solarSystem, random.nextFloat() * 2 - 1, random.nextFloat() * 2 - 1));
 		}
 		return stars;
 	}
@@ -128,5 +128,9 @@ public class GameJamGame extends Game {
 		SolarSystem solarSystem = galaxy.getShipLocation();
 		StarMapStar star = new StarMapStar(solarSystem, 0f, 0f);
 		return star;
+	}
+
+	public void setCurrentSolarSystem(SolarSystem targetSolarSystem) {
+		galaxy.setShipLocation(targetSolarSystem);
 	}
 }
