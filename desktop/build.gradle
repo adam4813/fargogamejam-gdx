@@ -3,8 +3,8 @@ apply plugin: "java"
 sourceSets.main.java.srcDirs = [ "src/" ]
 
 ext {
-    mainClassName = "com.greenstargames.pq.desktop.DesktopLauncher"
-    assetsDir = new File("../assets")
+    mainClassName = "com.fgj.gamejamgame.desktop.DesktopLauncher"
+    assetsDir = new File("./assets")
 }
 
 dependencies {

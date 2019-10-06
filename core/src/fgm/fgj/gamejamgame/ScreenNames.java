@@ -10,5 +10,6 @@ public enum ScreenNames {
 	Win,
 	SolarSystem,
 	Transition,
+	Credits,
 	Intro;
 }

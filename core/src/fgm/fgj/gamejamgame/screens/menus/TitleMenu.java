@@ -93,7 +93,7 @@ public class TitleMenu {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				super.clicked(event, x, y);
-				game.showScreen(ScreenNames.Transition);
+				game.showScreen(ScreenNames.Intro);
 			}
 		});
 		playButton.getDrawable().setMinHeight(128);
@@ -104,7 +104,7 @@ public class TitleMenu {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				super.clicked(event, x, y);
-				GameJamGame.quit();
+				game.showScreen(ScreenNames.Credits);
 			}
 		});
 		exitButton.getDrawable().setMinHeight(128);

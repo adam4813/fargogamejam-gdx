@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import fgm.fgj.gamejamgame.screens.CreditsScreen;
 import fgm.fgj.gamejamgame.screens.GameScreen;
 import fgm.fgj.gamejamgame.screens.IntroScreen;
 import fgm.fgj.gamejamgame.screens.LoadingScreen;
@@ -112,6 +113,7 @@ public class GameJamGame extends Game {
 		screens.put(ScreenNames.Win, new WinScreen(this));
 		screens.put(ScreenNames.Intro, new IntroScreen(this));
 		screens.put(ScreenNames.Transition, new TransitionScreen(this));
+		screens.put(ScreenNames.Credits, new CreditsScreen(this));
 	}
 
 	@Override
@@ -169,6 +171,7 @@ public class GameJamGame extends Game {
 		loadTexture("data/scenes/sceneTransition.png");
 		loadTexture("data/scenes/sceneWin.png");
 		loadTexture("data/scenes/sceneIntro.png");
+		loadTexture("data/scenes/credits.png");
 	}
 
 	private final Galaxy galaxy = new Galaxy(130, null,null, 1, null);
