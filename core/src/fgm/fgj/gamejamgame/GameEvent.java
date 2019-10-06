@@ -1,78 +1,47 @@
 package fgm.fgj.gamejamgame;
 
 import java.util.List;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class GameEvent {
-
+	final EventContext eventContext;
 	String eventText;
-	String eventType;
-	Boolean didLose;
-	Boolean didWin;
+	final String eventType;
+	boolean didLose;
+	final boolean didWin;
 
 	public GameEvent(SolarSystem solarSystem, Planet planet, Ship ship) {
+		if(solarSystem == null && planet == null){
+			this.eventContext = EventContext.GALAXY;
+		}else if(planet == null){
+			this.eventContext = EventContext.SOLAR_SYSTEM;
+		}else{
+			this.eventContext = EventContext.PLANET;
+		}
 		if (ship == null) {
-			throw new IllegalArgumentException("You must provide a Ship");
+			throw new IllegalArgumentException("A game event cannot occur with a null ship.");
 		}
-
-		if (checkWinCondition(planet, ship)) {
-			this.didWin = Boolean.TRUE;
-		}
-
-		Random rand = new Random();
-		int randomValue = rand.nextInt(100);
-
-		// assign probability of event
-
+		this.didWin = GameEvent.isHabitablePlanet(planet, ship);
+		int randomValue = (int)(Math.random() * 100);
 		if (this.didWin) {
 			this.eventType = "habitablePlanet";
-		}
-
-		else if (randomValue < solarSystem.pirateThreat) {
+		}else if(randomValue < solarSystem.pirateThreat) {
 			this.eventType = "pirate";
-		}
-
-		else if (randomValue < solarSystem.debrisRating + solarSystem.pirateThreat) {
+		}else if(randomValue < solarSystem.debrisRating + solarSystem.pirateThreat) {
 			this.eventType = "debris";
-		}
-
-		else if (randomValue < solarSystem.solarRadiation + solarSystem.pirateThreat + solarSystem.debrisRating) {
+		}else if(randomValue < solarSystem.solarRadiation + solarSystem.pirateThreat + solarSystem.debrisRating) {
 			this.eventType = "radiation";
-		}
-
-		else if (planet != null && planet.getMostViolentSpecies() != null && randomValue < planet.getMostViolentSpecies().damage + solarSystem.solarRadiation + solarSystem.pirateThreat + solarSystem.debrisRating) {
+		}else if(planet != null && planet.getMostViolentSpecies() != null && randomValue < planet.getMostViolentSpecies().damage + solarSystem.solarRadiation + solarSystem.pirateThreat + solarSystem.debrisRating) {
 			this.eventType = "ambush";
-		}
-
-		else if (randomValue < 60){
+		}else if(randomValue < 60){
 			this.eventType = "resource";
-		} else {
+		}else{
 			this.eventType = "none";
 		}
-
-		// Infer event context based on the objects passed in
-
-		EventContext eventContext;
-
-		if (solarSystem == null && planet == null) {
-			eventContext = EventContext.GALAXY;
-		}
-
-		else if (planet == null) {
-			eventContext = EventContext.SOLAR_SYSTEM;
-		}
-
-		else {
-			eventContext = EventContext.PLANET;
-		}
-
-		handleGameEvent(eventType, eventContext, solarSystem, planet, ship);
+		handleGameEvent(this.eventType, this.eventContext, solarSystem, planet, ship);
 	}
 
 	private void handleGameEvent(String eventType, EventContext eventContext, SolarSystem solarSystem, Planet planet, Ship ship) {
-
 		switch(eventType) {
 			case "habitablePlanet":
 				this.eventText = "You found a habitable planet! Do you want to settle?";
@@ -80,41 +49,47 @@ public class GameEvent {
 			case "pirate":
 				handlePirateEvent(ship);
 				break;
-
 			case "debris":
 				handleDebrisEvent(ship);
 				break;
-
 			case "radiation":
 				handleRadiationEvent(solarSystem, ship);
 				break;
-
 			case "resource":
 				if (eventContext == EventContext.PLANET) {
 					handleResourceCollection(planet, ship);
 				}
 				break;
-
 			case "ambush":
 				if (eventContext == EventContext.PLANET) {
 					handleAmbushEvent(planet, ship);
 				}
 				break;
-
 			default:
 				this.eventText = "Your voyage was uneventful.";
-
+				break;
 		}
 	}
 
 	private void handlePirateEvent(Ship ship) {
 		Random rand = new Random();
 		int outrunFactor = rand.nextInt(5);
-		if (outrunFactor < ship.getEngineSpeed()) {
+		int maneuverBonus = 0;
+		for(CrewMember cm : ship.listCrewMembers()){
+			if(cm.specialization.equals(Specialization.PILOT)){
+				/* Each pilot increases the maneuverability of the ship. */
+				maneuverBonus++;
+			}
+		}
+		if (outrunFactor < (ship.getEngineSpeed() + maneuverBonus)) {
 			this.eventText = "You encountered space pirates, but were able to escape!";
 		} else {
 			this.eventText = "You encountered space pirates! They took a bunch of your stuff!";
-			ship.plunderCargo();
+			ship.getCargoBay().decreaseMetal((int)(Math.random() * 6));
+			ship.getCargoBay().decreaseWater((int)(Math.random() * 6));
+			ship.getCargoBay().decreaseAmmo((int)(Math.random() * 6));
+			ship.getCargoBay().decreaseFood((int)(Math.random() * 6));
+			ship.getCargoBay().decreaseFuel((int)(Math.random() * 6));
 		}
 	}
 
@@ -185,7 +160,7 @@ public class GameEvent {
 		this.eventText = "You collected resources!";
 	}
 
-	private Boolean checkWinCondition(Planet planet, Ship ship) {
+	private static Boolean isHabitablePlanet(Planet planet, Ship ship) {
 		if (planet == null) {
 			return Boolean.FALSE;
 		}

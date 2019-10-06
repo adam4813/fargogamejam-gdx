@@ -64,17 +64,6 @@ public class Ship {
 		return this.engine.efficiency;
 	}
 
-	public void plunderCargo() {
-		Random rand = new Random();
-		int plunderAmount = rand.nextInt(5);
-
-		this.cargoBay.decreaseMetal(plunderAmount);
-		this.cargoBay.decreaseWater(plunderAmount);
-		this.cargoBay.decreaseAmmo(plunderAmount);
-		this.cargoBay.decreaseFood(plunderAmount);
-		this.cargoBay.decreaseFuel(plunderAmount);
-	}
-
 	public void addCargo(String cargoType, int amount) {
 		switch (cargoType) {
 			case "fuel":
