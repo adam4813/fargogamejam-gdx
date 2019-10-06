@@ -24,6 +24,13 @@ public class Galaxy {
 		if(solarSystemQuantity < 1){
 			throw new IllegalArgumentException("A galaxy must consist of at least 1 solar system.");
 		}
+		if(bestiary == null){
+			this.bestiary = generateBestiary();
+		}else if(bestiary.size() < 1){
+			this.bestiary = generateBestiary();
+		}else{
+			this.bestiary = bestiary;
+		}
 		if(root == null){
 			this.shipLocation = generateGalaxyMap(solarSystemQuantity);
 		}else{
@@ -33,13 +40,6 @@ public class Galaxy {
 			throw new IllegalArgumentException("A galaxy must have a player.");
 		}else{
 			this.player = player;
-		}
-		if(bestiary == null){
-			this.bestiary = generateBestiary();
-		}else if(bestiary.size() < 1){
-			this.bestiary = generateBestiary();
-		}else{
-			this.bestiary = bestiary;
 		}
 	}
 
@@ -129,7 +129,7 @@ public class Galaxy {
 	 */
 	private List<Species> generateBestiary() {
 		List<Species> speciesList = new ArrayList();
-		for(int i=0; i==5; i++){
+		for(int i=0; i<=5; i++){
 			speciesList.add(new Species());
 		}
 		return speciesList;

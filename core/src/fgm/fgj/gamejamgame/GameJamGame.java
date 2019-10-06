@@ -8,6 +8,7 @@ import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import java.util.ArrayList;
@@ -115,11 +116,13 @@ public class GameJamGame extends Game {
 
 	public ArrayList<StarMapStar> getNearbyStars() {
 		ArrayList<StarMapStar> stars = new ArrayList<>();
-		Random random = new Random();
-		int starCount = random.nextInt(10);
-		Gdx.app.log("GJG", String.valueOf( galaxy.getShipLocation().linkedSolarSystems.size()));
+		int starCount = galaxy.getShipLocation().linkedSolarSystems.size();
+		float angle = 360f / starCount;
+		Gdx.app.log("GJG", "Count " + String.valueOf(starCount));
+		int index = 0;
 		for (SolarSystem solarSystem : galaxy.getShipLocation().linkedSolarSystems) {
-			stars.add(new StarMapStar(solarSystem, random.nextFloat() * 2 - 1, random.nextFloat() * 2 - 1));
+			float itemAngle = angle * index++;
+			stars.add(new StarMapStar(solarSystem,(float)Math.cos(Math.toRadians(itemAngle)), (float)Math.sin(Math.toRadians(itemAngle))));
 		}
 		return stars;
 	}
