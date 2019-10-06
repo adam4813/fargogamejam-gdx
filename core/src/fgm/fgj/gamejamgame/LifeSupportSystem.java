@@ -13,4 +13,8 @@ public class LifeSupportSystem implements PartModules {
 		this.supportedAtmosphereCompositions = supportedAtmosphereCompositions;
 		this.atmosphericEfficency = atmosphericEfficency;
 	}
+
+	public int getSolarRadiationTolerance() {
+		return this.solarRadiationTolerance;
+	}
 }
