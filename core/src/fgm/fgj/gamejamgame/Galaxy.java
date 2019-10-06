@@ -11,6 +11,8 @@ public class Galaxy {
 	private final Ship player;
 	public final List<Species> bestiary;
 	private static final List<String> nameParts;
+	private static final List<String> firstNames;
+	private static final List<String> lastNames;
 	static{
 		nameParts = new ArrayList<>();
 		nameParts.add("GA");
@@ -18,6 +20,59 @@ public class Galaxy {
 		nameParts.add("GI");
 		nameParts.add("GO");
 		nameParts.add("GU");
+		firstNames = new ArrayList<>();
+		firstNames.add("Ariosh");
+		firstNames.add("Belephor");
+		firstNames.add("Caern");
+		firstNames.add("Daergo");
+		firstNames.add("Eric");
+		firstNames.add("Furhman");
+		firstNames.add("Galahad");
+		firstNames.add("Honorius");
+		firstNames.add("Ignus");
+		firstNames.add("Jaesrys");
+		firstNames.add("Kellon");
+		firstNames.add("Leonus");
+		firstNames.add("Markos");
+		firstNames.add("Nestor");
+		firstNames.add("Othar");
+		firstNames.add("Persei");
+		firstNames.add("Quintus");
+		firstNames.add("Rex");
+		firstNames.add("Samuel");
+		firstNames.add("Torben");
+		firstNames.add("Uthgard");
+		firstNames.add("Victus");
+		firstNames.add("Wendl");
+		firstNames.add("Xenapha");
+		firstNames.add("Yogur");
+		firstNames.add("Zemus");
+		lastNames = new ArrayList<>();
+		lastNames.add("Aadoms");
+		lastNames.add("Bucher");
+		lastNames.add("Corinth");
+		lastNames.add("Darben");
+		lastNames.add("Edrick");
+		lastNames.add("Foreman");
+		lastNames.add("Gugly");
+		lastNames.add("Honebrunk");
+		lastNames.add("Iashite");
+		lastNames.add("Jakobsson");
+		lastNames.add("Kjalberg");
+		lastNames.add("Leneer");
+		lastNames.add("Mauzer");
+		lastNames.add("Nicodemus");
+		lastNames.add("Orvarsson");
+		lastNames.add("Perguson");
+		lastNames.add("Quasimodus");
+		lastNames.add("Stephensson");
+		lastNames.add("Tuvas");
+		lastNames.add("Ursus");
+		lastNames.add("Victorius");
+		lastNames.add("Worgen");
+		lastNames.add("Xenia");
+		lastNames.add("Yulian");
+		lastNames.add("Zorgenzzon");
 	}
 	/** Instantiates the galaxy generating a new map based on the solar system quantity unless root is provided. It will generate the specified number of species if bestiary is empty or null. */
 	public Galaxy(int solarSystemQuantity, SolarSystem root, Ship player, int speciesQuantity, List<Species> bestiary){
@@ -83,6 +138,14 @@ public class Galaxy {
 		solarName.append('-');
 		solarName.append((int)(Math.random() * 1000));
 		return solarName.toString();
+	}
+
+	public static String generateCrewName(){
+		StringBuilder crewName = new StringBuilder();
+		crewName.append(Galaxy.firstNames.get((int)(Math.random() * firstNames.size())));
+		crewName.append(" ");
+		crewName.append(Galaxy.lastNames.get((int)(Math.random() * lastNames.size())));
+		return crewName.toString();
 	}
 
 	/**
@@ -172,11 +235,11 @@ public class Galaxy {
 	private List<CrewMember> generateCrewMembers() {
 		List<CrewMember> created = new ArrayList<>();
 		Species species = getRandomSpeciesFromBestiary();
-		created.add(new CrewMember(this.generateName(), species, Specialization.ENGINEER, 0));
-		created.add(new CrewMember(this.generateName(), species, Specialization.PILOT, 0));
-		created.add(new CrewMember(this.generateName(), species, Specialization.SCIENTIST, 0));
-		created.add(new CrewMember(this.generateName(), species, Specialization.getRandomSpecialization(), 0));
-		created.add(new CrewMember(this.generateName(), species, Specialization.getRandomSpecialization(), 0));
+		created.add(new CrewMember(this.generateCrewName(), species, Specialization.ENGINEER, 0));
+		created.add(new CrewMember(this.generateCrewName(), species, Specialization.PILOT, 0));
+		created.add(new CrewMember(this.generateCrewName(), species, Specialization.SCIENTIST, 0));
+		created.add(new CrewMember(this.generateCrewName(), species, Specialization.getRandomSpecialization(), 0));
+		created.add(new CrewMember(this.generateCrewName(), species, Specialization.getRandomSpecialization(), 0));
 		return created;
 	}
 
