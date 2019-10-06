@@ -24,6 +24,7 @@ import java.util.Random;
 
 import fgm.fgj.gamejamgame.AnimatedSprite;
 import fgm.fgj.gamejamgame.GameJamGame;
+import fgm.fgj.gamejamgame.ScreenNames;
 import fgm.fgj.gamejamgame.SolarSystem;
 import fgm.fgj.gamejamgame.StarField;
 import fgm.fgj.gamejamgame.StarMapStar;
@@ -118,6 +119,7 @@ public class StarMapScreen implements Screen {
 				public void clicked(InputEvent event, float x, float y) {
 					super.clicked(event, x, y);
 					Gdx.app.log("STAR_MAP", "Going to current to star's solar system" + currentStar.solarSystem.getName());
+					game.showScreen(ScreenNames.SolarSystem);
 				}
 			});
 			stage.addActor(actor);

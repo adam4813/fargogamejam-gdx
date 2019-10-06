@@ -8,6 +8,7 @@ import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import java.util.ArrayList;
@@ -16,20 +17,25 @@ import java.util.Map;
 
 import fgm.fgj.gamejamgame.screens.GameScreen;
 import fgm.fgj.gamejamgame.screens.LoadingScreen;
+import fgm.fgj.gamejamgame.screens.SolarSystemScreen;
 import fgm.fgj.gamejamgame.screens.StarMapScreen;
 import fgm.fgj.gamejamgame.screens.TitleScreen;
 
 public class GameJamGame extends Game {
-	public static final int SCREEN_WIDTH = 1920;
-	public static final int SCREEN_HEIGHT = 1080;
+	public static final int SCREEN_WIDTH = 1280;
+	public static final int SCREEN_HEIGHT = 720;
 	private Skin skin;
 	private final Map<ScreenNames, Screen> screens = new HashMap<>();
 
 	public SpriteBatch getSpriteBatch() {
 		return spriteBatch;
 	}
+	public ShapeRenderer getShapeRender() {
+		return shapeRenderer;
+	}
 
 	private SpriteBatch spriteBatch;
+	private ShapeRenderer shapeRenderer;
 
 	private AssetManager assetManager;
 
@@ -78,9 +84,11 @@ public class GameJamGame extends Game {
 		screens.put(ScreenNames.Loading, new LoadingScreen(this));
 		screens.put(ScreenNames.Game, new GameScreen(this));
 		screens.put(ScreenNames.StarMap, new StarMapScreen(this));
+		screens.put(ScreenNames.SolarSystem, new SolarSystemScreen(this));
 		showScreen(ScreenNames.Loading);
 
 		spriteBatch = new SpriteBatch();
+		shapeRenderer = new ShapeRenderer();
 	}
 
 	@Override
@@ -108,9 +116,14 @@ public class GameJamGame extends Game {
 		loadTexture("data/stars/bg-star-green.png");
 		loadTexture("data/stars/bg-star-red.png");
 		loadTexture("data/stars/bg-star-yellow.png");
+		loadTexture("data/planets/planetsheetBarren.png");
+		loadTexture("data/planets/planetsheetEarthLike.png");
+		loadTexture("data/planets/planetsheetGas01.png");
+		loadTexture("data/planets/planetsheetGas02.png");
+		loadTexture("data/planets/planetsheetGas03.png");
 	}
 
-	private final Galaxy galaxy = new Galaxy(130, null, new Ship(), null);
+	private final Galaxy galaxy = new Galaxy(130, null, new Ship(), 1, null);
 
 	public ArrayList<StarMapStar> getNearbyStars() {
 		ArrayList<StarMapStar> stars = new ArrayList<>();

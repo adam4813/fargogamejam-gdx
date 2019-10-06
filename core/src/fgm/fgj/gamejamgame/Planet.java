@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Planet {
+	public PlanetType planetType = PlanetType.getRandomPLanetType();
 	String name;
 	AtmosphericComposition airType;
 	List<Species> speciesPresent;
@@ -81,5 +82,9 @@ public class Planet {
 		}else{
 			this.water = water;
 		}
+	}
+
+	public String getName() {
+		return name;
 	}
 }

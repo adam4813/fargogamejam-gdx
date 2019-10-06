@@ -112,4 +112,8 @@ public class SolarSystem {
 	public String getName() {
 		return name;
 	}
+
+	public List<Planet> getPlanets() {
+		return planets;
+	}
 }

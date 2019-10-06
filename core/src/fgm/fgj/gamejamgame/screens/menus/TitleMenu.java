@@ -33,6 +33,16 @@ public class TitleMenu {
 			}
 		});
 
+		TextButton solarSystemButton = new TextButton("Solar System Map", game.getSkin());
+		solarSystemButton.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				super.clicked(event, x, y);
+				game.showScreen(ScreenNames.SolarSystem);
+			}
+		});
+
+
 		TextButton quitButton = new TextButton("Quit Game", game.getSkin());
 		quitButton.addListener(new ClickListener() {
 			@Override
@@ -44,6 +54,7 @@ public class TitleMenu {
 
 		table.add(startButton).padBottom(20).row();
 		table.add(starMapButton).padBottom(20).row();
+		table.add(solarSystemButton).padBottom(20).row();
 		table.add(quitButton);
 	}
 

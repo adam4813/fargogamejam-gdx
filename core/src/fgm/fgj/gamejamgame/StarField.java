@@ -13,7 +13,7 @@ import static fgm.fgj.gamejamgame.GameJamGame.SCREEN_HEIGHT;
 import static fgm.fgj.gamejamgame.GameJamGame.SCREEN_WIDTH;
 
 public class StarField {
-	private Random random = new Random();
+	private static Random random = new Random();
 
 	private final ArrayList<AnimatedSprite> animatedStars = new ArrayList<>();
 
@@ -27,7 +27,7 @@ public class StarField {
 		}
 	}
 
-	private static final Map<StarType, Texture> starTextures = new EnumMap<StarType, Texture>(StarType.class);
+	public static final Map<StarType, Texture> starTextures = new EnumMap<StarType, Texture>(StarType.class);
 
 	public static void initStarTextures(GameJamGame game) {
 		starTextures.put(StarType.YELLOW, game.getAsset("data/stars/yellow.png"));
@@ -47,22 +47,23 @@ public class StarField {
 
 	public StarField(List<StarMapStar> stars) {
 		for (StarMapStar star : stars) {
-			buildAnimatedStar(starTextures.get(star.solarSystem.starType), star.x, star.y, star.solarSystem.starSize);
+			animatedStars.add(buildAnimatedStar(starTextures.get(star.solarSystem.starType), star.x, star.y, star.solarSystem.starSize));
 		}
 	}
 
 	public AnimatedSprite addStar(StarMapStar star) {
-		return buildAnimatedStar(starTextures.get(star.solarSystem.starType), star.x, star.y, star.solarSystem.starSize);
+		AnimatedSprite animatedSprite = buildAnimatedStar(starTextures.get(star.solarSystem.starType), star.x, star.y, star.solarSystem.starSize);
+		animatedStars.add(animatedSprite);
+		return animatedSprite;
 	}
 
 	static int STAR_SPRITE_FRAMES = 15;
 	public static int STAR_SPRITE_FRAME_SIZE = 64;
 
-	private AnimatedSprite buildAnimatedStar(Texture texture, float x, float y, float size) {
+	public static AnimatedSprite buildAnimatedStar(Texture texture, float x, float y, float size) {
 		AnimatedSprite animatedSprite = new AnimatedSprite(texture,
 			x * SCREEN_WIDTH, y * SCREEN_HEIGHT, STAR_SPRITE_FRAME_SIZE, STAR_SPRITE_FRAME_SIZE, STAR_SPRITE_FRAMES, .1f, random.nextInt(STAR_SPRITE_FRAMES));
-		animatedStars.add(animatedSprite);
-		animatedStars.get(animatedStars.size() - 1).setScale(Math.max(size, 1));
+		animatedSprite.setScale(Math.max(size, 1));
 		return animatedSprite;
 	}
 
