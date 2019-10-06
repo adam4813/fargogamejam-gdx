@@ -281,6 +281,8 @@ public class GameEvent {
 
 			else if (eventKey == 3) {
 				 handleRecruitmentEvent(planet, ship);
+			} else {
+				this.eventText = "Nothing happened";
 			}
 		} else if (eventContext == EventContext.SOLAR_SYSTEM) {
 			if (eventKey == 0) {
@@ -306,9 +308,11 @@ public class GameEvent {
 				ship.getCargoBay().increaseAmmo((int)(Math.random() * 6));
 				ship.getCargoBay().increaseFood((int)(Math.random() * 6));
 				ship.getCargoBay().increaseFuel((int)(Math.random() * 6));
+			} else {
+				this.eventText = "Nothing happened";
 			}
 		} else {
-			// Galaxy level events
+			this.eventText = "Nothing happened";
 		}
 	}
 }
