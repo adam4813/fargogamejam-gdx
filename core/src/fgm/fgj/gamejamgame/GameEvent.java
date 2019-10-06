@@ -24,6 +24,7 @@ public class GameEvent {
 	}
 
 	public GameEvent(SolarSystem solarSystem, int fuelCost, Planet planet, Ship ship) {
+		this.eventText = "Nothing happened.";
 		if (ship == null) {
 			throw new IllegalArgumentException("A game event cannot occur with a null ship.");
 		}
