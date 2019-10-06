@@ -171,7 +171,7 @@ public class GameEvent {
 		int planetTemperature = planet.temperature;
 		AtmosphericComposition planetAir = planet.airType;
 
-		List<CrewMember> crewMembers = ship.crewMembers;
+		List<CrewMember> crewMembers = ship.listCrewMembers();
 		CrewMember crewMember = crewMembers.get(0);
 		Species crewSpecies = crewMember.species;
 
@@ -191,12 +191,12 @@ public class GameEvent {
 	private void handleAmbushEvent(Planet planet, Ship ship) {
 		Species ambushingSpecies = planet.getMostViolentSpecies();
 		// Get random crew member to the ambush will injure or kill
-		List<CrewMember> aliveCrewMembers = ship.crewMembers;
+		List<CrewMember> aliveCrewMembers = ship.listCrewMembers();
 		int randomCrewMemberIndex = (int) (Math.random() * aliveCrewMembers.size());
 		CrewMember randomCrewMember = aliveCrewMembers.get(randomCrewMemberIndex);
 		String crewMemberName = randomCrewMember.name;
 		if (randomCrewMember.dealDamage(ambushingSpecies.damage)) {
-			ship.crewMembers.remove(randomCrewMember);
+			ship.removeCrewMember(randomCrewMember);
 			this.eventText = "Crew member '" + crewMemberName + "' was killed. ";
 		} else {
 			this.eventText = "Crew member '" + crewMemberName + "' was injured. ";

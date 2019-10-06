@@ -1,15 +1,11 @@
 package fgm.fgj.gamejamgame;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static fgm.fgj.gamejamgame.AtmosphericComposition.getRandomAtmosphere;
-import static fgm.fgj.gamejamgame.WeaponType.BALLISTIC;
-
 public class Ship {
 	private int hullDamage;
-	List<CrewMember> crewMembers;
+	private List<CrewMember> crewMembers;
 	private Engine engine;
 	private Weapon weapon;
 	private CargoBay cargoBay;
@@ -96,6 +92,17 @@ public class Ship {
 	public CargoBay getCargoBay() {
 		return this.cargoBay;
 	}
+	public List<CrewMember> listCrewMembers() {
+		return this.crewMembers;
+	}
+	public void removeCrewMember(CrewMember crewMember) {
+		if (crewMember == null) {
+			throw new IllegalArgumentException("Must reference the crew member that is to be removed.");
+		} else {
+			this.crewMembers.remove(crewMember);
+		}
+	}
+
 	/**
 	 * @param value desired value
 	 * @param min lowest allowed value
