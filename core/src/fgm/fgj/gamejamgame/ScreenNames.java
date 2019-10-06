@@ -5,5 +5,6 @@ public enum ScreenNames {
 	Loading,
 	Game,
 	StarMap,
+	Ship,
 	SolarSystem;
 }

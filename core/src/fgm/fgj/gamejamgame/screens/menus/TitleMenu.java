@@ -42,6 +42,15 @@ public class TitleMenu {
 			}
 		});
 
+		TextButton shipButton = new TextButton("Ship", game.getSkin());
+		shipButton.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				super.clicked(event, x, y);
+				game.showScreen(ScreenNames.Ship);
+			}
+		});
+
 
 		TextButton quitButton = new TextButton("Quit Game", game.getSkin());
 		quitButton.addListener(new ClickListener() {
@@ -55,6 +64,7 @@ public class TitleMenu {
 		table.add(startButton).padBottom(20).row();
 		table.add(starMapButton).padBottom(20).row();
 		table.add(solarSystemButton).padBottom(20).row();
+		table.add(shipButton).padBottom(20).row();
 		table.add(quitButton);
 	}
 

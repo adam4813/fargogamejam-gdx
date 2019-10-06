@@ -17,6 +17,7 @@ import java.util.Map;
 
 import fgm.fgj.gamejamgame.screens.GameScreen;
 import fgm.fgj.gamejamgame.screens.LoadingScreen;
+import fgm.fgj.gamejamgame.screens.ShipScreen;
 import fgm.fgj.gamejamgame.screens.SolarSystemScreen;
 import fgm.fgj.gamejamgame.screens.StarMapScreen;
 import fgm.fgj.gamejamgame.screens.TitleScreen;
@@ -85,6 +86,7 @@ public class GameJamGame extends Game {
 		screens.put(ScreenNames.Game, new GameScreen(this));
 		screens.put(ScreenNames.StarMap, new StarMapScreen(this));
 		screens.put(ScreenNames.SolarSystem, new SolarSystemScreen(this));
+		screens.put(ScreenNames.Ship, new ShipScreen(this));
 		showScreen(ScreenNames.Loading);
 
 		spriteBatch = new SpriteBatch();
@@ -123,7 +125,7 @@ public class GameJamGame extends Game {
 		loadTexture("data/planets/planetsheetGas03.png");
 	}
 
-	private final Galaxy galaxy = new Galaxy(130, null, new Ship(), 1, null);
+	private final Galaxy galaxy = new Galaxy(130, null,null, 1, null);
 
 	public ArrayList<StarMapStar> getNearbyStars() {
 		ArrayList<StarMapStar> stars = new ArrayList<>();
@@ -145,5 +147,9 @@ public class GameJamGame extends Game {
 
 	public void setCurrentSolarSystem(SolarSystem targetSolarSystem) {
 		galaxy.setShipLocation(targetSolarSystem);
+	}
+
+	public Ship getShip() {
+		return galaxy.getShip();
 	}
 }
