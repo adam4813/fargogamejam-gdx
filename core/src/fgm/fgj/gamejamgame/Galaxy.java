@@ -130,7 +130,7 @@ public class Galaxy {
 		supportedCompositions.add(crewMembers.get(0).species.atmosphericCompositionTolerance);
 		LifeSupportSystem lss = new LifeSupportSystem(supportedCompositions, 1, 2);
 		List<PartModules> parts = new ArrayList<>();
-		CargoBay cargoBay = new CargoBay(30, 30, 30, 30, 30, 30, 25, 0, 15, 25, 10, 15, parts);
+		CargoBay cargoBay = new CargoBay(30, 30, 30, 30, 30, 30, 25, 10, 15, 25, 10, 15, parts);
 
 		return new Ship(crewMembers, engine, weapon, lss, cargoBay);
 	}
