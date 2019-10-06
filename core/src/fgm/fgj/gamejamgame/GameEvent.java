@@ -100,32 +100,20 @@ public class GameEvent {
 
 	private void handleDebrisEvent(Ship ship) {
 		// If crew has pilot, reduce potential damage amount
-		List<CrewMember> aliveCrewMembers = ship.listCrewMembers();
-		Boolean crewHasPilot = false;
-
-		for(int i = 0; i <= aliveCrewMembers.size(); i++){
-			CrewMember crewMember = aliveCrewMembers.get(i);
-			if (crewMember.specialization == Specialization.PILOT) {
-				crewHasPilot = true;
+		int maxPotentialDamage = 8;
+		int damageDealt;
+		for(CrewMember cm : ship.listCrewMembers()){
+			if(cm.specialization.equals(Specialization.PILOT)){
+				maxPotentialDamage--;
 			}
 		}
-
-		int maxPotentialDamage;
-
-		if (crewHasPilot) {
-			maxPotentialDamage = 10;
-		} else {
-			maxPotentialDamage = 20;
-		}
-
-		Random rand = new Random();
-		int damageAmount = rand.nextInt(maxPotentialDamage);
-		Boolean isShipDestroyed = ship.issueHullDamage(damageAmount);
+		damageDealt = (int)(Math.random() * maxPotentialDamage);
+		Boolean isShipDestroyed = ship.issueHullDamage(damageDealt);
 		if (isShipDestroyed) {
-			this.eventText = "Your ship was destroyed - Game Over";
-			this.didLose = Boolean.TRUE;
+			this.eventText = "Your ship took " + damageDealt + " damage and was destroyed!";
+			this.didLose = true;
 		} else {
-			this.eventText = "Your ship was damaged by debris! It caused" + damageAmount + " damage.";
+			this.eventText = "Your ship took " + damageDealt + " damaged by debris!";
 		}
 	}
 
