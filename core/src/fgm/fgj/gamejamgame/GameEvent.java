@@ -252,7 +252,7 @@ public class GameEvent {
 		if (eventContext == EventContext.PLANET) {
 			if (eventKey == 0) {
 				int metalAmount = rand.nextInt(5) + 1;
-				this.eventText = "You found some ancient ruins. There were" + metalAmount + " units of metal inside";
+				this.eventText = "You found some ancient ruins. There were " + metalAmount + " units of metal inside";
 				ship.addCargo("metals", metalAmount);
 			}
 
@@ -279,13 +279,13 @@ public class GameEvent {
 
 			else if (eventKey == 1) {
 				int fuelAmount = rand.nextInt(3) + 1;
-				this.eventText = "You found an abandoned coal bunker floating in space. You were able to salvage" + fuelAmount + " units of fuel from it.";
+				this.eventText = "You found an abandoned coal bunker floating in space. You were able to salvage " + fuelAmount + " units of fuel from it.";
 				ship.addCargo("fuel", fuelAmount);
 			}
 
 			else if (eventKey == 2) {
 				int foodAmount = rand.nextInt(3) + 1;
-				this.eventText = "Rats ate" + foodAmount + " units of your food.";
+				this.eventText = "Rats ate " + foodAmount + " units of your food.";
 				ship.removeCargo("food", foodAmount);
 			}
 
