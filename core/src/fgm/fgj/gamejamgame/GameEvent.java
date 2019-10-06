@@ -279,14 +279,23 @@ public class GameEvent {
 
 			else if (eventKey == 1) {
 				int fuelAmount = rand.nextInt(3) + 1;
-				this.eventText = "You found an abandoned ship. You were able to salvage" + fuelAmount + " units of fuel from it.";
+				this.eventText = "You found an abandoned coal bunker floating in space. You were able to salvage" + fuelAmount + " units of fuel from it.";
 				ship.addCargo("fuel", fuelAmount);
 			}
 
 			else if (eventKey == 2) {
-				int fuelAmount = rand.nextInt(3) + 1;
-				this.eventText = "Rats ate" + fuelAmount + " units of your fuel.";
-				ship.removeCargo("fuel", fuelAmount);
+				int foodAmount = rand.nextInt(3) + 1;
+				this.eventText = "Rats ate" + foodAmount + " units of your food.";
+				ship.removeCargo("food", foodAmount);
+			}
+
+			else if (eventKey == 3) {
+				this.eventText = "You found an abandoned ship adrift in space and ransacked its cargo bay!";
+				ship.getCargoBay().increaseMetal((int)(Math.random() * 6));
+				ship.getCargoBay().increaseWater((int)(Math.random() * 6));
+				ship.getCargoBay().increaseAmmo((int)(Math.random() * 6));
+				ship.getCargoBay().increaseFood((int)(Math.random() * 6));
+				ship.getCargoBay().increaseFuel((int)(Math.random() * 6));
 			}
 		} else {
 			// Galaxy level events
