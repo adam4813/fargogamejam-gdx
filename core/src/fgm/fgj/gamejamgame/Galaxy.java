@@ -24,6 +24,13 @@ public class Galaxy {
 		if(solarSystemQuantity < 1){
 			throw new IllegalArgumentException("A galaxy must consist of at least 1 solar system.");
 		}
+		if(bestiary == null){
+			this.bestiary = generateBestiary(speciesQuantity);
+		}else if(bestiary.size() < 1){
+			this.bestiary = generateBestiary(speciesQuantity);
+		}else{
+			this.bestiary = bestiary;
+		}
 		if(root == null){
 			this.shipLocation = generateGalaxyMap(solarSystemQuantity);
 		}else{
@@ -33,13 +40,6 @@ public class Galaxy {
 			this.player = generateShip();
 		}else{
 			this.player = player;
-		}
-		if(bestiary == null){
-			this.bestiary = generateBestiary(speciesQuantity);
-		}else if(bestiary.size() < 1){
-			this.bestiary = generateBestiary(speciesQuantity);
-		}else{
-			this.bestiary = bestiary;
 		}
 	}
 

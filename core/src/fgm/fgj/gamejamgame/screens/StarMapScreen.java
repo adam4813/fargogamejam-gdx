@@ -23,6 +23,7 @@ import java.util.Random;
 
 import fgm.fgj.gamejamgame.AnimatedSprite;
 import fgm.fgj.gamejamgame.GameJamGame;
+import fgm.fgj.gamejamgame.SolarSystem;
 import fgm.fgj.gamejamgame.StarField;
 import fgm.fgj.gamejamgame.StarMapStar;
 
@@ -65,22 +66,32 @@ public class StarMapScreen implements Screen {
 		cancelButton.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+				targetSolarSystem = null;
 				worldInfo.hide();
 			}
 		});
 		final GearTextButton visitButton = new GearTextButton("Visit", skin);
-		cancelButton.addListener(new ChangeListener() {
+		visitButton.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-				Gdx.app.log("STAR_MAP", "Visitng a star");
+				Gdx.app.log("STAR_MAP", "Going to a star");
+				worldInfo.hide();
+				game.setCurrentSolarSystem(targetSolarSystem);
+				populateStarField();
 			}
 		});
-		worldInfo = new GameDialog(game, "World Info", visitButton, cancelButton);
+		worldInfo = new GameDialog(game, "Solar System Info", visitButton, cancelButton);
 	}
+
+	SolarSystem targetSolarSystem;
 
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(stage);
+		populateStarField();
+	}
+
+	private void populateStarField() {
 		Skin skin = game.getSkin();
 		int starCount = random.nextInt(40) + 20;
 		backgroundStars = new StarField(starCount);
@@ -97,13 +108,7 @@ public class StarMapScreen implements Screen {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
 					super.clicked(event, x, y);
-					Table body = new Table();
-					body.align(Align.center);
-					body.add(new Label("Line 1", skin)).padTop(20.0f).padBottom(10.0f).row();
-					body.add(new Label("Line 2", skin)).padTop(20.0f).padBottom(10.0f).row();
-					body.add(new Label("Line 3", skin)).padTop(20.0f).padBottom(10.0f);
-					body.act(1);
-					worldInfo.show(stage, currentStar.solarSystem.getName(), body);
+					Gdx.app.log("STAR_MAP", "Going to current to star's solar system" + currentStar.solarSystem.getName());
 				}
 			});
 			stage.addActor(actor);
@@ -120,6 +125,10 @@ public class StarMapScreen implements Screen {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
 					super.clicked(event, x, y);
+
+					// Set the target to be used when the visit button is clicked, kind of a hackish way to handle it
+					targetSolarSystem = star.solarSystem;
+
 					Table body = new Table();
 					//body.setFillParent(true);
 					body.align(Align.center);
