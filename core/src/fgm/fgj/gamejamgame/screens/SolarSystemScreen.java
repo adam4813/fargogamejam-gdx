@@ -92,7 +92,7 @@ public class SolarSystemScreen implements Screen {
 			public void changed(ChangeEvent event, Actor actor) {
 				Gdx.app.log(TAG, "Doing and event on a planet!!");
 				worldInfo.hide();
-				GameEvent gameEvent = Galaxy.generateGameEvent(game.getCurrentStar().solarSystem, targetPlantet, game.getShip());
+				GameEvent gameEvent = Galaxy.generateGameEvent(game.getCurrentStar().solarSystem, 1, targetPlantet, game.getShip());
 				Table eventBody = new Table();
 				eventBody.align(Align.center);
 				eventBody.setFillParent(true);

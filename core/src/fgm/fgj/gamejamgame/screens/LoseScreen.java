@@ -38,7 +38,7 @@ public class LoseScreen extends ScreenAdapter {
 		stage = new Stage();
 		Table root = new Table();
 		root.setFillParent(true);
-		Animation loseAnimation = AnimatedSprite.buildAnimation(game.getAsset("data/scenes/sceneLose.png"),1280, 720, 16, .1f );
+		Animation loseAnimation = AnimatedSprite.buildAnimation(game.getAsset("data/scenes/sceneLose.png"),1280, 720, 9, .2f );
 		AnimatedImage image = new AnimatedImage(loseAnimation, false);
 		image.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 		root.add(image).center();
@@ -60,7 +60,7 @@ public class LoseScreen extends ScreenAdapter {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				super.clicked(event, x, y);
-				game.showScreen(ScreenNames.StarMap);
+				game.showScreen(ScreenNames.Title);
 			}
 		});
 		playButton.getDrawable().setMinHeight(128);

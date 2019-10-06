@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import fgm.fgj.gamejamgame.AnimatedSprite;
+import fgm.fgj.gamejamgame.Galaxy;
+import fgm.fgj.gamejamgame.GameEvent;
 import fgm.fgj.gamejamgame.GameJamGame;
 import fgm.fgj.gamejamgame.IconType;
 import fgm.fgj.gamejamgame.Icons;
@@ -35,12 +37,16 @@ import fgm.fgj.gamejamgame.SolarSystem;
 import fgm.fgj.gamejamgame.StarField;
 import fgm.fgj.gamejamgame.StarMapStar;
 
+import static fgm.fgj.gamejamgame.GameJamGame.SCREEN_HEIGHT;
+import static fgm.fgj.gamejamgame.GameJamGame.SCREEN_WIDTH;
+
 public class StarMapScreen implements Screen {
 	private final GameJamGame game;
 	private final Camera camera;
 	private final Stage stage;
 
 	private GameDialog worldInfo;
+	private GameDialog eventDialog;
 
 	private StarField backgroundStars;
 	private StarField nearbyStarField;
@@ -79,7 +85,7 @@ public class StarMapScreen implements Screen {
 		cancelButton.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-				targetSolarSystem = null;
+				targetStarMapStar = null;
 				worldInfo.hide();
 			}
 		});
@@ -89,8 +95,18 @@ public class StarMapScreen implements Screen {
 			public void changed(ChangeListener.ChangeEvent event, Actor actor) {
 				Gdx.app.log("STAR_MAP", "Going to a star");
 				worldInfo.hide();
-				game.setCurrentSolarSystem(targetSolarSystem);
+				game.setCurrentSolarSystem(targetStarMapStar.solarSystem);
 				populateStarField();
+
+				Gdx.app.log("STAR_MAP", "Doing and event after arriving!!");
+				GameEvent gameEvent = Galaxy.generateGameEvent(game.getCurrentStar().solarSystem, targetStarMapStar.fuelCost, null, game.getShip());
+				Table eventBody = new Table();
+				eventBody.align(Align.center);
+				eventBody.setFillParent(true);
+				Label eventTextLabel = new Label(gameEvent.getEventText(), game.getSkin());
+				eventTextLabel.setWrap(true);
+				eventBody.add(eventTextLabel).grow().padLeft(128);
+				eventDialog.show(stage, "Visit result" ,eventBody );
 			}
 		});
 		worldInfo = new GameDialog(game, "Solar System Info", visitButton, cancelButton);
@@ -104,10 +120,20 @@ public class StarMapScreen implements Screen {
 				game.showScreen(ScreenNames.Ship);
 			}
 		});
+
+		final GearTextButton okButton = new GearTextButton("Ok", skin);
+		okButton.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				Gdx.app.log("STAR_MAP", "Doing and event on a planet!!");
+				eventDialog.hide();
+			}
+		});
+		eventDialog = new GameDialog(game, "Event Result", okButton);
 		stage.addActor(shipInfoButton);
 	}
 
-	private SolarSystem targetSolarSystem;
+	private StarMapStar targetStarMapStar;
 	private Image shipInfoButton = new Image();;
 
 	@Override
@@ -118,6 +144,7 @@ public class StarMapScreen implements Screen {
 		TextureRegion textureRegion = Icons.getIcon(IconType.SHIP_INFO_BUTTON);
 		shipInfoButton.setDrawable(new TextureRegionDrawable(textureRegion));
 	}
+	ArrayList<StarMapStar> nearbyStars;
 
 	private void populateStarField() {
 		Skin skin = game.getSkin();
@@ -147,7 +174,7 @@ public class StarMapScreen implements Screen {
 			stage.addActor(actor);
 		}
 
-		ArrayList<StarMapStar> nearbyStars = game.getNearbyStars();
+		nearbyStars = game.getNearbyStars();
 		for (StarMapStar star : nearbyStars) {
 			AnimatedSprite animatedSprite = nearbyStarField.addStar(star);
 			Actor actor = new Actor();
@@ -160,7 +187,7 @@ public class StarMapScreen implements Screen {
 					super.clicked(event, x, y);
 
 					// Set the target to be used when the visit button is clicked, kind of a hackish way to handle it
-					targetSolarSystem = star.solarSystem;
+					targetStarMapStar = star;
 
 					Table body = new Table();
 					//body.setFillParent(true);
@@ -185,6 +212,11 @@ public class StarMapScreen implements Screen {
 		backgroundStars.draw(spriteBatch, delta);
 		spriteBatch.end();
 		ShapeRenderer shapeRenderer = game.getShapeRender();
+		shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+		for (StarMapStar star : nearbyStars) {
+			shapeRenderer.line(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, star.x * SCREEN_WIDTH, star.y *  SCREEN_HEIGHT);
+		}
+		shapeRenderer.end();
 		spriteBatch.begin();
 		nearbyStarField.draw(spriteBatch, delta);
 		spriteBatch.end();

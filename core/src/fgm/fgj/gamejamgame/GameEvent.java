@@ -42,7 +42,7 @@ public class GameEvent {
 			ship.getCargoBay().decreaseFuel(1);
 		}
 		int randomValue = (int)(Math.random() * 100);
-		if(planet.hasArtifact()){
+		if(planet != null && planet.hasArtifact()){
 			this.eventType = "artifact";
 		}else if(randomValue < solarSystem.pirateThreat) {
 			this.eventType = "pirate";
