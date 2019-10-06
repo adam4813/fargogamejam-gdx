@@ -2,14 +2,14 @@ package fgm.fgj.gamejamgame;
 import java.util.Random;
 
 public class Species {
-	int mass;
-	String name;
-	AtmosphericComposition atmosphericCompositionTolerance;
-	int temperatureTolerance;
-	int atmosphericPressureTolerance;
-	int gravityTolerance;
-	int hitPoints;
-	int damage;
+	final int mass;
+	final String name;
+	final AtmosphericComposition atmosphericCompositionTolerance;
+	final int temperatureTolerance;
+	final int atmosphericPressureTolerance;
+	final int gravityTolerance;
+	final int hitPoints;
+	final int damage;
 
 	public Species(String name, int gravityTolerance, AtmosphericComposition tolerance, int atmosphericPressureTolerance, int temperatureTolerance, int mass, int hitPoints, int damage) {
 		if(name == null){

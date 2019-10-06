@@ -32,8 +32,4 @@ public class LifeSupportSystem implements PartModules {
 			return def;
 		}
 	}
-
-	public int getSolarRadiationTolerance() {
-		return this.solarRadiationTolerance;
-	}
 }

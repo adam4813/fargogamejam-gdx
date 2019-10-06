@@ -5,19 +5,19 @@ import java.util.List;
 import java.util.Random;
 
 public class CargoBay {
-	private int maxFuel;
-	private int maxMetal;
-	private int maxWater;
-	private int maxGas;
-	private int maxAmmo;
-	private int maxFood;
+	private final int maxFuel;
+	private final int maxMetal;
+	private final int maxWater;
+	private final int maxGas;
+	private final int maxAmmo;
+	private final int maxFood;
 	private int fuel;
 	private int metal;
 	private int water;
 	private int gas;
 	private int ammo;
 	private int food;
-	private List<PartModules> parts;
+	private final List<PartModules> parts;
 
 	/**
 	 * @param value desired value
@@ -56,12 +56,12 @@ public class CargoBay {
 		int fuel, int metal, int water, int gas, int ammo, int food,
 		List<PartModules> parts
 	) {
-		this.maxFuel = this.withinRangeOrDefault(maxFuel, 25, 100, 50);
-		this.maxMetal = this.withinRangeOrDefault(maxMetal, 5, 25, 15);
-		this.maxWater = this.withinRangeOrDefault(maxWater, 5, 50, 25);
-		this.maxGas = this.withinRangeOrDefault(maxGas, 5, 50, 25);
-		this.maxAmmo = this.withinRangeOrDefault(maxAmmo, 50, 200, 100);
-		this.maxFood = this.withinRangeOrDefault(maxFood, 25, 100, 50);
+		this.maxFuel = this.withinRangeOrDefault(maxFuel, 10, 100, 30);
+		this.maxMetal = this.withinRangeOrDefault(maxMetal, 10, 100, 30);
+		this.maxWater = this.withinRangeOrDefault(maxWater, 10, 100, 30);
+		this.maxGas = this.withinRangeOrDefault(maxGas, 10, 100, 30);
+		this.maxAmmo = this.withinRangeOrDefault(maxAmmo, 10, 100, 30);
+		this.maxFood = this.withinRangeOrDefault(maxFood, 10, 100, 30);
 
 		this.fuel = this.withinRangeOrDefault(fuel, 0, this.maxFuel, this.maxFuel);
 		this.metal = this.withinRangeOrDefault(metal, 0, this.maxWater, this.maxMetal);
