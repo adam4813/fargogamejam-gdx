@@ -83,13 +83,13 @@ public class Galaxy {
 		List<SolarSystem> links = new ArrayList<>();
 		List<Integer> fuelCosts = new ArrayList<>();
 		List<Planet> planets = new ArrayList<>();
-		int planetQuantity = (int)Math.random() * 15;
+		int planetQuantity = (int)(Math.random() * 15);
 		for(int i = 0; i < planetQuantity; i++){
 			planets.add(this.generatePlanet());
 		}
-		int pirateThreat = (int) Math.random() * 6;
-		int solarRadiation = (int) Math.random() * 6;
-		int debrisRating = (int) Math.random() * 6;
+		int pirateThreat = (int) (Math.random() * 6);
+		int solarRadiation = (int) (Math.random() * 6);
+		int debrisRating = (int) (Math.random() * 6);
 		return new SolarSystem(name, starType, starSize, links, fuelCosts, planets, pirateThreat, solarRadiation, debrisRating);
 	}
 
@@ -109,7 +109,7 @@ public class Galaxy {
 		for(SolarSystem ss : created){
 			int links = (int)(Math.random() * 6) + 1;
 			for(int i = 0; i < links; i++){
-				int linkIndex = (int)Math.random() * created.size();
+				int linkIndex = (int)(Math.random() * created.size());
 				int fuelCost = (int)(Math.random() * 4) + 1;
 				if(!ss.linkedSolarSystems.contains(created.get(linkIndex))){
 					/* If the link doesn't already exist make it bidirectional to avoid unreachable solar systems.
@@ -160,16 +160,16 @@ public class Galaxy {
 		String name = Galaxy.generateName();
 		AtmosphericComposition airType = AtmosphericComposition.getRandomAtmosphere();
 		List<Species> speciesPresent = new ArrayList<>();
-		int speciesPresentQuantity = (int)Math.random() * 3;
+		int speciesPresentQuantity = (int)(Math.random() * 3);
 		for(int i = 0; i < speciesPresentQuantity; i++){
 			speciesPresent.add(this.getRandomSpeciesFromBestiary());
 		}
-		int gravity = (int)Math.random() * 6;
-		int atmospherePressure = (int)Math.random() * 6;
-		int temperature = (int)Math.random() * 6;
-		int fuel = (int)Math.random() * 126;
-		int metals = (int)Math.random() * 126;
-		int water = (int)Math.random() * 126;
+		int gravity = (int)(Math.random() * 6);
+		int atmospherePressure = (int)(Math.random() * 6);
+		int temperature = (int)(Math.random() * 6);
+		int fuel = (int)(Math.random() * 126);
+		int metals = (int)(Math.random() * 126);
+		int water = (int)(Math.random() * 126);
 		return new Planet(name, airType, speciesPresent, gravity, atmospherePressure, temperature, fuel, metals, water);
 	}
 
