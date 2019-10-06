@@ -2,6 +2,8 @@ package fgm.fgj.gamejamgame;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class GameEvent {
@@ -39,6 +41,10 @@ public class GameEvent {
 
 		else if (randomValue < solarSystem.solarRadiation + solarSystem.pirateThreat + solarSystem.debrisRating) {
 			this.eventType = "radiation";
+		}
+
+		else if (planet != null && planet.getMostViolentSpecies() != null && randomValue < planet.getMostViolentSpecies().damage + solarSystem.solarRadiation + solarSystem.pirateThreat + solarSystem.debrisRating) {
+			this.eventType = "ambush";
 		}
 
 		else if (randomValue < 60){
@@ -87,6 +93,12 @@ public class GameEvent {
 			case "resource":
 				if (eventContext == EventContext.PLANET) {
 					handleResourceCollection(planet, ship);
+				}
+				break;
+
+			case "ambush":
+				if (eventContext == EventContext.PLANET) {
+					handleAmbushEvent(planet, ship);
 				}
 				break;
 
@@ -174,5 +186,33 @@ public class GameEvent {
 		Boolean airTypeMatch = (planetAir == speciesAtmosphericCompositionTolerance);
 
 		return (gravityMatch && pressureMatch && temperatureMatch && airTypeMatch);
+	}
+
+	private void handleAmbushEvent(Planet planet, Ship ship) {
+		Species ambushingSpecies = planet.getMostViolentSpecies();
+		// Get random crew member to the ambush will injure or kill
+		List<CrewMember> aliveCrewMembers = ship.crewMembers;
+		int randomCrewMemberIndex = (int) (Math.random() * aliveCrewMembers.size());
+		CrewMember randomCrewMember = aliveCrewMembers.get(randomCrewMemberIndex);
+		String crewMemberName = randomCrewMember.name;
+		if (randomCrewMember.dealDamage(ambushingSpecies.damage)) {
+			ship.crewMembers.remove(randomCrewMember);
+			this.eventText = "Crew member '" + crewMemberName + "' was killed. ";
+		} else {
+			this.eventText = "Crew member '" + crewMemberName + "' was injured. ";
+		}
+
+		int ammoRequired = (int) (ambushingSpecies.hitPoints / ship.getDamagePerAmmo()) * ambushingSpecies.hitPoints;
+		int currentAmmo = ship.getCargoBay().checkAmmo();
+		if (currentAmmo < ammoRequired) {
+			this.eventText += "Ran out of ammo, no food acquired. ";
+		} else {
+			if (currentAmmo == ammoRequired) {
+				this.eventText += "Ran out of ammo. ";
+			}
+			ship.getCargoBay().increaseFood(ambushingSpecies.mass);
+			this.eventText += "Acquired " + ambushingSpecies.mass + " food.";
+		}
+		ship.getCargoBay().decreaseAmmo(ammoRequired);
 	}
 }

@@ -8,7 +8,8 @@ import static fgm.fgj.gamejamgame.AtmosphericComposition.getRandomAtmosphere;
 import static fgm.fgj.gamejamgame.WeaponType.BALLISTIC;
 
 public class Ship {
-	public List<CrewMember> crewMembers;
+	private int hullDamage;
+	List<CrewMember> crewMembers;
 	private Engine engine;
 	private Weapon weapon;
 	private CargoBay cargoBay;
@@ -90,6 +91,10 @@ public class Ship {
 				this.cargoBay.increaseWater(amount);
 				break;
 		}
+	}
+
+	public CargoBay getCargoBay() {
+		return this.cargoBay;
 	}
 	/**
 	 * @param value desired value

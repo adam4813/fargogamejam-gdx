@@ -88,4 +88,16 @@ public class Planet {
 	public String getName() {
 		return name;
 	}
+
+	public Species getMostViolentSpecies() {
+		Species mostViolentSpecies = null;
+		if (this.speciesPresent.size() > 0) {
+			for (Species species : this.speciesPresent) {
+				if (mostViolentSpecies == null || species.damage > mostViolentSpecies.damage) {
+					mostViolentSpecies = species;
+				}
+			}
+		}
+		return mostViolentSpecies;
+	}
 }

@@ -172,11 +172,11 @@ public class Galaxy {
 	private List<CrewMember> generateCrewMembers() {
 		List<CrewMember> created = new ArrayList<>();
 		Species species = getRandomSpeciesFromBestiary();
-		created.add(new CrewMember(this.generateName(), species, Specialization.ENGINEER));
-		created.add(new CrewMember(this.generateName(), species, Specialization.PILOT));
-		created.add(new CrewMember(this.generateName(), species, Specialization.SCIENTIST));
-		created.add(new CrewMember(this.generateName(), species, Specialization.getRandomSpecialization()));
-		created.add(new CrewMember(this.generateName(), species, Specialization.getRandomSpecialization()));
+		created.add(new CrewMember(this.generateName(), species, Specialization.ENGINEER, 0));
+		created.add(new CrewMember(this.generateName(), species, Specialization.PILOT, 0));
+		created.add(new CrewMember(this.generateName(), species, Specialization.SCIENTIST, 0));
+		created.add(new CrewMember(this.generateName(), species, Specialization.getRandomSpecialization(), 0));
+		created.add(new CrewMember(this.generateName(), species, Specialization.getRandomSpecialization(), 0));
 		return created;
 	}
 
