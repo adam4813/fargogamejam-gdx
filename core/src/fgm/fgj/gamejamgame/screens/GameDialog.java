@@ -19,6 +19,7 @@ public class GameDialog {
 	private Dialog dialog;
 	private Image dialogCog;
 	Label titleLabel;
+	Table bodyTable;
 	private Array<com.ray3k.rustyrobot.GearTextButton> gearTextButtons = new Array<GearTextButton>();
 
 	public GameDialog(GameJamGame game, String title, com.ray3k.rustyrobot.GearTextButton... buttons) {
@@ -53,7 +54,7 @@ public class GameDialog {
 		cont.padLeft(159);
 		cont.padTop(123.0f);
 		cont.padRight(139);
-		cont.padBottom(65);
+		cont.padBottom(100);
 		Container black = new Container();
 		black.setBackground(skin.getDrawable("black"));
 		cont.setActor(black);
@@ -63,9 +64,8 @@ public class GameDialog {
 		dialogCog = new Image(skin, "cog3");
 		dialogCog.setOrigin(Align.center);
 		cont.setActor(dialogCog);
-		cont.top().left();
-		cont.padLeft(166);
-		cont.padTop(82);
+		cont.bottom();
+		cont.padBottom(128);
 		stack.add(cont);
 
 		cont = new Container();
@@ -77,18 +77,21 @@ public class GameDialog {
 		table.add(titleLabel).top().padTop(30.0f).padLeft(24.0f).colspan(2);
 
 		table.row();
+
+		bodyTable = new Table();
+		table.add(bodyTable).colspan(2).row();
 		for (GearTextButton button : buttons) {
 			gearTextButtons.add(button);
 			table.add(button).top().expandY();
 		}
 		stack.add(table);
-
-		dialog.add(stack).size(408, 246);
+		dialog.add(stack);
 		dialog.key(Input.Keys.ESCAPE, false);
 	}
 
-	public void show(Stage stage, String title) {
+	public void show(Stage stage, String title, Table body) {
 		titleLabel.setText(title);
+		bodyTable.add(body).growX();
 		dialog.show(stage);
 	}
 

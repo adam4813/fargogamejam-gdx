@@ -17,8 +17,7 @@ public class StarField {
 
 	private final ArrayList<AnimatedSprite> animatedStars = new ArrayList<>();
 
-	public StarField() {
-		int starCount = random.nextInt(40) + 20;
+	public StarField(int starCount) {
 		for (int i = 0; i < starCount; i++) {
 			buildAnimatedBGStar(starTextures.get(StarType.BG_YELLOW));
 			buildAnimatedBGStar(starTextures.get(StarType.BG_BROWN));
@@ -41,6 +40,8 @@ public class StarField {
 		starTextures.put(StarType.BG_GREEN, game.getAsset("data/stars/bg-star-green.png"));
 		starTextures.put(StarType.BG_RED, game.getAsset("data/stars/bg-star-red.png"));
 	}
+	public StarField() {
+	}
 
 	public StarField(List<StarMapStar> stars) {
 		for (StarMapStar star : stars) {
@@ -48,13 +49,19 @@ public class StarField {
 		}
 	}
 
+	public AnimatedSprite addStar(StarMapStar star) {
+		return buildAnimatedStar(starTextures.get(star.solarSystem.starType), star.x, star.y, star.solarSystem.starSize);
+	}
+
 	static int STAR_SPRITE_FRAMES = 15;
 	static int STAR_SPRITE_FRAME_SIZE = 64;
 
-	private void buildAnimatedStar(Texture texture, float x, float y, float size) {
-		animatedStars.add(new AnimatedSprite(texture,
-			x * SCREEN_WIDTH, y * SCREEN_HEIGHT, STAR_SPRITE_FRAME_SIZE, STAR_SPRITE_FRAME_SIZE, STAR_SPRITE_FRAMES, .1f, random.nextInt(STAR_SPRITE_FRAMES)));
+	private AnimatedSprite buildAnimatedStar(Texture texture, float x, float y, float size) {
+		AnimatedSprite animatedSprite = new AnimatedSprite(texture,
+			x * SCREEN_WIDTH, y * SCREEN_HEIGHT, STAR_SPRITE_FRAME_SIZE, STAR_SPRITE_FRAME_SIZE, STAR_SPRITE_FRAMES, .1f, random.nextInt(STAR_SPRITE_FRAMES));
+		animatedStars.add(animatedSprite);
 		animatedStars.get(animatedStars.size() - 1).setScale(Math.max(size, 1));
+		return animatedSprite;
 	}
 
 	private void buildAnimatedBGStar(Texture texture) {

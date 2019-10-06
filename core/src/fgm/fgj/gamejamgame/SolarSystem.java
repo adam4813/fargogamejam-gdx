@@ -120,4 +120,8 @@ public class SolarSystem {
 		}
 		//return encounter;
 	}
+
+	public String getName() {
+		return name;
+	}
 }

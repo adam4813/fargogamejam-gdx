@@ -5,8 +5,8 @@ public class StarMapStar {
 
 	public StarMapStar(SolarSystem solarSystem, float x, float y) {
 		this.solarSystem = solarSystem;
-		this.x = x;
-		this.y = y;
+		this.x = (x + 1) / 2;
+		this.y = (y + 1) / 2;
 	}
 
 	public float x;

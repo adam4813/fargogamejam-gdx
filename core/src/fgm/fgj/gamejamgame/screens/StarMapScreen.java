@@ -2,40 +2,49 @@ package fgm.fgj.gamejamgame.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.ray3k.rustyrobot.GearTextButton;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 import fgm.fgj.gamejamgame.AnimatedSprite;
 import fgm.fgj.gamejamgame.GameJamGame;
 import fgm.fgj.gamejamgame.StarField;
+import fgm.fgj.gamejamgame.StarMapStar;
 
 public class StarMapScreen implements Screen {
 	private final GameJamGame game;
-	private final PerspectiveCamera camera;
+	private final Camera camera;
 	private final Stage stage;
 
 	private GameDialog worldInfo;
 
 	private StarField backgroundStars;
-	private StarField nearbyStars;
+	private StarField nearbyStarField;
 
 	private Array<Actor> starActors = new Array<>();
 
-	Table root;
+	private Table root;
+	private Random random = new Random();
 
 	public StarMapScreen(GameJamGame game) {
 		this.game = game;
 		stage = new Stage();
+		//stage.setDebugAll(true);
 		root = new Table();
 		root.setFillParent(true);
 		stage.addActor(root);
@@ -43,11 +52,7 @@ public class StarMapScreen implements Screen {
 		// Camera Setup
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
-		camera = new PerspectiveCamera(75f, w, h);
-		camera.near = .1f;
-		camera.far = 300f;
-		camera.update();
-
+		camera = new OrthographicCamera( w, h);
 
 		// Ship screen button
 
@@ -76,18 +81,54 @@ public class StarMapScreen implements Screen {
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(stage);
-		backgroundStars = new StarField();
-		nearbyStars = new StarField(game.getNearbyStars());
-		for (AnimatedSprite star : nearbyStars.getStars()) {
+		Skin skin = game.getSkin();
+		int starCount = random.nextInt(40) + 20;
+		backgroundStars = new StarField(starCount);
+		nearbyStarField = new StarField();
+
+		{
+			StarMapStar currentStar = game.getCurrentStar();
+			AnimatedSprite animatedSprite = nearbyStarField.addStar(currentStar);
 			Actor actor = new Actor();
 			starActors.add(actor);
-			actor.setBounds(star.getX(), star.getY(), 64 * star.getScale(), 64 * star.getScale());
-			actor.setOrigin(32 * star.getScale(), 32 * star.getScale());
+			actor.setBounds(animatedSprite.getX(), animatedSprite.getY(), 64 * animatedSprite.getScale(), 64 * animatedSprite.getScale());
+			actor.setOrigin(32 * animatedSprite.getScale(), 32 * animatedSprite.getScale());
 			actor.addListener(new ClickListener() {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
 					super.clicked(event, x, y);
-					worldInfo.show(stage, "SOLAR SYSTEM NAME");
+					Table body = new Table();
+					//body.setFillParent(true);
+					body.align(Align.center);
+					body.add(new Label("Line 1", skin)).padTop(20.0f).padBottom(10.0f).row();
+					body.add(new Label("Line 2", skin)).padTop(20.0f).padBottom(10.0f).row();
+					body.add(new Label("Line 3", skin)).padTop(20.0f).padBottom(10.0f);
+					body.act(1);
+					worldInfo.show(stage, currentStar.solarSystem.getName(), body);
+				}
+			});
+			stage.addActor(actor);
+		}
+
+		ArrayList<StarMapStar> nearbyStars = game.getNearbyStars();
+		for (StarMapStar star : nearbyStars) {
+			AnimatedSprite animatedSprite = nearbyStarField.addStar(star);
+			Actor actor = new Actor();
+			starActors.add(actor);
+			actor.setBounds(animatedSprite.getX(), animatedSprite.getY(), 64 * animatedSprite.getScale(), 64 * animatedSprite.getScale());
+			actor.setOrigin(32 * animatedSprite.getScale(), 32 * animatedSprite.getScale());
+			actor.addListener(new ClickListener() {
+				@Override
+				public void clicked(InputEvent event, float x, float y) {
+					super.clicked(event, x, y);
+					Table body = new Table();
+					//body.setFillParent(true);
+					body.align(Align.center);
+					body.add(new Label("Line 1", skin)).padTop(20.0f).padBottom(10.0f).row();
+					body.add(new Label("Line 2", skin)).padTop(20.0f).padBottom(10.0f).row();
+					body.add(new Label("Line 3", skin)).padTop(20.0f).padBottom(10.0f);
+					body.act(1);
+					worldInfo.show(stage, star.solarSystem.getName(), body);
 				}
 			});
 			stage.addActor(actor);
@@ -101,7 +142,7 @@ public class StarMapScreen implements Screen {
 		SpriteBatch spriteBatch = game.getSpriteBatch();
 		spriteBatch.begin();
 		backgroundStars.draw(spriteBatch, delta);
-		nearbyStars.draw(spriteBatch, delta);
+		nearbyStarField.draw(spriteBatch, delta);
 
 		spriteBatch.end();
 		stage.act(delta);

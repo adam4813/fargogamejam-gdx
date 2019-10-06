@@ -27,7 +27,7 @@ public class TitleScreen extends ScreenAdapter {
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(stage);
-		backgroundStars = new StarField();
+		backgroundStars = new StarField(40);
 	}
 
 	@Override
