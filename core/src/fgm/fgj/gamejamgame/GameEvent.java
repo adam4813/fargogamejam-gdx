@@ -122,8 +122,13 @@ public class GameEvent {
 	private void handleDebrisEvent(Ship ship) {
 		Random rand = new Random();
 		int damageAmount = rand.nextInt(20);
-		ship.issueHullDamage(damageAmount);
-		this.eventText = "Your ship was damaged by debris! It caused" + damageAmount + " damage";
+		Boolean isShipDestroyed = ship.issueHullDamage(damageAmount);
+		if (isShipDestroyed) {
+			this.eventText = "Your ship was destroyed - Game Over";
+			this.didLose = Boolean.TRUE;
+		} else {
+			this.eventText = "Your ship was damaged by debris! It caused" + damageAmount + " damage.";
+		}
 	}
 
 	private void handleRadiationEvent(SolarSystem solarSystem, Ship ship) {
@@ -135,7 +140,7 @@ public class GameEvent {
 				this.eventText = "Your ship was destroyed - Game Over";
 				this.didLose = Boolean.TRUE;
 			} else {
-				this.eventText = "Your ship was ravaged by radiation!";
+				this.eventText = "Your ship was ravaged by radiation! It caused " + damageAmount + " damage.";
 			}
 		}
 	}
