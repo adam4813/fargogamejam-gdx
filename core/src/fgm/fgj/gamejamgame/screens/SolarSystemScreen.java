@@ -179,6 +179,19 @@ public class SolarSystemScreen implements Screen {
 
 					Table body = new Table();
 					body.align(Align.center);
+					if (planet.isHabitablePlanet(game.getShip())) {
+						final GearTextButton settleButton = new GearTextButton("Sttle Here!!", skin);
+						settleButton.addListener(new ChangeListener() {
+							@Override
+							public void changed(ChangeEvent event, Actor actor) {
+								Gdx.app.log(TAG, "Settling on planet!!");
+								worldInfo.hide();
+								game.showScreen(ScreenNames.Win);
+								targetPlantet = null;
+							}
+						});
+						body.add(settleButton);
+					}
 					body.act(1);
 					worldInfo.show(stage, planet.getName(), body);
 				}

@@ -2,6 +2,7 @@ package fgm.fgj.gamejamgame.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -23,72 +24,46 @@ import fgm.fgj.gamejamgame.StarField;
 import static fgm.fgj.gamejamgame.GameJamGame.SCREEN_HEIGHT;
 import static fgm.fgj.gamejamgame.GameJamGame.SCREEN_WIDTH;
 
-public class WinScreen extends ScreenAdapter {
-	private static final float BUTTON_DELAY = 2.0f;
+public class IntroScreen extends ScreenAdapter {
+	private static final float INTRO_LENGTH = 80f;
 	private final Stage stage;
 
 	private float displayTime = 0f;
-	private boolean buttonsAdded = false;
 
 	private GameJamGame game;
 	private StarField backgroundStars;
+	Music music;
 
-	public WinScreen(GameJamGame game) {
+	public IntroScreen(GameJamGame game) {
 		this.game = game;
 		stage = new Stage();
 		Table root = new Table();
 		root.setFillParent(true);
-		Animation loseAnimation = AnimatedSprite.buildAnimation(game.getAsset("data/scenes/sceneWin.png"),1280, 720, 10, .2f );
-		AnimatedImage image = new AnimatedImage(loseAnimation, true);
+		Animation loseAnimation = AnimatedSprite.buildAnimation(game.getAsset("data/scenes/sceneIntro.png"),1280, 720, 3, 26 );
+		AnimatedImage image = new AnimatedImage(loseAnimation, false);
 		image.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 		root.add(image).center();
 		stage.addActor(root);
 		//stage.setDebugAll(true);
+		music = Gdx.audio.newMusic(Gdx.files.internal("data/introVoiceOver.wav"));
 	}
 
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(stage);
 		backgroundStars = new StarField(40);
+		music.play();
 	}
 
-	private void addButtons() {
-		Table table = new Table();
-		table.setFillParent(true);
-		Image playButton = new Image(Icons.getIcon(IconType.PLAY_BUTTON));
-		playButton.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				super.clicked(event, x, y);
-				game.showScreen(ScreenNames.Title);
-			}
-		});
-		playButton.getDrawable().setMinHeight(128);
-		playButton.getDrawable().setMinWidth(128);
-
-		Image exitButton = new Image(Icons.getIcon(IconType.EXIT_BUTTON));
-		exitButton.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				super.clicked(event, x, y);
-				GameJamGame.quit();
-			}
-		});
-		exitButton.getDrawable().setMinHeight(128);
-		exitButton.getDrawable().setMinWidth(128);
-
-		table.add(playButton).right().pad(32).top();
-		table.add(exitButton).left().pad(32).top();
-		table.add(new Container());
-		stage.addActor(table);
-		buttonsAdded = true;
+	private void showStarMap() {
+		game.showScreen(ScreenNames.StarMap);
 	}
 
 	@Override
 	public void render(float delta) {
 		displayTime += delta;
-		if (displayTime > BUTTON_DELAY && !buttonsAdded) {
-			addButtons();
+		if (displayTime > INTRO_LENGTH) {
+			showStarMap();
 		}
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -108,6 +83,8 @@ public class WinScreen extends ScreenAdapter {
 	@Override
 	public void dispose() {
 		stage.dispose();
+		music.stop();
+		music.dispose();
 	}
 
 	@Override
@@ -115,6 +92,5 @@ public class WinScreen extends ScreenAdapter {
 		super.hide();
 
 		displayTime = 0f;
-		buttonsAdded = false;
 	}
 }

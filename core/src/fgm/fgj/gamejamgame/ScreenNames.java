@@ -7,5 +7,6 @@ public enum ScreenNames {
 	StarMap,
 	Ship,
 	Lose,
-	SolarSystem;
+	Win,
+	SolarSystem, Intro;
 }

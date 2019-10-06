@@ -43,7 +43,7 @@ public class LoseScreen extends ScreenAdapter {
 		image.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 		root.add(image).center();
 		stage.addActor(root);
-		stage.setDebugAll(true);
+		//stage.setDebugAll(true);
 	}
 
 	@Override

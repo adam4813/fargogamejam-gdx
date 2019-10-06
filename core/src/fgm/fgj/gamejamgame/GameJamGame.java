@@ -16,12 +16,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fgm.fgj.gamejamgame.screens.GameScreen;
+import fgm.fgj.gamejamgame.screens.IntroScreen;
 import fgm.fgj.gamejamgame.screens.LoadingScreen;
 import fgm.fgj.gamejamgame.screens.LoseScreen;
 import fgm.fgj.gamejamgame.screens.ShipScreen;
 import fgm.fgj.gamejamgame.screens.SolarSystemScreen;
 import fgm.fgj.gamejamgame.screens.StarMapScreen;
 import fgm.fgj.gamejamgame.screens.TitleScreen;
+import fgm.fgj.gamejamgame.screens.WinScreen;
 
 public class GameJamGame extends Game {
 	public static final int SCREEN_WIDTH = 1440;
@@ -106,6 +108,8 @@ public class GameJamGame extends Game {
 		screens.put(ScreenNames.SolarSystem, new SolarSystemScreen(this));
 		screens.put(ScreenNames.Ship, new ShipScreen(this));
 		screens.put(ScreenNames.Lose, new LoseScreen(this));
+		screens.put(ScreenNames.Win, new WinScreen(this));
+		screens.put(ScreenNames.Intro, new IntroScreen(this));
 	}
 
 	@Override
