@@ -2,6 +2,7 @@ package fgm.fgj.gamejamgame.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -37,6 +38,7 @@ public class ShipScreen implements Screen {
 	private final GameJamGame game;
 	private final Camera camera;
 	private final Stage stage;
+	private final Music music;
 
 	private GameDialog worldInfo;
 
@@ -139,6 +141,7 @@ public class ShipScreen implements Screen {
 			}
 		});
 		stage.addActor(starMapButton);
+		music = Gdx.audio.newMusic(Gdx.files.internal("data/music/ship01.wav"));
 	}
 
 	Image starMapButton = new Image();
@@ -151,6 +154,10 @@ public class ShipScreen implements Screen {
 		resourcePanel.displayResources(ship.getCargoBay());
 		TextureRegion textureRegion = Icons.getIcon(IconType.STARMAP_BUTTON);
 		starMapButton.setDrawable(new TextureRegionDrawable(textureRegion));
+
+		music.setPosition(0);
+		music.setLooping(true);
+		music.play();
 	}
 
 	@Override
@@ -189,10 +196,11 @@ public class ShipScreen implements Screen {
 	@Override
 	public void hide() {
 
+		music.pause();
 	}
 
 	@Override
 	public void dispose() {
-
+		music.dispose();
 	}
 }

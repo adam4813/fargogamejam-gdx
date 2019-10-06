@@ -73,12 +73,12 @@ public class TitleMenu {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				super.clicked(event, x, y);
-				game.showScreen(ScreenNames.Lose);
+				game.showScreen(ScreenNames.Win);
 
 			}
 		});
 
-		table.add(loseButton).padBottom(20).row();
+		//table.add(loseButton).padBottom(20).row();
 		//table.add(startButton).padBottom(20).row();
 		//table.add(starMapButton).padBottom(20).row();
 		//table.add(solarSystemButton).padBottom(20).row();

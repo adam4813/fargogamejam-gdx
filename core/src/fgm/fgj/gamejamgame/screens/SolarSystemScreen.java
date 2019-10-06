@@ -2,6 +2,7 @@ package fgm.fgj.gamejamgame.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -53,6 +54,7 @@ public class SolarSystemScreen implements Screen {
 	private Random random = new Random();
 	private ExtendViewport viewport;
 	private static final String TAG = "SolarSystemScreen";
+	Music music;
 
 	public SolarSystemScreen(GameJamGame game) {
 		this.game = game;
@@ -118,6 +120,7 @@ public class SolarSystemScreen implements Screen {
 		});
 		worldInfo = new GameDialog(game, "Planet Info", visitButton, cancelButton);
 		eventDialog = new GameDialog(game, "Event Result", okButton);
+		music = Gdx.audio.newMusic(Gdx.files.internal("data/music/solarMap01.wav"));
 	}
 
 	Planet targetPlantet;
@@ -127,6 +130,10 @@ public class SolarSystemScreen implements Screen {
 	public void show() {
 		Gdx.input.setInputProcessor(stage);
 		populatePlanetOrbits();
+
+		music.setPosition(0);
+		music.setLooping(true);
+		music.play();
 	}
 
 	private static float STAR_SIZE = 10f;
@@ -250,10 +257,12 @@ public class SolarSystemScreen implements Screen {
 	@Override
 	public void hide() {
 		stage.getActors().removeAll(starActors, true);
+		music.pause();
 	}
 
 	@Override
 	public void dispose() {
+		music.dispose();
 
 	}
 }

@@ -2,6 +2,7 @@ package fgm.fgj.gamejamgame.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -57,6 +58,7 @@ public class StarMapScreen implements Screen {
 	private ExtendViewport viewport;
 
 	private boolean firstTime = true;
+	Music music;
 
 	public StarMapScreen(GameJamGame game) {
 		this.game = game;
@@ -74,6 +76,7 @@ public class StarMapScreen implements Screen {
 		camera.position.set(viewport.getMinWorldWidth() / 2f, viewport.getMinWorldHeight() / 2f, 0);
 		camera.update();
 		stage.setViewport(viewport);
+		music = Gdx.audio.newMusic(Gdx.files.internal("data/music/starMap01.wav"));
 
 		// Ship screen button
 
@@ -137,10 +140,14 @@ public class StarMapScreen implements Screen {
 		Gdx.input.setInputProcessor(stage);
 		populateStarField();
 
+		music.setPosition(0);
+		music.setLooping(true);
+		music.play();
+
 		TextureRegion textureRegion = Icons.getIcon(IconType.SHIP_INFO_BUTTON);
 		shipInfoButton.setDrawable(new TextureRegionDrawable(textureRegion));
 
-		if (!firstTime) {
+		if (!firstTime && targetStarMapStar != null) {
 			Gdx.app.log("STAR_MAP", "Doing and event after arriving!!");
 			gameEvent = Galaxy.generateGameEvent(game.getCurrentStar().solarSystem, targetStarMapStar.fuelCost, null, game.getShip());
 			Table eventBody = new Table();
@@ -179,6 +186,7 @@ public class StarMapScreen implements Screen {
 					super.clicked(event, x, y);
 					Gdx.app.log("STAR_MAP", "Going to current to star's solar system" + currentStar.solarSystem.getName());
 					game.showScreen(ScreenNames.SolarSystem);
+					targetStarMapStar = null;
 				}
 			});
 			stage.addActor(actor);
@@ -253,10 +261,11 @@ public class StarMapScreen implements Screen {
 	@Override
 	public void hide() {
 		stage.getActors().removeAll(starActors, true);
+		music.pause();
 	}
 
 	@Override
 	public void dispose() {
-
+		music.dispose();
 	}
 }

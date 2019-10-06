@@ -2,6 +2,7 @@ package fgm.fgj.gamejamgame.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -16,6 +17,7 @@ public class TitleScreen extends ScreenAdapter {
 
 	private GameJamGame game;
 	private StarField backgroundStars;
+	Music music;
 
 	public TitleScreen(GameJamGame game) {
 		this.game = game;
@@ -23,12 +25,17 @@ public class TitleScreen extends ScreenAdapter {
 		titleMenu = new TitleMenu(game);
 		stage.addActor(titleMenu.getTable());
 		//stage.setDebugAll(true);
+		music = Gdx.audio.newMusic(Gdx.files.internal("data/music/intro01.wav"));
 	}
 
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(stage);
 		backgroundStars = new StarField(40);
+
+		music.setPosition(0);
+		music.setLooping(true);
+		music.play();
 	}
 
 	@Override
@@ -49,7 +56,14 @@ public class TitleScreen extends ScreenAdapter {
 	}
 
 	@Override
+	public void hide() {
+		super.hide();
+		music.pause();
+	}
+
+	@Override
 	public void dispose() {
 		stage.dispose();
+		music.dispose();
 	}
 }

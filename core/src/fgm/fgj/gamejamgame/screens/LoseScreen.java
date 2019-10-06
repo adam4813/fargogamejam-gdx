@@ -2,6 +2,7 @@ package fgm.fgj.gamejamgame.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -26,6 +27,7 @@ import static fgm.fgj.gamejamgame.GameJamGame.SCREEN_WIDTH;
 public class LoseScreen extends ScreenAdapter {
 	private static final float BUTTON_DELAY = 2.0f;
 	private final Stage stage;
+	private final Music music;
 
 	private float displayTime = 0f;
 	private boolean buttonsAdded = false;
@@ -44,12 +46,16 @@ public class LoseScreen extends ScreenAdapter {
 		root.add(image).center();
 		stage.addActor(root);
 		//stage.setDebugAll(true);
+		music = Gdx.audio.newMusic(Gdx.files.internal("data/music/endingLose01.wav"));
 	}
 
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(stage);
 		backgroundStars = new StarField(40);
+		music.setPosition(0);
+		music.setLooping(true);
+		music.play();
 	}
 
 	private void addButtons() {
@@ -108,6 +114,7 @@ public class LoseScreen extends ScreenAdapter {
 	@Override
 	public void dispose() {
 		stage.dispose();
+		music.dispose();
 	}
 
 	@Override
@@ -116,5 +123,6 @@ public class LoseScreen extends ScreenAdapter {
 
 		displayTime = 0f;
 		buttonsAdded = false;
+		music.pause();
 	}
 }

@@ -2,6 +2,7 @@ package fgm.fgj.gamejamgame.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -24,31 +25,36 @@ import static fgm.fgj.gamejamgame.GameJamGame.SCREEN_HEIGHT;
 import static fgm.fgj.gamejamgame.GameJamGame.SCREEN_WIDTH;
 
 public class TransitionScreen extends ScreenAdapter {
-	private static final float TRANSITION_TIME = 2.0f;
+	private static final float TRANSITION_TIME = 3.0f;
 	private final Stage stage;
 
 	private float displayTime = 0f;
 
 	private GameJamGame game;
 	private StarField backgroundStars;
+	private Music music;
 
 	public TransitionScreen(GameJamGame game) {
 		this.game = game;
 		stage = new Stage();
-		Table root = new Table();
-		root.setFillParent(true);
-		Animation loseAnimation = AnimatedSprite.buildAnimation(game.getAsset("data/scenes/sceneTransition.png"),1280, 720, 16, .2f );
-		AnimatedImage image = new AnimatedImage(loseAnimation, true);
-		image.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-		root.add(image).center();
-		stage.addActor(root);
 		//stage.setDebugAll(true);
+		music = Gdx.audio.newMusic(Gdx.files.internal("data/music/endingLose01.wav"));
+		music.setLooping(true);
 	}
 
 	@Override
 	public void show() {
+		stage.clear();
+		Table root = new Table();
+		root.setFillParent(true);
 		Gdx.input.setInputProcessor(stage);
 		backgroundStars = new StarField(40);
+		Animation loseAnimation = AnimatedSprite.buildAnimation(game.getAsset("data/scenes/sceneTransition.png"),1280, 720, 8, .2f );
+		AnimatedImage image = new AnimatedImage(loseAnimation, false);
+		image.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+		root.add(image).center();
+		stage.addActor(root);
+		music.play();
 	}
 
 	private void showStarMap() {
@@ -79,6 +85,7 @@ public class TransitionScreen extends ScreenAdapter {
 	@Override
 	public void dispose() {
 		stage.dispose();
+		music.dispose();
 	}
 
 	@Override
@@ -86,5 +93,6 @@ public class TransitionScreen extends ScreenAdapter {
 		super.hide();
 
 		displayTime = 0f;
+		music.pause();
 	}
 }
