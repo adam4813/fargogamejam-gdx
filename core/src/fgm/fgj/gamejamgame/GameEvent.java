@@ -150,24 +150,26 @@ public class GameEvent {
 
 	private void handleResourceCollection(Planet planet, Ship ship) {
 		Random rand = new Random();
-		int harvestAmount = rand.nextInt(5);
+		int metalHarvestAmount = rand.nextInt(3);
+		int waterHarvestAmount = rand.nextInt(3);
+		int fuelHarvestAmount = rand.nextInt(3);
 
-		if (planet.metals > harvestAmount) {
-			planet.metals = planet.metals - harvestAmount;
-			ship.addCargo("metals", harvestAmount);
+		if (planet.metals > metalHarvestAmount) {
+			planet.metals = planet.metals - metalHarvestAmount;
+			ship.addCargo("metals", metalHarvestAmount);
 		}
 
-		if (planet.water > harvestAmount) {
-			planet.water = planet.water - harvestAmount;
-			ship.addCargo("water", harvestAmount);
+		if (planet.water > waterHarvestAmount) {
+			planet.water = planet.water - waterHarvestAmount;
+			ship.addCargo("water", waterHarvestAmount);
 		}
 
-		if (planet.fuel > harvestAmount) {
-			planet.fuel = planet.fuel - harvestAmount;
-			ship.addCargo("fuel", harvestAmount);
+		if (planet.fuel > fuelHarvestAmount) {
+			planet.fuel = planet.fuel - fuelHarvestAmount;
+			ship.addCargo("fuel", fuelHarvestAmount);
 		}
 
-		this.eventText = "You collected resources!";
+		this.eventText = "You harvested " + metalHarvestAmount + " metals, " + waterHarvestAmount + " water, and " + fuelHarvestAmount + " fuel from the planet.";
 	}
 
 	private void handleAmbushEvent(Planet planet, Ship ship) {
@@ -228,6 +230,33 @@ public class GameEvent {
 		}
 	}
 
+	private void handleTradeEvent(Ship ship) {
+		Random rand = new Random();
+		int giveResourceIndex = rand.nextInt(6);
+		int giveUnits = rand.nextInt(4) + 1;
+		String giveResource;
+		switch (giveResourceIndex) {
+			case 0: giveResource = "fuel"; ship.getCargoBay().increaseFuel(giveUnits); break;
+			case 1: giveResource = "metal"; ship.getCargoBay().increaseMetal(giveUnits); break;
+			case 2: giveResource = "water"; ship.getCargoBay().increaseWater(giveUnits); break;
+			case 3: giveResource = "gas"; ship.getCargoBay().increaseGas(giveUnits); break;
+			case 4: giveResource = "ammo"; ship.getCargoBay().increaseAmmo(giveUnits); break;
+			case 5: default: giveResource = "food"; ship.getCargoBay().increaseFood(giveUnits); break;
+		}
+		int receiveResourceIndex = rand.nextInt(6);
+		int receiveUnits = rand.nextInt(4) + 1;
+		String receiveResource;
+		switch (receiveResourceIndex) {
+			case 0: receiveResource = "food"; ship.getCargoBay().decreaseFuel(giveUnits); break;
+			case 1: receiveResource = "ammo"; ship.getCargoBay().decreaseMetal(giveUnits); break;
+			case 2: receiveResource = "gas"; ship.getCargoBay().decreaseWater(giveUnits); break;
+			case 3: receiveResource = "water"; ship.getCargoBay().decreaseGas(giveUnits); break;
+			case 4: receiveResource = "metal"; ship.getCargoBay().decreaseAmmo(giveUnits); break;
+			case 5: default: receiveResource = "fuel"; ship.getCargoBay().decreaseFood(giveUnits); break;
+		}
+		this.eventText = "You traded with another ship. You gave them " + giveUnits + " " + giveResource + " and received " + receiveUnits + " " + receiveResource + ".";
+	}
+
 	public String getEventText() {
 		return this.eventText;
 	}
@@ -239,7 +268,12 @@ public class GameEvent {
 		if (eventContext == EventContext.PLANET) {
 			if (eventKey == 0) {
 				int metalAmount = rand.nextInt(5) + 1;
-				this.eventText = "You found some ancient ruins. There were " + metalAmount + " units of metal inside";
+				if (metalAmount == 1) {
+					this.eventText = "You found some ancient ruins. There was " + metalAmount + " unit of metal inside";
+				} else {
+					this.eventText = "You found some ancient ruins. There were " + metalAmount + " units of metal inside";
+				}
+
 				ship.addCargo("metals", metalAmount);
 			}
 
@@ -247,7 +281,7 @@ public class GameEvent {
 				int damageAmount = rand.nextInt(10) + 1;
 				Boolean isShipDestroyed = ship.issueHullDamage(damageAmount);
 				if (isShipDestroyed) {
-					this.eventText = "An earthquake occurred. Your ship took" + damageAmount + " and was destroyed.";
+					this.eventText = "An earthquake occurred. Your ship took" + damageAmount + " damage and was destroyed.";
 					this.didLose = Boolean.TRUE;
 				} else {
 					this.eventText = "An earthquake occurred. Your ship took" + damageAmount + " damage.";
@@ -287,9 +321,16 @@ public class GameEvent {
 				ship.getCargoBay().increaseAmmo((int)(Math.random() * 6));
 				ship.getCargoBay().increaseFood((int)(Math.random() * 6));
 				ship.getCargoBay().increaseFuel((int)(Math.random() * 6));
-			} else {
+			}
+
+			else if (eventKey == 4) {
+				handleTradeEvent(ship);
+			}
+
+			else {
 				this.eventText = "Nothing happened";
 			}
+
 		} else {
 			this.eventText = "Nothing happened";
 		}
