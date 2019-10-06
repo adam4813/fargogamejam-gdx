@@ -145,24 +145,26 @@ public class GameEvent {
 
 	private void handleResourceCollection(Planet planet, Ship ship) {
 		Random rand = new Random();
-		int harvestAmount = rand.nextInt(5);
+		int metalHarvestAmount = rand.nextInt(3);
+		int waterHarvestAmount = rand.nextInt(3);
+		int fuelHarvestAmount = rand.nextInt(3);
 
-		if (planet.metals > harvestAmount) {
-			planet.metals = planet.metals - harvestAmount;
-			ship.addCargo("metals", harvestAmount);
+		if (planet.metals > metalHarvestAmount) {
+			planet.metals = planet.metals - metalHarvestAmount;
+			ship.addCargo("metals", metalHarvestAmount);
 		}
 
-		if (planet.water > harvestAmount) {
-			planet.water = planet.water - harvestAmount;
-			ship.addCargo("water", harvestAmount);
+		if (planet.water > waterHarvestAmount) {
+			planet.water = planet.water - waterHarvestAmount;
+			ship.addCargo("water", waterHarvestAmount);
 		}
 
-		if (planet.fuel > harvestAmount) {
-			planet.fuel = planet.fuel - harvestAmount;
-			ship.addCargo("fuel", harvestAmount);
+		if (planet.fuel > fuelHarvestAmount) {
+			planet.fuel = planet.fuel - fuelHarvestAmount;
+			ship.addCargo("fuel", fuelHarvestAmount);
 		}
 
-		this.eventText = "You collected resources!";
+		this.eventText = "You harvested " + metalHarvestAmount + " metals, " + waterHarvestAmount + " water, and " + fuelHarvestAmount + " fuel from the planet.";
 	}
 
 	private static Boolean isHabitablePlanet(Planet planet, Ship ship) {
@@ -260,7 +262,12 @@ public class GameEvent {
 		if (eventContext == EventContext.PLANET) {
 			if (eventKey == 0) {
 				int metalAmount = rand.nextInt(5) + 1;
-				this.eventText = "You found some ancient ruins. There were " + metalAmount + " units of metal inside";
+				if (metalAmount == 1) {
+					this.eventText = "You found some ancient ruins. There was " + metalAmount + " unit of metal inside";
+				} else {
+					this.eventText = "You found some ancient ruins. There were " + metalAmount + " units of metal inside";
+				}
+
 				ship.addCargo("metals", metalAmount);
 			}
 
@@ -268,7 +275,7 @@ public class GameEvent {
 				int damageAmount = rand.nextInt(10) + 1;
 				Boolean isShipDestroyed = ship.issueHullDamage(damageAmount);
 				if (isShipDestroyed) {
-					this.eventText = "An earthquake occurred. Your ship took" + damageAmount + " and was destroyed.";
+					this.eventText = "An earthquake occurred. Your ship took" + damageAmount + " damage and was destroyed.";
 					this.didLose = Boolean.TRUE;
 				} else {
 					this.eventText = "An earthquake occurred. Your ship took" + damageAmount + " damage.";
