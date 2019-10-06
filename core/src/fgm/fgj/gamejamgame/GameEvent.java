@@ -180,7 +180,7 @@ public class GameEvent {
 			metalHarvestAmount -= planet.metals;
 			planet.metals = 0;
 		}
-		ship.addCargo("metals", metalHarvestAmount);
+		ship.getCargoBay().increaseMetal(metalHarvestAmount);
 
 		planet.water -= waterHarvestAmount;
 		if(planet.water < 0){
@@ -188,7 +188,7 @@ public class GameEvent {
 			waterHarvestAmount -= planet.water;
 			planet.water = 0;
 		}
-		ship.addCargo("water", waterHarvestAmount);
+		ship.getCargoBay().increaseWater(waterHarvestAmount);
 
 		planet.fuel -= fuelHarvestAmount;
 		if(planet.fuel < 0){
@@ -196,7 +196,7 @@ public class GameEvent {
 			fuelHarvestAmount -= planet.fuel;
 			planet.fuel = 0;
 		}
-		ship.addCargo("fuel", waterHarvestAmount);
+		ship.getCargoBay().increaseFuel(waterHarvestAmount);
 		this.eventText = "You collected " + metalHarvestAmount + " metals, " + waterHarvestAmount + " water, and " + fuelHarvestAmount + " fuel from the planet.";
 	}
 
@@ -370,7 +370,7 @@ public class GameEvent {
 					this.eventText = "You found some ancient ruins. There were " + metalAmount + " units of metal inside";
 				}
 
-				ship.addCargo("metals", metalAmount);
+				ship.getCargoBay().increaseMetal(metalAmount);
 			}
 
 			else if (eventKey == 1) {
@@ -414,13 +414,13 @@ public class GameEvent {
 			else if (eventKey == 1) {
 				int fuelAmount = rand.nextInt(3) + 1;
 				this.eventText = "You found an abandoned coal bunker floating in space. You were able to salvage " + fuelAmount + " units of fuel from it.";
-				ship.addCargo("fuel", fuelAmount);
+				ship.getCargoBay().increaseFuel(fuelAmount);
 			}
 
 			else if (eventKey == 2) {
 				int foodAmount = rand.nextInt(3) + 1;
 				this.eventText = "Rats ate " + foodAmount + " units of your food.";
-				ship.removeCargo("food", foodAmount);
+				ship.getCargoBay().decreaseFood(foodAmount);
 			}
 
 			else if (eventKey == 3) {
