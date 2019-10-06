@@ -199,6 +199,6 @@ public class CargoBay {
 		if(this.maxWater > 60){
 			level++;
 		}
-		return Math.max(level, 4);
+		return Math.min(level, 4);
 	}
 }

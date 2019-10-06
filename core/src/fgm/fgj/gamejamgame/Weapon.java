@@ -33,6 +33,6 @@ public class Weapon implements PartModules{
 		if(this.type.equals(WeaponType.PLASMA)){
 			level++;
 		}
-		return Math.max(level, 4);
+		return Math.min(level, 4);
 	}
 }

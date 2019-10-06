@@ -37,6 +37,6 @@ public class LifeSupportSystem implements PartModules {
 		int level = 0;
 		level += solarRadiationTolerance / 2;
 		level += gasEfficiency / 2;
-		return Math.max(level, 4);
+		return Math.min(level, 4);
 	}
 }
