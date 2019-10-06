@@ -1,11 +1,8 @@
 package fgm.fgj.gamejamgame;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 /** Represents the world map of the game. */
 public class Galaxy {
@@ -56,6 +53,10 @@ public class Galaxy {
 		return shipLocation;
 	}
 
+	public void setShipLocation(SolarSystem ss){
+		this.shipLocation = ss;
+	}
+
 	/**
 	 * Builds a rudimentary name for stuff.
 	 * @return a name in a format like GEGU-874
@@ -100,14 +101,13 @@ public class Galaxy {
 		/* Temporary cache for created solar systems until they are linked and a single root node can be returned. */
 		List<SolarSystem> created = new ArrayList<>();
 		/* Create the solar systems. */
-		int ssQuantity = (int)Math.random() * 25 + 5;
-		for(int i = 0; i < ssQuantity; i++){
+		for(int i = 0; i < solarSystemQuantity; i++){
 			SolarSystem ss = this.generateSolarSystem();
 			created.add(ss);
 		}
 		/* Link the solar systems. */
 		for(SolarSystem ss : created){
-			int links = (int)(Math.random() * 6);
+			int links = (int)(Math.random() * 6) + 1;
 			for(int i = 0; i < links; i++){
 				int linkIndex = (int)Math.random() * created.size();
 				int fuelCost = (int)(Math.random() * 4) + 1;
