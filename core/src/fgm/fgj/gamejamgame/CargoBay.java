@@ -5,19 +5,19 @@ import java.util.List;
 import java.util.Random;
 
 public class CargoBay {
-	private int fuel;
 	private int maxFuel;
-	private int metal;
 	private int maxMetal;
-	private int water;
 	private int maxWater;
-	private int gas;
 	private int maxGas;
-	private List<PartModules> parts;
-	private int ammo;
 	private int maxAmmo;
-	private int food;
 	private int maxFood;
+	private int fuel;
+	private int metal;
+	private int water;
+	private int gas;
+	private int ammo;
+	private int food;
+	private List<PartModules> parts;
 
 	/**
 	 * @param value desired value
@@ -41,21 +41,40 @@ public class CargoBay {
 	 * @param maxGas int (5-50) indicating maximum gas storage capacity - default 25
 	 * @param maxAmmo int (50-200) indicating maximum ammo storage capacity - default 100
 	 * @param maxFood int (25-100) indicating maximum food storage capacity - default 50
+	 *
+	 * @param fuel int (0-maxFuel) indicating current fuel level - default maxFuel
+	 * @param metal int (0-maxMetal) indicating current metal level - default maxMetal
+	 * @param water int (0-maxWater) indicating current water level - default maxWater
+	 * @param gas int (0-maxGas) indicating current gas level - default maxGas
+	 * @param ammo int (0-maxAmmo) indicating current ammo level - default maxAmmo
+	 * @param food int (0-maxFood) indicating current food level - default maxFood
+	 *
+	 * @param parts list of parts present in the cargo bay
 	 */
-	public CargoBay (int maxFuel, int maxMetal, int maxWater, int maxGas, int maxAmmo, int maxFood) {
+	public CargoBay (
+		int maxFuel, int maxMetal, int maxWater, int maxGas, int maxAmmo, int maxFood,
+		int fuel, int metal, int water, int gas, int ammo, int food,
+		List<PartModules> parts
+	) {
 		this.maxFuel = this.withinRangeOrDefault(maxFuel, 25, 100, 50);
-		this.fuel = this.maxFuel; // Assuming you would have fueled up before starting out
 		this.maxMetal = this.withinRangeOrDefault(maxMetal, 5, 25, 15);
-		this.metal = 0;
 		this.maxWater = this.withinRangeOrDefault(maxWater, 5, 50, 25);
-		this.water = this.maxWater; // Assuming you topped off water before starting out
 		this.maxGas = this.withinRangeOrDefault(maxGas, 5, 50, 25);
-		this.gas = 0;
-		this.parts = new ArrayList<>();
 		this.maxAmmo = this.withinRangeOrDefault(maxAmmo, 50, 200, 100);
-		this.ammo = this.maxAmmo; // Assuming stocked armory before starting out
 		this.maxFood = this.withinRangeOrDefault(maxFood, 25, 100, 50);
-		this.food = this.maxFood; // Assuming you packed your lunch
+
+		this.fuel = this.withinRangeOrDefault(fuel, 0, this.maxFuel, this.maxFuel);
+		this.metal = this.withinRangeOrDefault(metal, 0, this.maxWater, this.maxMetal);
+		this.water = this.withinRangeOrDefault(water, 0, this.maxWater, this.maxWater);
+		this.gas = this.withinRangeOrDefault(gas, 0, this.maxGas, this.maxGas);
+		this.ammo = this.withinRangeOrDefault(ammo, 0, this.maxAmmo, this.maxAmmo);
+		this.food = this.withinRangeOrDefault(food, 0, this.maxFood, this.maxFood);
+
+		if (parts == null || parts.isEmpty()) {
+			this.parts = new ArrayList<>();
+		} else {
+			this.parts = parts;
+		}
 	}
 
 	/**
@@ -146,10 +165,18 @@ public class CargoBay {
 	}
 
 	public void addPart(PartModules part) {
-		this.parts.add(part);
+		if (part == null) {
+			throw new IllegalArgumentException("Must include a part to be added");
+		} else {
+			this.parts.add(part);
+		}
 	}
-	public void removePart() {
-		// TODO: what do we pass in to select a part to remove?
+	public void removePart(PartModules part) {
+		if (part == null) {
+			throw new IllegalArgumentException("Must reference a part to be removed");
+		} else {
+			this.parts.remove(part);
+		}
 	}
 	public List<PartModules> listParts() {
 		return this.parts;
