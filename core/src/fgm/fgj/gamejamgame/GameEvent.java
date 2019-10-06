@@ -230,7 +230,7 @@ public class GameEvent {
 		}
 	}
 
-	private void handleTradeEvent(Ship ship) {
+	private String handleTradeEvent(Ship ship) {
 		Random rand = new Random();
 		int giveResourceIndex = rand.nextInt(6);
 		int giveUnits = rand.nextInt(4) + 1;
@@ -254,7 +254,7 @@ public class GameEvent {
 			case 4: receiveResource = "metal"; ship.getCargoBay().decreaseAmmo(giveUnits); break;
 			case 5: default: receiveResource = "fuel"; ship.getCargoBay().decreaseFood(giveUnits); break;
 		}
-		this.eventText = "You traded with another ship. You gave them " + giveUnits + " " + giveResource + " and received " + receiveUnits + " " + receiveResource + ".";
+		return "You gave them " + giveUnits + " " + giveResource + " and received " + receiveUnits + " " + receiveResource + ".";
 	}
 
 	public String getEventText() {
@@ -294,7 +294,13 @@ public class GameEvent {
 
 			else if (eventKey == 3) {
 				 handleRecruitmentEvent(planet, ship);
-			} else {
+			}
+
+			else if (eventKey == 4) {
+				this.eventText = "You traded with the planet '" + planet.getName() + ". " + handleTradeEvent(ship);
+			}
+
+			else {
 				this.eventText = "Nothing happened";
 			}
 		} else if (eventContext == EventContext.SOLAR_SYSTEM) {
@@ -324,7 +330,7 @@ public class GameEvent {
 			}
 
 			else if (eventKey == 4) {
-				handleTradeEvent(ship);
+				this.eventText = "You encountered another ship and traded with them. " + handleTradeEvent(ship);
 			}
 
 			else {
