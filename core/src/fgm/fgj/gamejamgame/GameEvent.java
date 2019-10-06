@@ -220,6 +220,19 @@ public class GameEvent {
 		ship.getCargoBay().decreaseAmmo(ammoRequired);
 	}
 
+	private void handleRecruitmentEvent(Planet planet, Ship ship) {
+		Random rand = new Random();
+		int recruitmentAmount = rand.nextInt(5);
+
+		List<Species> speciesPresent = planet.speciesPresent;
+		Species crewSpecies = ship.getCrewSpecies();
+		if (speciesPresent.contains(crewSpecies)) {
+			ship.addCrewMember(recruitmentAmount);
+		}
+
+		this.eventText = "You recruited" + recruitmentAmount + " new crew members";
+	}
+
 	public String getEventText() {
 		return this.eventText;
 	}
@@ -234,7 +247,7 @@ public class GameEvent {
 			} else if (eventKey == 1) {
 				this.eventText = "An earthquake has damaged your ship.";
 			} else if (eventKey == 2) {
-				// handleRecruitmentEvent(planet, ship);
+				 handleRecruitmentEvent(planet, ship);
 			}
 		} else if (eventContext == EventContext.SOLAR_SYSTEM) {
 			if (eventKey == 0) {

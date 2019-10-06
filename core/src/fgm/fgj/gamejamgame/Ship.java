@@ -91,4 +91,16 @@ public class Ship {
 			this.crewMembers.remove(crewMember);
 		}
 	}
+
+	public Species getCrewSpecies() {
+		List<CrewMember> crewMembers = this.listCrewMembers();
+		CrewMember crewMember = crewMembers.get(0);
+		return crewMember.species;
+	}
+
+	public void addCrewMember(int amount) {
+		for (int i = 1; i <= amount; i++) {
+			this.crewMembers.add(new CrewMember(Galaxy.generateCrewName(), getCrewSpecies(), Specialization.getRandomSpecialization(), 0));
+		}
+	}
 }
