@@ -100,4 +100,23 @@ public class Planet {
 		}
 		return mostViolentSpecies;
 	}
+
+	public Boolean isHabitablePlanet(Ship ship) {
+		if(ship == null){
+			throw new IllegalArgumentException("A planet cannot be habitable with a null ship.");
+		}
+		boolean isHabitable = true;
+		List<CrewMember> crewMembers = ship.listCrewMembers();
+		for(CrewMember cm : crewMembers){
+			Species s = cm.species;
+			isHabitable &= this.gravity == s.gravityTolerance;
+			isHabitable &= this.atmosphericPressure == s.atmosphericPressureTolerance;
+			isHabitable &= this.temperature == s.temperatureTolerance;
+			isHabitable &= this.airType == s.atmosphericCompositionTolerance;
+			if(!isHabitable){
+				break;
+			}
+		}
+		return isHabitable;
+	}
 }

@@ -9,6 +9,7 @@ public class GameEvent {
 	final String eventType;
 	boolean didLose;
 	final boolean didWin;
+	boolean isPositive;
 
 	public boolean didWin(){
 		return this.didWin;
@@ -16,6 +17,10 @@ public class GameEvent {
 
 	public boolean didLose(){
 		return this.didLose;
+	}
+
+	public boolean isPositive(){
+		return this.isPositive && this.didWin && !this.didLose;
 	}
 
 	public GameEvent(SolarSystem solarSystem, Planet planet, Ship ship) {
@@ -29,7 +34,7 @@ public class GameEvent {
 		if (ship == null) {
 			throw new IllegalArgumentException("A game event cannot occur with a null ship.");
 		}
-		this.didWin = GameEvent.isHabitablePlanet(planet, ship);
+		this.didWin = planet.isHabitablePlanet(ship);
 		int randomValue = (int)(Math.random() * 100);
 		if (this.didWin) {
 			this.eventType = "habitablePlanet";
@@ -163,32 +168,6 @@ public class GameEvent {
 		}
 
 		this.eventText = "You collected resources!";
-	}
-
-	private static Boolean isHabitablePlanet(Planet planet, Ship ship) {
-		if (planet == null) {
-			return Boolean.FALSE;
-		}
-		int planetGravity = planet.gravity;
-		int planetAtmosphericPressure = planet.atmosphericPressure;
-		int planetTemperature = planet.temperature;
-		AtmosphericComposition planetAir = planet.airType;
-
-		List<CrewMember> crewMembers = ship.listCrewMembers();
-		CrewMember crewMember = crewMembers.get(0);
-		Species crewSpecies = crewMember.species;
-
-		int speciesGravityTolerance = crewSpecies.gravityTolerance;
-		int speciesAtmosphericPressureTolerance = crewSpecies.atmosphericPressureTolerance;
-		int speciesTemperatureTolerance = crewSpecies.temperatureTolerance;
-		AtmosphericComposition speciesAtmosphericCompositionTolerance = crewSpecies.atmosphericCompositionTolerance;
-
-		Boolean gravityMatch = (planetGravity == speciesGravityTolerance);
-		Boolean pressureMatch = (planetAtmosphericPressure == speciesAtmosphericPressureTolerance);
-		Boolean temperatureMatch = (planetTemperature == speciesTemperatureTolerance);
-		Boolean airTypeMatch = (planetAir == speciesAtmosphericCompositionTolerance);
-
-		return (gravityMatch && pressureMatch && temperatureMatch && airTypeMatch);
 	}
 
 	private void handleAmbushEvent(Planet planet, Ship ship) {
