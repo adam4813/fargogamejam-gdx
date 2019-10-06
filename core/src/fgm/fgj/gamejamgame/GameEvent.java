@@ -260,8 +260,10 @@ public class GameEvent {
 				int damageAmount = rand.nextInt(10) + 1;
 				Boolean isShipDestroyed = ship.issueHullDamage(damageAmount);
 				if (isShipDestroyed) {
-					this.eventText = "Your ship was destroyed - Game Over";
+					this.eventText = "An earthquake occurred. Your ship took" + damageAmount + " and was destroyed.";
 					this.didLose = Boolean.TRUE;
+				} else {
+					this.eventText = "An earthquake occurred. Your ship took" + damageAmount + " damage.";
 				}
 			}
 
