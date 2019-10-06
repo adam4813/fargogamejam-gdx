@@ -68,7 +68,18 @@ public class TitleMenu {
 			}
 		});
 
-		///table.add(startButton).padBottom(20).row();
+		TextButton loseButton = new TextButton("Quit Game", game.getSkin());
+		loseButton.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				super.clicked(event, x, y);
+				game.showScreen(ScreenNames.Lose);
+
+			}
+		});
+
+		table.add(loseButton).padBottom(20).row();
+		//table.add(startButton).padBottom(20).row();
 		//table.add(starMapButton).padBottom(20).row();
 		//table.add(solarSystemButton).padBottom(20).row();
 		//table.add(shipButton).padBottom(20).row();

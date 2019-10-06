@@ -1,6 +1,7 @@
 package fgm.fgj.gamejamgame.screens.shipPanels;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
@@ -8,7 +9,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 import java.util.List;
 
+import javax.swing.Icon;
+
 import fgm.fgj.gamejamgame.CrewMember;
+import fgm.fgj.gamejamgame.Icons;
 import fgm.fgj.gamejamgame.Species;
 
 public class CrewPanel {
@@ -33,6 +37,8 @@ public class CrewPanel {
 	private void addRow(CrewMember crewMember) {
 		Species species = crewMember.getSpecies();
 		Stack imageStack = new Stack();
+		imageStack.add(new Image(Icons.getIcon(crewMember.getSpecialization().getIcon())));
+		imageStack.add(new Image(Icons.getIcon(crewMember.getSpecies().getIcon())));
 		crewTable.add(imageStack).uniform().expand();
 		crewTable.add(new Label(crewMember.getName(), skin)).uniform().expand();
 		crewTable.add(new Label(species.getName(), skin)).uniform().expand();
@@ -42,7 +48,7 @@ public class CrewPanel {
 
 	public void displayCrew(List<CrewMember> crew) {
 		crewTable.clearChildren();
-		
+
 		crewTable.add(new Container()).uniform().expandX().padBottom(4);
 		crewTable.add(new Label("Name", skin)).uniform().expandX().padBottom(4);
 		crewTable.add(new Label("Species", skin)).uniform().expandX().padBottom(4);

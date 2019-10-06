@@ -52,4 +52,8 @@ public class CrewMember {
 	public int getHP() {
 		return species.hitPoints - damageTaken;
 	}
+
+	public Specialization getSpecialization() {
+		return specialization;
+	}
 }

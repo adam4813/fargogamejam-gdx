@@ -51,28 +51,28 @@ public class ModulesPanel {
 		Engine engine = ship.getEngine();
 		int engineLevel = engine.getModuleLevel() + 1;
 		Animation engineAnimation = AnimatedSprite.buildAnimation(game.getAsset("data/modules/moduleEngine0" + engineLevel + ".png"), 64, 64, 8, .1f);
-		engineModuleTable.add(new AnimatedImage(engineAnimation)).uniform().expand();
+		engineModuleTable.add(new AnimatedImage(engineAnimation, false)).uniform().expand();
 		engineModuleTable.add(new Label(new StringBuilder().append("Engine: ").append(engineLevel).toString(), skin)).uniform().expand();
 
 		lifeSupportModuleTable.clearChildren();
 		LifeSupportSystem lifeSupportSystem = ship.getLifeSupport();
 		int lifeSupportLevel = lifeSupportSystem.getModuleLevel() + 1;
 		Animation lifeSupportSystemAnimation = AnimatedSprite.buildAnimation(game.getAsset("data/modules/moduleLifeSupport0" + lifeSupportLevel + ".png"), 64, 64, 8, .1f);
-		lifeSupportModuleTable.add(new AnimatedImage(lifeSupportSystemAnimation)).uniform().expand();
+		lifeSupportModuleTable.add(new AnimatedImage(lifeSupportSystemAnimation, false)).uniform().expand();
 		lifeSupportModuleTable.add(new Label(new StringBuilder().append("Life Support: ").append(lifeSupportLevel).toString(), skin)).uniform().expand();
 
 		weaponModuleTable.clearChildren();
 		Weapon weapon = ship.getWeapon();
 		int weaponLevel = weapon.getModuleLevel() + 1;
 		Animation weaponAnimation = AnimatedSprite.buildAnimation(game.getAsset("data/modules/moduleWeapon0" + weaponLevel + ".png"), 64, 64, 16, .1f);
-		weaponModuleTable.add(new AnimatedImage(weaponAnimation)).uniform().expand();
+		weaponModuleTable.add(new AnimatedImage(weaponAnimation, false)).uniform().expand();
 		weaponModuleTable.add(new Label(new StringBuilder().append("Weapon: ").append(weaponLevel).toString(), skin)).uniform().expand();
 
 		cargoModuleTable.clearChildren();
 		CargoBay cargoBay = ship.getCargoBay();
 		int cargoBaryLevel = cargoBay.getModuleLevel() + 1;
 		Animation cargoBayAnimation = AnimatedSprite.buildAnimation(game.getAsset("data/modules/moduleCargo0" + cargoBaryLevel + ".png"), 64, 64, 5, .1f);
-		cargoModuleTable.add(new AnimatedImage(cargoBayAnimation)).uniform().expand();
+		cargoModuleTable.add(new AnimatedImage(cargoBayAnimation, false)).uniform().expand();
 		cargoModuleTable.add(new Label(new StringBuilder().append("Cargo Bat: ").append(cargoBaryLevel).toString(), skin)).uniform().expand();
 	}
 }

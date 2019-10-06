@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -164,9 +165,7 @@ public class StarMapScreen implements Screen {
 					Table body = new Table();
 					//body.setFillParent(true);
 					body.align(Align.center);
-					body.add(new Label("Line 1", skin)).padTop(20.0f).padBottom(10.0f).row();
-					body.add(new Label("Line 2", skin)).padTop(20.0f).padBottom(10.0f).row();
-					body.add(new Label("Line 3", skin)).padTop(20.0f).padBottom(10.0f);
+					body.add(new Label("Fuel cost to visit - " + star.fuelCost, skin)).padTop(20.0f).padBottom(10.0f).row();
 					body.act(1);
 					worldInfo.show(stage, star.solarSystem.getName(), body);
 				}
@@ -184,8 +183,10 @@ public class StarMapScreen implements Screen {
 		spriteBatch.setProjectionMatrix(camera.combined);
 		spriteBatch.begin();
 		backgroundStars.draw(spriteBatch, delta);
+		spriteBatch.end();
+		ShapeRenderer shapeRenderer = game.getShapeRender();
+		spriteBatch.begin();
 		nearbyStarField.draw(spriteBatch, delta);
-
 		spriteBatch.end();
 		stage.act(delta);
 		stage.draw();

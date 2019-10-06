@@ -17,6 +17,7 @@ import java.util.Map;
 
 import fgm.fgj.gamejamgame.screens.GameScreen;
 import fgm.fgj.gamejamgame.screens.LoadingScreen;
+import fgm.fgj.gamejamgame.screens.LoseScreen;
 import fgm.fgj.gamejamgame.screens.ShipScreen;
 import fgm.fgj.gamejamgame.screens.SolarSystemScreen;
 import fgm.fgj.gamejamgame.screens.StarMapScreen;
@@ -104,6 +105,7 @@ public class GameJamGame extends Game {
 		screens.put(ScreenNames.StarMap, new StarMapScreen(this));
 		screens.put(ScreenNames.SolarSystem, new SolarSystemScreen(this));
 		screens.put(ScreenNames.Ship, new ShipScreen(this));
+		screens.put(ScreenNames.Lose, new LoseScreen(this));
 	}
 
 	@Override
@@ -157,6 +159,10 @@ public class GameJamGame extends Game {
 		loadTexture("data/modules/moduleCargo03.png");
 		loadTexture("data/modules/moduleCargo04.png");
 		loadTexture("data/modules/moduleCargo05.png");
+		loadTexture("data/scenes/sceneLose.png");
+		loadTexture("data/scenes/sceneTransition.png");
+		loadTexture("data/scenes/sceneWin.png");
+		loadTexture("data/scenes/sceneIntro.png");
 	}
 
 	private final Galaxy galaxy = new Galaxy(130, null,null, 1, null);
@@ -168,15 +174,16 @@ public class GameJamGame extends Game {
 		Gdx.app.log("GJG", "Count " + String.valueOf(starCount));
 		int index = 0;
 		for (SolarSystem solarSystem : galaxy.getShipLocation().linkedSolarSystems) {
-			double itemAngle = angle * index++;
-			stars.add(new StarMapStar(solarSystem, (float) Math.cos(itemAngle) * 0.5f, (float) Math.sin(itemAngle) * 0.75f));
+			double itemAngle = angle * index;
+			stars.add(new StarMapStar(solarSystem, (float) Math.cos(itemAngle) * 0.5f, (float) Math.sin(itemAngle) * 0.75f, galaxy.getShipLocation().fuelCosts.get(index)));
+			index++;
 		}
 		return stars;
 	}
 
 	public StarMapStar getCurrentStar() {
 		SolarSystem solarSystem = galaxy.getShipLocation();
-		return new StarMapStar(solarSystem, 0f, 0f);
+		return new StarMapStar(solarSystem, 0f, 0f, 0);
 	}
 
 	public void setCurrentSolarSystem(SolarSystem targetSolarSystem) {
