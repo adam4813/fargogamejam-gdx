@@ -144,7 +144,7 @@ public class GameEvent {
 			this.eventText = "Your ship took " + damageDealt + " damage from a radiation burst and was destroyed!";
 			this.didLose = true;
 		} else {
-			this.eventText = "Your ship took " + damageDealt + " damaged from a radiation burst!";
+			this.eventText = "Your ship took " + damageDealt + " damage from a radiation burst!";
 		}
 	}
 
