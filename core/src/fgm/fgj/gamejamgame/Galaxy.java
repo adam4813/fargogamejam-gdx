@@ -179,7 +179,7 @@ public class Galaxy {
 		int solarRadiation = (int) (Math.random() * 6);
 		int debrisRating = (int) (Math.random() * 6);
 		// if the solar system has the artifact, put it on a random planet
-		if (hasArtifact) {
+		if (hasArtifact && planetQuantity > 0) {
 			int artifactIndex = (int) (Math.random() * planetQuantity);
 			Planet artifactPlanet = planets.get(artifactIndex);
 			artifactPlanet.plantArtifact();
