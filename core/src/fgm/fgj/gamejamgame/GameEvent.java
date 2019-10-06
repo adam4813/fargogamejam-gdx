@@ -300,6 +300,13 @@ public class GameEvent {
 				this.eventText = "You traded with the planet '" + planet.getName() + ". " + handleTradeEvent(ship);
 			}
 
+			else if (eventKey == 5) {
+				List<CrewMember> crewMembers = ship.listCrewMembers();
+				int crewMemberIndex = rand.nextInt(crewMembers.size());
+				int foodEaten = rand.nextInt(3) + 1;
+				this.eventText = "Crew member '" + crewMembers.get(crewMemberIndex).getName() + "' returned from planet '" + planet.getName() + " famished and ate " + foodEaten + " extra food from the cargo bay.";
+			}
+
 			else {
 				this.eventText = "Nothing happened";
 			}
