@@ -13,7 +13,7 @@ public class Planet {
 	int fuel;
 	int metals;
 	int water;
-	private Boolean hasArtifact;
+	boolean hasArtifact;
 
 	/**
 	 * Instantiates a new planet based on parameters given.
@@ -84,6 +84,8 @@ public class Planet {
 		}else{
 			this.water = water;
 		}
+
+		this.hasArtifact = false;
 	}
 
 	public String getName() {
