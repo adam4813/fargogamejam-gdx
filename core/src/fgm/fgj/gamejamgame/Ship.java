@@ -30,7 +30,7 @@ public class Ship {
 		this.pirateThreat = 0;
 	}
 
-	public void calculateHullDamage(int damageAmount) {
+	public void issueHullDamage(int damageAmount) {
 		this.hullDamage = this.hullDamage + damageAmount;
 	}
 
