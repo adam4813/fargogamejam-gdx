@@ -353,6 +353,25 @@ public class GameEvent {
 		}
 	}
 
+	public void handleAmmoProductEvent(Ship ship) {
+		Random rand = new Random();
+		int metals = ship.getCargoBay().checkMetal();
+		if (metals == 0) {
+			this.eventText = "You tried to trade metal for ammo, but you didn't have any metal.";
+		} else {
+			int metalToTrade = rand.nextInt(metals) + 1;
+			for(CrewMember cm : ship.listCrewMembers()){
+				if(cm.specialization.equals(Specialization.SCIENTIST)){
+					metalToTrade++;
+				}
+			}
+			int addedAmmo = metalToTrade * 2;
+			ship.getCargoBay().decreaseMetal(metalToTrade);
+			ship.getCargoBay().increaseAmmo(addedAmmo);
+			this.eventText = "You traded " + metalToTrade + " metal for " + addedAmmo + " ammo.";
+		}
+	}
+
 	public String getEventText() {
 		return this.eventText;
 	}
@@ -401,6 +420,10 @@ public class GameEvent {
 				int crewMemberIndex = rand.nextInt(crewMembers.size());
 				int foodEaten = rand.nextInt(3) + 1;
 				this.eventText = "Crew member '" + crewMembers.get(crewMemberIndex).getName() + "' returned from planet '" + planet.getName() + " famished and ate " + foodEaten + " extra food from the cargo bay.";
+			}
+
+			else if (eventKey == 6) {
+				handleAmmoProductEvent(ship);
 			}
 
 			else {
