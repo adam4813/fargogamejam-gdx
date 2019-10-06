@@ -19,8 +19,8 @@ public class Galaxy {
 		nameParts.add("GO");
 		nameParts.add("GU");
 	}
-	/** Instantiates the galaxy generating a new map based on the solar system quantity unless root is provided. */
-	public Galaxy(int solarSystemQuantity, SolarSystem root, Ship player, List<Species> bestiary){
+	/** Instantiates the galaxy generating a new map based on the solar system quantity unless root is provided. It will generate the specified number of species if bestiary is empty or null. */
+	public Galaxy(int solarSystemQuantity, SolarSystem root, Ship player, int speciesQuantity, List<Species> bestiary){
 		if(solarSystemQuantity < 1){
 			throw new IllegalArgumentException("A galaxy must consist of at least 1 solar system.");
 		}
@@ -30,14 +30,14 @@ public class Galaxy {
 			this.shipLocation = root;
 		}
 		if(player == null){
-			throw new IllegalArgumentException("A galaxy must have a player.");
+			this.player = generateShip();
 		}else{
 			this.player = player;
 		}
 		if(bestiary == null){
-			this.bestiary = generateBestiary();
+			this.bestiary = generateBestiary(speciesQuantity);
 		}else if(bestiary.size() < 1){
-			this.bestiary = generateBestiary();
+			this.bestiary = generateBestiary(speciesQuantity);
 		}else{
 			this.bestiary = bestiary;
 		}
@@ -55,6 +55,10 @@ public class Galaxy {
 
 	public void setShipLocation(SolarSystem ss){
 		this.shipLocation = ss;
+	}
+
+	public Ship generateShip(){
+		return new Ship();
 	}
 
 	/**
@@ -127,12 +131,24 @@ public class Galaxy {
 	 * Builds a bestiary of species available in the galaxy.
 	 * @return
 	 */
-	private List<Species> generateBestiary() {
+	private List<Species> generateBestiary(int speciesQuantity) {
 		List<Species> speciesList = new ArrayList();
-		for(int i=0; i==5; i++){
-			speciesList.add(new Species());
+		for(int i = 0; i <= speciesQuantity; i++){
+			speciesList.add(this.generateSpecies());
 		}
 		return speciesList;
+	}
+
+	public Species generateSpecies(){
+		String name = generateName();
+		int gravityTolerance = (int)(Math.random() * 6);
+		AtmosphericComposition atmosphericCompositionTolerance = AtmosphericComposition.getRandomAtmosphere();
+		int atmosphericPressureTolerance = (int)(Math.random() * 6);
+		int temperatureTolerance = (int)(Math.random() * 6);
+		int mass = (int)(Math.random() * 6);
+		int hitPoints = (int)(Math.random() * 9) + 2;
+		int damage = (int)(Math.random() * 6);
+		return new Species(name, gravityTolerance, atmosphericCompositionTolerance, atmosphericPressureTolerance, temperatureTolerance, mass, hitPoints, damage);
 	}
 
 	/**
@@ -144,12 +160,15 @@ public class Galaxy {
 		return this.bestiary.get(random.nextInt(this.bestiary.size()));
 	}
 
-	private CrewMember generateCrewMember() {
+	private List<CrewMember> generateCrewMembers() {
+		List<CrewMember> created = new ArrayList<>();
 		Species species = getRandomSpeciesFromBestiary();
-		int hitPoints = species.getHitPoints();
-		Specialization specialization = Specialization.getRandomSpecialization();
-		CrewMember newCrewMember = new CrewMember(species, hitPoints, specialization);
-		return newCrewMember;
+		created.add(new CrewMember(species, Specialization.ENGINEER));
+		created.add(new CrewMember(species, Specialization.PILOT));
+		created.add(new CrewMember(species, Specialization.SCIENTIST));
+		created.add(new CrewMember(species, Specialization.getRandomSpecialization()));
+		created.add(new CrewMember(species, Specialization.getRandomSpecialization()));
+		return created;
 	}
 
 	/**
