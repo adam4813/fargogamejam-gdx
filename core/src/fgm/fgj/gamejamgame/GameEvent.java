@@ -251,6 +251,33 @@ public class GameEvent {
 		}
 	}
 
+	private void handleTradeEvent(Ship ship) {
+		Random rand = new Random();
+		int giveResourceIndex = rand.nextInt(6);
+		int giveUnits = rand.nextInt(4) + 1;
+		String giveResource;
+		switch (giveResourceIndex) {
+			case 0: giveResource = "fuel"; ship.getCargoBay().increaseFuel(giveUnits); break;
+			case 1: giveResource = "metal"; ship.getCargoBay().increaseMetal(giveUnits); break;
+			case 2: giveResource = "water"; ship.getCargoBay().increaseWater(giveUnits); break;
+			case 3: giveResource = "gas"; ship.getCargoBay().increaseGas(giveUnits); break;
+			case 4: giveResource = "ammo"; ship.getCargoBay().increaseAmmo(giveUnits); break;
+			case 5: default: giveResource = "food"; ship.getCargoBay().increaseFood(giveUnits); break;
+		}
+		int receiveResourceIndex = rand.nextInt(6);
+		int receiveUnits = rand.nextInt(4) + 1;
+		String receiveResource;
+		switch (receiveResourceIndex) {
+			case 0: receiveResource = "food"; ship.getCargoBay().decreaseFuel(giveUnits); break;
+			case 1: receiveResource = "ammo"; ship.getCargoBay().decreaseMetal(giveUnits); break;
+			case 2: receiveResource = "gas"; ship.getCargoBay().decreaseWater(giveUnits); break;
+			case 3: receiveResource = "water"; ship.getCargoBay().decreaseGas(giveUnits); break;
+			case 4: receiveResource = "metal"; ship.getCargoBay().decreaseAmmo(giveUnits); break;
+			case 5: default: receiveResource = "fuel"; ship.getCargoBay().decreaseFood(giveUnits); break;
+		}
+		this.eventText = "You traded with another ship. You gave them " + giveUnits + " " + giveResource + " and received " + receiveUnits + " " + receiveResource + ".";
+	}
+
 	public String getEventText() {
 		return this.eventText;
 	}
@@ -315,9 +342,16 @@ public class GameEvent {
 				ship.getCargoBay().increaseAmmo((int)(Math.random() * 6));
 				ship.getCargoBay().increaseFood((int)(Math.random() * 6));
 				ship.getCargoBay().increaseFuel((int)(Math.random() * 6));
-			} else {
+			}
+
+			else if (eventKey == 4) {
+				handleTradeEvent(ship);
+			}
+
+			else {
 				this.eventText = "Nothing happened";
 			}
+
 		} else {
 			this.eventText = "Nothing happened";
 		}
