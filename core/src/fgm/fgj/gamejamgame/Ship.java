@@ -128,4 +128,10 @@ public class Ship {
 			this.crewMembers.add(new CrewMember(Galaxy.generateCrewName(), getCrewSpecies(), Specialization.getRandomSpecialization(), 0));
 		}
 	}
+
+	public void addCrewMember(CrewMember crewMember) {
+		if (crewMember != null) {
+			this.crewMembers.add(crewMember);
+		}
+	}
 }

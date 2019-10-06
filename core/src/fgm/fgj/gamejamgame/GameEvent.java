@@ -1,7 +1,12 @@
 package fgm.fgj.gamejamgame;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import static fgm.fgj.gamejamgame.Specialization.ENGINEER;
+import static fgm.fgj.gamejamgame.Specialization.PILOT;
+import static fgm.fgj.gamejamgame.Specialization.SCIENTIST;
 
 public class GameEvent {
 	final EventContext eventContext;
@@ -100,7 +105,7 @@ public class GameEvent {
 		Random rand = new Random();
 		int maxResourcesTaken = 7 - ship.getEngineSpeed();
 		for(CrewMember cm : ship.listCrewMembers()){
-			if(cm.specialization.equals(Specialization.PILOT)){
+			if(cm.specialization.equals(PILOT)){
 				/* Each pilot increases the maneuverability of the ship. */
 				maxResourcesTaken--;
 			}
@@ -127,7 +132,7 @@ public class GameEvent {
 		int maxPotentialDamage = 8;
 		int damageDealt;
 		for(CrewMember cm : ship.listCrewMembers()){
-			if(cm.specialization.equals(Specialization.PILOT)){
+			if(cm.specialization.equals(PILOT)){
 				maxPotentialDamage--;
 			}
 		}
@@ -280,6 +285,74 @@ public class GameEvent {
 		return "You gave them " + giveUnits + " " + giveResource + " and received " + receiveUnits + " " + receiveResource + ".";
 	}
 
+	private void handleCrewMemberExchange(Ship ship) {
+		List<CrewMember> crewMembers = ship.listCrewMembers();
+		List<CrewMember> engineers = new ArrayList<>();
+		List<CrewMember> pilots = new ArrayList<>();
+		List<CrewMember> scientists = new ArrayList<>();
+		for (CrewMember crewMember: crewMembers) {
+			switch (crewMember.specialization) {
+				case ENGINEER: engineers.add(crewMember); break;
+				case PILOT: pilots.add(crewMember); break;
+				case SCIENTIST: scientists.add(crewMember); break;
+			}
+		}
+		String tradeAwayName = "";
+		String tradeAwaySpecialization = "";
+		String tradeToSpecialization = "";
+		String tradeToName = Galaxy.generateCrewName();
+		if (engineers.size() > 1) {
+			if (pilots.size() == 0) {
+				tradeAwayName = engineers.get(1).name;
+				tradeAwaySpecialization = "engineer";
+				tradeToSpecialization = "pilot";
+				ship.addCrewMember(new CrewMember(tradeToName, engineers.get(1).species, PILOT, 0));
+				ship.removeCrewMember(engineers.get(1));
+			} else if (scientists.size() == 0) {
+				tradeAwayName = engineers.get(1).name;
+				tradeAwaySpecialization = "engineer";
+				tradeToSpecialization = "scientist";
+				ship.addCrewMember(new CrewMember(tradeToName, engineers.get(1).species, SCIENTIST, 0));
+				ship.removeCrewMember(engineers.get(1));
+			}
+		} else if (pilots.size() > 1) {
+			if (engineers.size() == 0) {
+				tradeAwayName = pilots.get(1).name;
+				tradeAwaySpecialization = "pilot";
+				tradeToSpecialization = "engineer";
+				ship.addCrewMember(new CrewMember(tradeToName, pilots.get(1).species, ENGINEER, 0));
+				ship.removeCrewMember(pilots.get(1));
+			} else if (scientists.size() == 0) {
+				tradeAwayName = pilots.get(1).name;
+				tradeAwaySpecialization = "pilot";
+				tradeToSpecialization = "scientist";
+				ship.addCrewMember(new CrewMember(tradeToName, pilots.get(1).species, SCIENTIST, 0));
+				ship.removeCrewMember(pilots.get(1));
+			}
+		} else if (scientists.size() > 1) {
+			if (engineers.size() == 0) {
+				tradeAwayName = scientists.get(1).name;
+				tradeAwaySpecialization = "scientist";
+				tradeToSpecialization = "engineer";
+				ship.addCrewMember(new CrewMember(tradeToName, scientists.get(1).species, ENGINEER, 0));
+				ship.removeCrewMember(scientists.get(1));
+			} else if (pilots.size() == 0) {
+				tradeAwayName = scientists.get(1).name;
+				tradeAwaySpecialization = "scientist";
+				tradeToSpecialization = "pilot";
+				ship.addCrewMember(new CrewMember(tradeToName, scientists.get(1).species, PILOT, 0));
+				ship.removeCrewMember(scientists.get(1));
+			}
+		}
+		if (tradeAwayName != "" && tradeToName != "" && tradeToSpecialization != "" && tradeAwaySpecialization != "") {
+			this.eventText = "A passing ship noticed you had no " + tradeToSpecialization
+				+ ", so they offered a crew member exchange and gave you '" + tradeToName
+				+ "' in exchange for your extra " + tradeAwaySpecialization + " named '" + tradeAwayName + ".'";
+		} else {
+			this.eventText = "You tried to initiate a crew member exchange, but it didn't work out.";
+		}
+	}
+
 	public String getEventText() {
 		return this.eventText;
 	}
@@ -361,6 +434,10 @@ public class GameEvent {
 
 			else if (eventKey == 4) {
 				this.eventText = "You encountered another ship and traded with them. " + handleTradeEvent(ship);
+			}
+
+			else if (eventKey == 5) {
+				handleCrewMemberExchange(ship);
 			}
 
 			else {
