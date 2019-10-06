@@ -159,6 +159,7 @@ public class ShipScreen implements Screen {
 
 		centerCog.setRotation(centerCog.getRotation() + 10.0f * delta);
 
+		camera.update();
 		SpriteBatch spriteBatch = game.getSpriteBatch();
 		spriteBatch.setProjectionMatrix(camera.combined);
 		spriteBatch.begin();

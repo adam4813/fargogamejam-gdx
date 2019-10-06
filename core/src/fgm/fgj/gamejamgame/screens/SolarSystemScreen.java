@@ -118,7 +118,7 @@ public class SolarSystemScreen implements Screen {
 		SolarSystem currentSolarSystem = game.getCurrentStar().solarSystem;
 
 		{
-			currentStar = StarField.buildAnimatedStar(starTextures.get(currentSolarSystem.starType), -.1f * currentSolarSystem.starSize, .5f, STAR_SIZE * currentSolarSystem.starSize);
+			currentStar = StarField.buildAnimatedStar(starTextures.get(currentSolarSystem.starType), -.078f * currentSolarSystem.starSize, .5f, STAR_SIZE * currentSolarSystem.starSize);
 			Actor actor = new Actor();
 			starActors.add(actor);
 			float scale = currentStar.getScale();
@@ -170,6 +170,7 @@ public class SolarSystemScreen implements Screen {
 	public void render(float delta) {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+		camera.update();
 		ShapeRenderer shapeRenderer = game.getShapeRender();
 		shapeRenderer.setProjectionMatrix(camera.combined);
 		SpriteBatch spriteBatch = game.getSpriteBatch();
