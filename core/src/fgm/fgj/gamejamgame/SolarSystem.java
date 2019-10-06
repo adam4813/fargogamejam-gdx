@@ -49,12 +49,14 @@ public class SolarSystem {
 			this.fuelCosts = new ArrayList<>();
 		}else{
 			this.linkedSolarSystems = linkedSolarSystems;
+			if(linkedSolarSystems.size() == fuelCosts.size()){
+				/* Must have a matching amount of fuel costs to the systems connected. */
+				this.fuelCosts = fuelCosts;
+			}else{
+				throw new IllegalArgumentException("Linked solar system and fuel cost sizes do not match!");
+			}
 		}
-		if(linkedSolarSystems.size() == fuelCosts.size()){
-			/* Must have a matching amount of fuel costs to the systems connected. */
-		}else{
-			throw new IllegalArgumentException("Linked solar system and fuel cost sizes do not match!");
-		}
+
 		if(planets == null){
 			/* Cannot have a null list of planets the system has. Assume they meant to have none in the list. */
 			this.planets = new ArrayList<>();

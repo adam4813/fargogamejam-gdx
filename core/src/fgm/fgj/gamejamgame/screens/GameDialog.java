@@ -46,6 +46,11 @@ public class GameDialog {
 				return super.remove();
 			}
 
+			@Override
+			public void hide() {
+				super.hide();
+				bodyTable.clearChildren();
+			}
 		};
 		Stack stack = new Stack();
 

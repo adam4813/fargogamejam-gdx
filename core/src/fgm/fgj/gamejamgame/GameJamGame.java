@@ -111,22 +111,22 @@ public class GameJamGame extends Game {
 		loadTexture("data/stars/bg-star-yellow.png");
 	}
 
-	private final Galaxy galaxy = new Galaxy(1);
+	private final Galaxy galaxy = new Galaxy(130, null, new Ship(), null);
 
 	public ArrayList<StarMapStar> getNearbyStars() {
 		ArrayList<StarMapStar> stars = new ArrayList<>();
 		Random random = new Random();
 		int starCount = random.nextInt(10);
-		Gdx.app.log("GJG", String.valueOf(starCount));
-		/*for (int i = 0; i < starCount; i++) {
-			stars.add(new StarMapStar(new SolarSystem(StarType.getRandomStarType(), random.nextFloat() * 2.5f ), random.nextFloat(), random.nextFloat()));
-		}*/
+		Gdx.app.log("GJG", String.valueOf( galaxy.getShipLocation().linkedSolarSystems.size()));
+		for (SolarSystem solarSystem : galaxy.getShipLocation().linkedSolarSystems) {
+			stars.add(new StarMapStar(solarSystem, random.nextFloat(), random.nextFloat()));
+		}
 		return stars;
 	}
 
 	public StarMapStar getCurrentStar() {
 		SolarSystem solarSystem = galaxy.getShipLocation();
-		StarMapStar star = new StarMapStar(solarSystem, 0f,0f);
+		StarMapStar star = new StarMapStar(solarSystem, 0f, 0f);
 		return star;
 	}
 }

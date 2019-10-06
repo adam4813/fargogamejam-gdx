@@ -98,7 +98,6 @@ public class StarMapScreen implements Screen {
 				public void clicked(InputEvent event, float x, float y) {
 					super.clicked(event, x, y);
 					Table body = new Table();
-					//body.setFillParent(true);
 					body.align(Align.center);
 					body.add(new Label("Line 1", skin)).padTop(20.0f).padBottom(10.0f).row();
 					body.add(new Label("Line 2", skin)).padTop(20.0f).padBottom(10.0f).row();

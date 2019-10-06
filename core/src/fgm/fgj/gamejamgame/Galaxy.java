@@ -107,7 +107,7 @@ public class Galaxy {
 		}
 		/* Link the solar systems. */
 		for(SolarSystem ss : created){
-			int links = (int)Math.random() * 6;
+			int links = (int)(Math.random() * 6);
 			for(int i = 0; i < links; i++){
 				int linkIndex = (int)Math.random() * created.size();
 				int fuelCost = (int)(Math.random() * 4) + 1;
