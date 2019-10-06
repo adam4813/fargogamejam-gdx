@@ -1,5 +1,7 @@
 package fgm.fgj.gamejamgame;
 
+import javax.swing.Icon;
+
 public class Species {
 	final int mass;
 	final String name;
@@ -9,14 +11,20 @@ public class Species {
 	final int gravityTolerance;
 	final int hitPoints;
 	final int damage;
+	final IconType icon;
 
-	public Species(String name, int gravityTolerance, AtmosphericComposition tolerance, int atmosphericPressureTolerance, int temperatureTolerance, int mass, int hitPoints, int damage) {
+	public Species(String name, IconType icon, int gravityTolerance, AtmosphericComposition tolerance, int atmosphericPressureTolerance, int temperatureTolerance, int mass, int hitPoints, int damage) {
 		if(name == null){
 			throw new IllegalArgumentException("Species cannot be null named.");
 		}else if(name == ""){
 			throw new IllegalArgumentException("Species cannot be unnamed.");
 		}else{
 			this.name = name;
+		}
+		if(icon == null){
+			throw new IllegalArgumentException("Species cannot have a null icon.");
+		}else{
+			this.icon = icon;
 		}
 		this.gravityTolerance = this.withinRangeOrDefault(gravityTolerance, 0, 5, 2);
 		if(tolerance == null){
@@ -48,5 +56,9 @@ public class Species {
 
 	public String getName() {
 		return name;
+	}
+
+	public IconType getIcon(){
+		return icon;
 	}
 }

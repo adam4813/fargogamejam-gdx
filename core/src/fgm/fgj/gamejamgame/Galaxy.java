@@ -220,7 +220,7 @@ public class Galaxy {
 		int mass = (int)(Math.random() * 6);
 		int hitPoints = (int)(Math.random() * 9) + 2;
 		int damage = (int)(Math.random() * 6);
-		return new Species(name, gravityTolerance, atmosphericCompositionTolerance, atmosphericPressureTolerance, temperatureTolerance, mass, hitPoints, damage);
+		return new Species(name, IconType.getRandomSpecies(), gravityTolerance, atmosphericCompositionTolerance, atmosphericPressureTolerance, temperatureTolerance, mass, hitPoints, damage);
 	}
 
 	/**
