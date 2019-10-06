@@ -286,7 +286,7 @@ public class Galaxy {
 		return new Planet(name, airType, speciesPresent, gravity, atmospherePressure, temperature, fuel, metals, water);
 	}
 
-	public static GameEvent generateGameEvent(SolarSystem solarSystem, Planet planet, Ship ship) {
-		return new GameEvent(solarSystem, planet, ship);
+	public static GameEvent generateGameEvent(SolarSystem solarSystem, int fuelCost, Planet planet, Ship ship) {
+		return new GameEvent(solarSystem, fuelCost, planet, ship);
 	}
 }
