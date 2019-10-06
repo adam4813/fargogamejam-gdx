@@ -6,12 +6,16 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -20,6 +24,9 @@ import com.ray3k.rustyrobot.GearTextButton;
 import java.util.Random;
 
 import fgm.fgj.gamejamgame.GameJamGame;
+import fgm.fgj.gamejamgame.IconType;
+import fgm.fgj.gamejamgame.Icons;
+import fgm.fgj.gamejamgame.ScreenNames;
 import fgm.fgj.gamejamgame.Ship;
 import fgm.fgj.gamejamgame.screens.shipPanels.CargoPanel;
 import fgm.fgj.gamejamgame.screens.shipPanels.CrewPanel;
@@ -122,12 +129,26 @@ public class ShipScreen implements Screen {
 		shipTable.add(cargoPanel.getRoot()).fill().expand().uniform();
 
 		stage.addActor(shipTable);
+		starMapButton.setSize(64, 64);
+		starMapButton.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				super.clicked(event, x, y);
+				Gdx.app.log("STAR_MAP", "Going to current to ship info");
+				game.showScreen(ScreenNames.StarMap);
+			}
+		});
+		stage.addActor(starMapButton);
 	}
+
+	Image starMapButton = new Image();
 
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(stage);
 		crewPanel.displayCrew(ship.listCrewMembers());
+		TextureRegion textureRegion = Icons.getIcon(IconType.STARMAP_BUTTON);
+		starMapButton.setDrawable(new TextureRegionDrawable(textureRegion));
 	}
 
 	@Override

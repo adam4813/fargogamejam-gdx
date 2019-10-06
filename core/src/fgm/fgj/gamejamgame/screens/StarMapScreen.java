@@ -6,14 +6,17 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
@@ -24,6 +27,8 @@ import java.util.Random;
 
 import fgm.fgj.gamejamgame.AnimatedSprite;
 import fgm.fgj.gamejamgame.GameJamGame;
+import fgm.fgj.gamejamgame.IconType;
+import fgm.fgj.gamejamgame.Icons;
 import fgm.fgj.gamejamgame.ScreenNames;
 import fgm.fgj.gamejamgame.SolarSystem;
 import fgm.fgj.gamejamgame.StarField;
@@ -51,6 +56,7 @@ public class StarMapScreen implements Screen {
 		root = new Table();
 		root.setFillParent(true);
 		stage.addActor(root);
+		stage.setDebugAll(true);
 
 		// Camera Setup
 		float w = Gdx.graphics.getWidth();
@@ -87,14 +93,29 @@ public class StarMapScreen implements Screen {
 			}
 		});
 		worldInfo = new GameDialog(game, "Solar System Info", visitButton, cancelButton);
+
+		shipInfoButton.setSize(64, 64);
+		shipInfoButton.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				super.clicked(event, x, y);
+				Gdx.app.log("STAR_MAP", "Going to current to ship info");
+				game.showScreen(ScreenNames.Ship);
+			}
+		});
+		stage.addActor(shipInfoButton);
 	}
 
-	SolarSystem targetSolarSystem;
+	private SolarSystem targetSolarSystem;
+	private Image shipInfoButton = new Image();;
 
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(stage);
 		populateStarField();
+
+		TextureRegion textureRegion = Icons.getIcon(IconType.SHIP_INFO_BUTTON);
+		shipInfoButton.setDrawable(new TextureRegionDrawable(textureRegion));
 	}
 
 	private void populateStarField() {
@@ -171,7 +192,7 @@ public class StarMapScreen implements Screen {
 
 	@Override
 	public void resize(int width, int height) {
-		stage.getViewport().setScreenSize(width, height);
+		stage.getViewport().update(width, height, true);
 		viewport.update(width, height);
 	}
 
