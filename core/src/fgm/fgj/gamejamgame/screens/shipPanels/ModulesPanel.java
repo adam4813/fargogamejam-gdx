@@ -49,7 +49,7 @@ public class ModulesPanel {
 	public void displayModules(GameJamGame game, Ship ship) {
 		engineModuleTable.clearChildren();
 		Engine engine = ship.getEngine();
-		int engineLevel = engine.getEfficiency() + 1;
+		int engineLevel = engine.getModuleLevel() + 1;
 		Animation engineAnimation = AnimatedSprite.buildAnimation(game.getAsset("data/modules/moduleEngine0" + engineLevel + ".png"), 64, 64, 8, .1f);
 		engineModuleTable.add(new AnimatedImage(engineAnimation)).uniform().expand();
 		engineModuleTable.add(new Label(new StringBuilder().append("Engine: ").append(engineLevel).toString(), skin)).uniform().expand();

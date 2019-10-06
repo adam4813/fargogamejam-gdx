@@ -1,10 +1,8 @@
 package fgm.fgj.gamejamgame;
 
 import java.util.List;
-import java.util.Random;
 
 public class Ship {
-	private int hullDamage;
 	private List<CrewMember> crewMembers;
 	private Engine engine;
 	private Weapon weapon;

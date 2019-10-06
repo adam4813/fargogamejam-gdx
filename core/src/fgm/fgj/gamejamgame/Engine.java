@@ -32,7 +32,10 @@ public class Engine implements PartModules{
 		}
 	}
 
-	public int getEfficiency() {
-		return efficiency;
+	public int getModuleLevel() {
+		int level = 0;
+		level += efficiency / 2;
+		level += speed / 2;
+		return Math.max(level, 4);
 	}
 }

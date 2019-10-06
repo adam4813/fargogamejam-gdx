@@ -181,4 +181,24 @@ public class CargoBay {
 	public List<PartModules> listParts() {
 		return this.parts;
 	}
+
+	public int getModuleLevel() {
+		int level = 0;
+		if(this.maxAmmo > 60){
+			level++;
+		}
+		if(this.maxFood > 60){
+			level++;
+		}
+		if(this.maxGas > 60){
+			level++;
+		}
+		if(this.maxMetal > 60){
+			level++;
+		}
+		if(this.maxWater > 60){
+			level++;
+		}
+		return Math.max(level, 4);
+	}
 }

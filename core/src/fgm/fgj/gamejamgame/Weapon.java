@@ -26,4 +26,13 @@ public class Weapon implements PartModules{
 			return def;
 		}
 	}
+
+	public int getModuleLevel() {
+		int level = 0;
+		level += damage - 1;
+		if(this.type.equals(WeaponType.PLASMA)){
+			level++;
+		}
+		return Math.max(level, 4);
+	}
 }
