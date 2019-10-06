@@ -46,9 +46,9 @@ public class GameEvent {
 			this.eventType = "radiation";
 		}else if(planet != null && planet.getMostViolentSpecies() != null && randomValue < planet.getMostViolentSpecies().damage + solarSystem.solarRadiation + solarSystem.pirateThreat + solarSystem.debrisRating) {
 			this.eventType = "ambush";
-		}else if (randomValue < 40) {
+		}else if (randomValue < 70) {
 			this.eventType = "resource";
-		}else if (randomValue < 60) {
+		}else if (randomValue < 95) {
 			this.eventType = "other";
 		}else {
 			this.eventType = "none";
@@ -91,24 +91,29 @@ public class GameEvent {
 
 	private void handlePirateEvent(Ship ship) {
 		Random rand = new Random();
-		int outrunFactor = rand.nextInt(5);
-		int maneuverBonus = 0;
+		int maxResourcesTaken = 7 - ship.getEngineSpeed();
 		for(CrewMember cm : ship.listCrewMembers()){
 			if(cm.specialization.equals(Specialization.PILOT)){
 				/* Each pilot increases the maneuverability of the ship. */
-				maneuverBonus++;
+				maxResourcesTaken--;
 			}
 		}
-		if (outrunFactor < (ship.getEngineSpeed() + maneuverBonus)) {
-			this.eventText = "You encountered space pirates, but were able to escape!";
-		} else {
-			this.eventText = "You encountered space pirates! They took a bunch of your stuff!";
-			ship.getCargoBay().decreaseMetal((int)(Math.random() * 6));
-			ship.getCargoBay().decreaseWater((int)(Math.random() * 6));
-			ship.getCargoBay().decreaseAmmo((int)(Math.random() * 6));
-			ship.getCargoBay().decreaseFood((int)(Math.random() * 6));
-			ship.getCargoBay().decreaseFuel((int)(Math.random() * 6));
+		if(maxResourcesTaken > ship.getDamagePerAmmo()){
+			int takenMetal = (int)(Math.random() * maxResourcesTaken);
+			int takenWater= (int)(Math.random() * maxResourcesTaken);
+			int takenAmmo = (int)(Math.random() * maxResourcesTaken);
+			int takenFood = (int)(Math.random() * maxResourcesTaken);
+			int takenFuel = (int)(Math.random() * maxResourcesTaken);
+			ship.getCargoBay().decreaseMetal(takenMetal);
+			ship.getCargoBay().decreaseWater(takenWater);
+			ship.getCargoBay().decreaseAmmo(takenAmmo);
+			ship.getCargoBay().decreaseFood(takenFood);
+			ship.getCargoBay().decreaseFuel(takenFuel);
+			this.eventText = "Space pirates overwhelmed your weapons and engines. They've taken " + takenMetal + " metals " + takenWater + " water " + takenAmmo + " ammo " + takenFood + " food " + "and " + takenFuel + " fuel";
+		}else{
+			this.eventText = "You encountered space pirates and fended them off with your weapons and out maneuvered them before they took anything!";
 		}
+
 	}
 
 	private void handleDebrisEvent(Ship ship) {
