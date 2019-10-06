@@ -209,16 +209,32 @@ public class GameEvent {
 	}
 
 	private void handleRecruitmentEvent(Planet planet, Ship ship) {
-		Random rand = new Random();
-		int recruitmentAmount = rand.nextInt(4) + 1;
-
 		List<Species> speciesPresent = planet.speciesPresent;
 		Species crewSpecies = ship.getCrewSpecies();
 		if (speciesPresent.contains(crewSpecies)) {
-			ship.addCrewMember(recruitmentAmount);
+			ship.addCrewMember(1);
 		}
 
-		this.eventText = "You recruited" + recruitmentAmount + " new crew members";
+		this.eventText = "You recruited a new crew member";
+	}
+
+	private void handleDesertionEvent(Planet planet, Ship ship) {
+		Random rand = new Random();
+
+		List<Species> speciesPresent = planet.speciesPresent;
+		Species crewSpecies = ship.getCrewSpecies();
+
+		if (speciesPresent.contains(crewSpecies)) {
+			List<CrewMember> aliveCrewMembers = ship.listCrewMembers();
+			if (aliveCrewMembers.size() > 2) {
+				int randomCrewMemberIndex = rand.nextInt(aliveCrewMembers.size());
+				CrewMember randomCrewMember = aliveCrewMembers.get(randomCrewMemberIndex);
+				String crewMemberName = randomCrewMember.name;
+				ship.removeCrewMember(randomCrewMember);
+
+				this.eventText = "Crew member '" + crewMemberName + "' deserted. ";
+			}
+		}
 	}
 
 	public String getEventText() {
@@ -242,12 +258,14 @@ public class GameEvent {
 				if (isShipDestroyed) {
 					this.eventText = "Your ship was destroyed - Game Over";
 					this.didLose = Boolean.TRUE;
-				} else {
-					this.eventText = "An earthquake damaged your ship! It caused" + damageAmount + " damage.";
 				}
 			}
 
 			else if (eventKey == 2) {
+				handleDesertionEvent(planet, ship);
+			}
+
+			else if (eventKey == 3) {
 				 handleRecruitmentEvent(planet, ship);
 			}
 		} else if (eventContext == EventContext.SOLAR_SYSTEM) {
