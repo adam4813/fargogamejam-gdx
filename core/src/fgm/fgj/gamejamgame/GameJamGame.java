@@ -40,6 +40,8 @@ public class GameJamGame extends Game {
 
 	private AssetManager assetManager;
 
+	private Icons icon = new Icons();
+
 	public <T> T getAsset(String filename) {
 		return assetManager.get(filename);
 	}
@@ -123,6 +125,7 @@ public class GameJamGame extends Game {
 		loadTexture("data/planets/planetsheetGas01.png");
 		loadTexture("data/planets/planetsheetGas02.png");
 		loadTexture("data/planets/planetsheetGas03.png");
+		loadTexture("data/icons.png");
 	}
 
 	private final Galaxy galaxy = new Galaxy(130, null,null, 1, null);

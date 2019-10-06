@@ -33,9 +33,11 @@ public class GameEvent {
 			this.eventType = "radiation";
 		}else if(planet != null && planet.getMostViolentSpecies() != null && randomValue < planet.getMostViolentSpecies().damage + solarSystem.solarRadiation + solarSystem.pirateThreat + solarSystem.debrisRating) {
 			this.eventType = "ambush";
-		}else if(randomValue < 60){
+		}else if (randomValue < 40) {
 			this.eventType = "resource";
-		}else{
+		}else if (randomValue < 60) {
+			this.eventType = "other";
+		}else {
 			this.eventType = "none";
 		}
 		handleGameEvent(this.eventType, this.eventContext, solarSystem, planet, ship);
@@ -64,6 +66,9 @@ public class GameEvent {
 				if (eventContext == EventContext.PLANET) {
 					handleAmbushEvent(planet, ship);
 				}
+				break;
+			case "other":
+				handleRandomEvent(eventContext, solarSystem, planet, ship);
 				break;
 			default:
 				this.eventText = "Your voyage was uneventful.";
@@ -217,5 +222,32 @@ public class GameEvent {
 
 	public String getEventText() {
 		return this.eventText;
+	}
+
+	private void handleRandomEvent(EventContext eventContext, SolarSystem solarSystem, Planet planet, Ship ship) {
+		Random rand = new Random();
+		int eventKey = rand.nextInt(10);
+
+		if (eventContext == EventContext.PLANET) {
+			if (eventKey == 0) {
+				this.eventText = "You found some ancient ruins.";
+			} else if (eventKey == 1) {
+				this.eventText = "An earthquake has damaged your ship.";
+			} else if (eventKey == 2) {
+				// handleRecruitmentEvent(planet, ship);
+			}
+		} else if (eventContext == EventContext.SOLAR_SYSTEM) {
+			if (eventKey == 0) {
+				this.eventText = "There is a solar storm. You must leave this system temporarily.";
+			} else if (eventKey == 1) {
+				int fuelAmount = rand.nextInt(3) + 1;
+				this.eventText = "You found an abandoned ship. You were able to salvage" + fuelAmount + " units of fuel from it.";
+				ship.addCargo("fuel", fuelAmount);
+			} else {
+				this.eventText = "";
+			}
+		} else {
+			// Galaxy level events
+		}
 	}
 }

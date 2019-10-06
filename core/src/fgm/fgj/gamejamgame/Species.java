@@ -45,4 +45,8 @@ public class Species {
 			return def;
 		}
 	}
+
+	public String getName() {
+		return name;
+	}
 }
