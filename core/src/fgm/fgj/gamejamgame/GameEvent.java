@@ -10,6 +10,14 @@ public class GameEvent {
 	boolean didLose;
 	final boolean didWin;
 
+	public boolean didWin(){
+		return this.didWin;
+	}
+
+	public boolean isDidLose(){
+		return this.didLose;
+	}
+
 	public GameEvent(SolarSystem solarSystem, Planet planet, Ship ship) {
 		if(solarSystem == null && planet == null){
 			this.eventContext = EventContext.GALAXY;
