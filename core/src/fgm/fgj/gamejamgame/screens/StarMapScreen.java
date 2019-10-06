@@ -33,7 +33,6 @@ import fgm.fgj.gamejamgame.GameJamGame;
 import fgm.fgj.gamejamgame.IconType;
 import fgm.fgj.gamejamgame.Icons;
 import fgm.fgj.gamejamgame.ScreenNames;
-import fgm.fgj.gamejamgame.SolarSystem;
 import fgm.fgj.gamejamgame.StarField;
 import fgm.fgj.gamejamgame.StarMapStar;
 
@@ -56,6 +55,8 @@ public class StarMapScreen implements Screen {
 	private Table root;
 	private Random random = new Random();
 	private ExtendViewport viewport;
+
+	private boolean firstTime = true;
 
 	public StarMapScreen(GameJamGame game) {
 		this.game = game;
@@ -96,17 +97,7 @@ public class StarMapScreen implements Screen {
 				Gdx.app.log("STAR_MAP", "Going to a star");
 				worldInfo.hide();
 				game.setCurrentSolarSystem(targetStarMapStar.solarSystem);
-				populateStarField();
-
-				Gdx.app.log("STAR_MAP", "Doing and event after arriving!!");
-				gameEvent = Galaxy.generateGameEvent(game.getCurrentStar().solarSystem, targetStarMapStar.fuelCost, null, game.getShip());
-				Table eventBody = new Table();
-				eventBody.align(Align.center);
-				eventBody.setFillParent(true);
-				Label eventTextLabel = new Label(gameEvent.getEventText(), game.getSkin());
-				eventTextLabel.setWrap(true);
-				eventBody.add(eventTextLabel).grow().padLeft(128);
-				eventDialog.show(stage, gameEvent.isPositive() ? "Success" : "Uh-oh" ,eventBody );
+				game.showScreen(ScreenNames.Transition);
 			}
 		});
 		worldInfo = new GameDialog(game, "Solar System Info", visitButton, cancelButton);
@@ -137,7 +128,8 @@ public class StarMapScreen implements Screen {
 	}
 
 	private StarMapStar targetStarMapStar;
-	private Image shipInfoButton = new Image();;
+	private Image shipInfoButton = new Image();
+	;
 	private GameEvent gameEvent;
 
 	@Override
@@ -147,7 +139,21 @@ public class StarMapScreen implements Screen {
 
 		TextureRegion textureRegion = Icons.getIcon(IconType.SHIP_INFO_BUTTON);
 		shipInfoButton.setDrawable(new TextureRegionDrawable(textureRegion));
+
+		if (!firstTime) {
+			Gdx.app.log("STAR_MAP", "Doing and event after arriving!!");
+			gameEvent = Galaxy.generateGameEvent(game.getCurrentStar().solarSystem, targetStarMapStar.fuelCost, null, game.getShip());
+			Table eventBody = new Table();
+			eventBody.align(Align.center);
+			eventBody.setFillParent(true);
+			Label eventTextLabel = new Label(gameEvent.getEventText(), game.getSkin());
+			eventTextLabel.setWrap(true);
+			eventBody.add(eventTextLabel).grow().padLeft(128);
+			eventDialog.show(stage, gameEvent.isPositive() ? "Success" : "Uh-oh", eventBody);
+		}
+		firstTime = false;
 	}
+
 	ArrayList<StarMapStar> nearbyStars;
 
 	private void populateStarField() {
@@ -218,7 +224,7 @@ public class StarMapScreen implements Screen {
 		ShapeRenderer shapeRenderer = game.getShapeRender();
 		shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
 		for (StarMapStar star : nearbyStars) {
-			shapeRenderer.line(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, star.x * SCREEN_WIDTH, star.y *  SCREEN_HEIGHT);
+			shapeRenderer.line(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, star.x * SCREEN_WIDTH, star.y * SCREEN_HEIGHT);
 		}
 		shapeRenderer.end();
 		spriteBatch.begin();

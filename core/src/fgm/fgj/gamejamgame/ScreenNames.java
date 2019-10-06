@@ -8,5 +8,7 @@ public enum ScreenNames {
 	Ship,
 	Lose,
 	Win,
-	SolarSystem, Intro;
+	SolarSystem,
+	Transition,
+	Intro;
 }
