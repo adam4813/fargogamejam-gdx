@@ -14,7 +14,7 @@ public class GameEvent {
 		return this.didWin;
 	}
 
-	public boolean isDidLose(){
+	public boolean didLose(){
 		return this.didLose;
 	}
 
