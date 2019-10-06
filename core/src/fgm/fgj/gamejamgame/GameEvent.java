@@ -149,27 +149,39 @@ public class GameEvent {
 	}
 
 	private void handleResourceCollection(Planet planet, Ship ship) {
-		Random rand = new Random();
-		int metalHarvestAmount = rand.nextInt(3);
-		int waterHarvestAmount = rand.nextInt(3);
-		int fuelHarvestAmount = rand.nextInt(3);
-
-		if (planet.metals > metalHarvestAmount) {
-			planet.metals = planet.metals - metalHarvestAmount;
-			ship.addCargo("metals", metalHarvestAmount);
+		int potentialResources = 5;
+		for(CrewMember cm : ship.listCrewMembers()){
+			if(cm.specialization.equals(Specialization.SCIENTIST)){
+				potentialResources++;
+			}
 		}
-
-		if (planet.water > waterHarvestAmount) {
-			planet.water = planet.water - waterHarvestAmount;
-			ship.addCargo("water", waterHarvestAmount);
+		int metalHarvestAmount = (int)(Math.random() * potentialResources);
+		int waterHarvestAmount = (int)(Math.random() * potentialResources);
+		int fuelHarvestAmount = (int)(Math.random() * potentialResources);
+		planet.metals -= metalHarvestAmount;
+		if(planet.metals < 0){
+			/* They've collected the last of the metals. */
+			metalHarvestAmount -= planet.metals;
+			planet.metals = 0;
 		}
+		ship.addCargo("metals", metalHarvestAmount);
 
-		if (planet.fuel > fuelHarvestAmount) {
-			planet.fuel = planet.fuel - fuelHarvestAmount;
-			ship.addCargo("fuel", fuelHarvestAmount);
+		planet.water -= waterHarvestAmount;
+		if(planet.water < 0){
+			/* They've collected the last of the water. */
+			waterHarvestAmount -= planet.water;
+			planet.water = 0;
 		}
+		ship.addCargo("water", waterHarvestAmount);
 
-		this.eventText = "You harvested " + metalHarvestAmount + " metals, " + waterHarvestAmount + " water, and " + fuelHarvestAmount + " fuel from the planet.";
+		planet.fuel -= fuelHarvestAmount;
+		if(planet.fuel < 0){
+			/* They've collected the last of the fuel. */
+			fuelHarvestAmount -= planet.fuel;
+			planet.fuel = 0;
+		}
+		ship.addCargo("fuel", waterHarvestAmount);
+		this.eventText = "You collected " + metalHarvestAmount + " metals, " + waterHarvestAmount + " water, and " + fuelHarvestAmount + " fuel from the planet.";
 	}
 
 	private void handleAmbushEvent(Planet planet, Ship ship) {
