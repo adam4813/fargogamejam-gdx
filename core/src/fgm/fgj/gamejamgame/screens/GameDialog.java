@@ -40,7 +40,6 @@ public class GameDialog {
 
 			@Override
 			public boolean remove() {
-				dialogCog = null;
 				gearTextButtons.clear();
 
 				return super.remove();
@@ -84,10 +83,10 @@ public class GameDialog {
 		table.row();
 
 		bodyTable = new Table();
-		table.add(bodyTable).colspan(2).row();
+		table.add(bodyTable).padTop(8).colspan(buttons.length).growX().row();
 		for (GearTextButton button : buttons) {
 			gearTextButtons.add(button);
-			table.add(button).top().expandY();
+			table.add(button).center().top().expandY();
 		}
 		stack.add(table);
 		dialog.add(stack);
@@ -102,5 +101,6 @@ public class GameDialog {
 
 	public void hide() {
 		dialog.hide();
+		dialog.remove();
 	}
 }

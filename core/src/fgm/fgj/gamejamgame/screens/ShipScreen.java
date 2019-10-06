@@ -28,7 +28,7 @@ import fgm.fgj.gamejamgame.IconType;
 import fgm.fgj.gamejamgame.Icons;
 import fgm.fgj.gamejamgame.ScreenNames;
 import fgm.fgj.gamejamgame.Ship;
-import fgm.fgj.gamejamgame.screens.shipPanels.CargoPanel;
+import fgm.fgj.gamejamgame.screens.shipPanels.ResourcePanel;
 import fgm.fgj.gamejamgame.screens.shipPanels.CrewPanel;
 import fgm.fgj.gamejamgame.screens.shipPanels.ModulesPanel;
 import fgm.fgj.gamejamgame.screens.shipPanels.SolarSystemPanel;
@@ -48,7 +48,7 @@ public class ShipScreen implements Screen {
 	Table shipTable = new Table();
 
 	private final CrewPanel crewPanel;
-	private final CargoPanel cargoPanel;
+	private final ResourcePanel resourcePanel;
 	private final ModulesPanel modulesPanel;
 	private final SolarSystemPanel solarSystemPanel;
 
@@ -125,8 +125,8 @@ public class ShipScreen implements Screen {
 		shipTable.add(new Image(skin.getDrawable("splitpane-horizontal")))
 			.expandY().fillY().bottom();
 
-		cargoPanel = new CargoPanel(skin);
-		shipTable.add(cargoPanel.getRoot()).fill().expand().uniform();
+		resourcePanel = new ResourcePanel(skin);
+		shipTable.add(resourcePanel.getRoot()).fill().expand().uniform();
 
 		stage.addActor(shipTable);
 		starMapButton.setSize(64, 64);
@@ -148,6 +148,7 @@ public class ShipScreen implements Screen {
 		Gdx.input.setInputProcessor(stage);
 		crewPanel.displayCrew(ship.listCrewMembers());
 		modulesPanel.displayModules(game, ship);
+		resourcePanel.displayResources(ship.getCargoBay());
 		TextureRegion textureRegion = Icons.getIcon(IconType.STARMAP_BUTTON);
 		starMapButton.setDrawable(new TextureRegionDrawable(textureRegion));
 	}

@@ -186,4 +186,8 @@ public class GameJamGame extends Game {
 	public Ship getShip() {
 		return galaxy.getShip();
 	}
+
+	public Galaxy getGalaxy() {
+		return galaxy;
+	}
 }

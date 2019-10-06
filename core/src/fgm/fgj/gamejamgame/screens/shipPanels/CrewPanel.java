@@ -42,7 +42,7 @@ public class CrewPanel {
 
 	public void displayCrew(List<CrewMember> crew) {
 		crewTable.clearChildren();
-
+		
 		crewTable.add(new Container()).uniform().expandX().padBottom(4);
 		crewTable.add(new Label("Name", skin)).uniform().expandX().padBottom(4);
 		crewTable.add(new Label("Species", skin)).uniform().expandX().padBottom(4);
@@ -51,6 +51,5 @@ public class CrewPanel {
 		for (CrewMember crewMember : crew) {
 			addRow(crewMember);
 		}
-		//crewTable.add(new Container()).growY();
 	}
 }
