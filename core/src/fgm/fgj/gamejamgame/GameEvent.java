@@ -8,37 +8,36 @@ public class GameEvent {
 	String eventText;
 	final String eventType;
 	boolean didLose;
-	final boolean didWin;
 	boolean isPositive;
-
-	public boolean didWin(){
-		return this.didWin;
-	}
 
 	public boolean didLose(){
 		return this.didLose;
 	}
 
 	public boolean isPositive(){
-		return this.isPositive && this.didWin && !this.didLose;
+		return this.isPositive && !this.didLose;
 	}
 
-	public GameEvent(SolarSystem solarSystem, Planet planet, Ship ship) {
-		if(solarSystem == null && planet == null){
-			this.eventContext = EventContext.GALAXY;
-		}else if(planet == null){
-			this.eventContext = EventContext.SOLAR_SYSTEM;
-		}else{
-			this.eventContext = EventContext.PLANET;
-		}
+	public GameEvent(SolarSystem solarSystem, int fuelCost, Planet planet, Ship ship) {
 		if (ship == null) {
 			throw new IllegalArgumentException("A game event cannot occur with a null ship.");
 		}
-		this.didWin = planet.isHabitablePlanet(ship);
+		if(solarSystem == null && planet == null){
+			this.eventContext = EventContext.GALAXY;
+			ship.getCargoBay().decreaseFuel(1);
+		}else if(planet == null){
+			this.eventContext = EventContext.SOLAR_SYSTEM;
+			if(fuelCost > 1){
+				ship.getCargoBay().decreaseFuel(fuelCost);
+			}else{
+				throw new IllegalArgumentException("Fuel costs to visit another solar system cannot be less than 1.");
+			}
+		}else{
+			this.eventContext = EventContext.PLANET;
+			ship.getCargoBay().decreaseFuel(1);
+		}
 		int randomValue = (int)(Math.random() * 100);
-		if (this.didWin) {
-			this.eventType = "habitablePlanet";
-		}else if(planet.hasArtifact()){
+		if(planet.hasArtifact()){
 			this.eventType = "artifact";
 		}else if(randomValue < solarSystem.pirateThreat) {
 			this.eventType = "pirate";
@@ -121,7 +120,6 @@ public class GameEvent {
 		}else{
 			this.eventText = "You encountered space pirates and fended them off with your weapons and out maneuvered them before they took anything!";
 		}
-
 	}
 
 	private void handleDebrisEvent(Ship ship) {
