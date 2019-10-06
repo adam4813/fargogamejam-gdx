@@ -8,9 +8,9 @@ import java.util.Random;
 public class Galaxy {
 	/** Represents the node that the ship is at, also serving as a root node for the solar systems. */
 	private SolarSystem shipLocation;
-	private Ship player;
-	public List<Species> bestiary;
-	private static List<String> nameParts;
+	private final Ship player;
+	public final List<Species> bestiary;
+	private static final List<String> nameParts;
 	static{
 		nameParts = new ArrayList<>();
 		nameParts.add("GA");

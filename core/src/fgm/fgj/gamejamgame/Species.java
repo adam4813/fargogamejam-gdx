@@ -1,5 +1,4 @@
 package fgm.fgj.gamejamgame;
-import java.util.Random;
 
 public class Species {
 	final int mass;

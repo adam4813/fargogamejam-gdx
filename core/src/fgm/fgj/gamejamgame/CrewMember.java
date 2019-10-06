@@ -2,8 +2,8 @@ package fgm.fgj.gamejamgame;
 
 public class CrewMember {
 	final String name;
-	Species species;
-	Specialization specialization;
+	final Species species;
+	final Specialization specialization;
 	int damageTaken;
 
 	public CrewMember (String name, Species species, Specialization specialization, int damageTaken) {

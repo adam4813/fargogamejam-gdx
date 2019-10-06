@@ -3,13 +3,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Planet {
-	public PlanetType planetType;
-	String name;
-	AtmosphericComposition airType;
-	List<Species> speciesPresent;
-	int gravity;
-	int atmosphericPressure;
-	int temperature;
+	public final PlanetType planetType;
+	final String name;
+	final AtmosphericComposition airType;
+	final List<Species> speciesPresent;
+	final int gravity;
+	final int atmosphericPressure;
+	final int temperature;
 	int fuel;
 	int metals;
 	int water;

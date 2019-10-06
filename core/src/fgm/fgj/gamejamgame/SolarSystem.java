@@ -3,15 +3,15 @@ import java.util.ArrayList;
 import java.util.List;
 /** Serves as a hub for encounters */
 public class SolarSystem {
-	String name;
-	List<Planet> planets;
+	final String name;
+	final List<Planet> planets;
 	int pirateThreat;
-	int solarRadiation;
-	int debrisRating;
-	List<SolarSystem> linkedSolarSystems;
-	List<Integer> fuelCosts;
-	public StarType starType;
-	public float starSize;
+	final int solarRadiation;
+	final int debrisRating;
+	final List<SolarSystem> linkedSolarSystems;
+	final List<Integer> fuelCosts;
+	public final StarType starType;
+	public final float starSize;
 
 	/**
 	 * Instantiates a solar system based on the provided parameters.
@@ -26,9 +26,9 @@ public class SolarSystem {
 	 */
 	public SolarSystem(String name, StarType starType, float starSize, List<SolarSystem> linkedSolarSystems, List<Integer> fuelCosts, List<Planet> planets, int pirateThreat, int solarRadiation, int debrisRating) {
 		if(name == null){
-			if(name.equals("")){
-				throw new IllegalArgumentException("Solar systems must have a given name.");
-			}
+			throw new IllegalArgumentException("Solar systems cannot have a null name.");
+		}else if(name.equals("")){
+			throw new IllegalArgumentException("Solar systems must have a given name.");
 		}else{
 			this.name = name;
 		}
