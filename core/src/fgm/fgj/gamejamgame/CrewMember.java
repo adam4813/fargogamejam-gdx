@@ -40,4 +40,16 @@ public class CrewMember {
 		}
 		return this.damageTaken >= this.species.hitPoints;
 	}
+
+	public String getName() {
+		return name;
+	}
+
+	public Species getSpecies() {
+		return species;
+	}
+
+	public int getHP() {
+		return species.hitPoints - damageTaken;
+	}
 }

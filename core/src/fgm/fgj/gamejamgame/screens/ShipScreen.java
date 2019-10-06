@@ -8,13 +8,12 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.FillViewport;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.ray3k.rustyrobot.GearTextButton;
 
@@ -22,9 +21,10 @@ import java.util.Random;
 
 import fgm.fgj.gamejamgame.GameJamGame;
 import fgm.fgj.gamejamgame.Ship;
-import fgm.fgj.gamejamgame.SolarSystem;
-
-import static fgm.fgj.gamejamgame.GameJamGame.SCREEN_HEIGHT;
+import fgm.fgj.gamejamgame.screens.shipPanels.CargoPanel;
+import fgm.fgj.gamejamgame.screens.shipPanels.CrewPanel;
+import fgm.fgj.gamejamgame.screens.shipPanels.ModulesPanel;
+import fgm.fgj.gamejamgame.screens.shipPanels.SolarSystemPanel;
 
 public class ShipScreen implements Screen {
 	private final GameJamGame game;
@@ -39,21 +39,24 @@ public class ShipScreen implements Screen {
 	private Ship ship;
 
 	Table shipTable = new Table();
-	Table solarSystemTable = new Table();
-	Table crewTable = new Table();
-	Table equipmentTable = new Table();
-	Table cargoTable = new Table();
+
+	private final CrewPanel crewPanel;
+	private final CargoPanel cargoPanel;
+	private final ModulesPanel modulesPanel;
+	private final SolarSystemPanel solarSystemPanel;
+
+	private final Image centerCog;
 
 	public ShipScreen(GameJamGame game) {
 		this.game = game;
 		stage = new Stage();
-		//stage.setDebugAll(true);
+		stage.setDebugAll(true);
 
 		// Camera Setup
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
 		camera = new OrthographicCamera();
-		viewport = new FitViewport(w, h, camera);
+		viewport = new ExtendViewport(w, h, camera);
 		camera.position.set(viewport.getWorldWidth() / 2f, viewport.getWorldHeight() / 2f, 0);
 		camera.update();
 		stage.setViewport(viewport);
@@ -84,26 +87,39 @@ public class ShipScreen implements Screen {
 
 		ship = game.getShip();
 		shipTable.setBackground(skin.getDrawable("list"));
-		shipTable.pad(32f);
 		shipTable.setFillParent(true);
 
-		shipTable.add(solarSystemTable).fill().expand().uniform();
-		solarSystemTable.pad(32f).padTop(0);
-		solarSystemTable.add(new Label("Current Solar System", skin)).expand().top().left();
+		solarSystemPanel = new SolarSystemPanel(skin);
+		shipTable.add(solarSystemPanel.getRoot()).fill().expand().uniform();
 
-		shipTable.add(equipmentTable).fill().expand().uniform();
-		equipmentTable.pad(32f).padTop(0);
-		equipmentTable.add(new Label("Equipped Modules", skin)).expand().top().left();
+		shipTable.add(new Image(skin.getDrawable("splitpane-horizontal")))
+			.expandY().fillY().top();
+
+		modulesPanel = new ModulesPanel(skin);
+		shipTable.add(modulesPanel.getRoot()).fill().expand().uniform();
 
 		shipTable.row();
 
-		shipTable.add(crewTable).fill().expand().uniform();
-		crewTable.pad(32f).padTop(0);
-		crewTable.add(new Label("Crew Roster", skin)).expand().top().left();
+		shipTable.add(new Image(skin.getDrawable("splitpane-vertical")))
+			.expandX().fillX().left();
 
-		shipTable.add(cargoTable).fill().expand().uniform();
-		cargoTable.pad(32f).padTop(0);
-		cargoTable.add(new Label("Cargo Hold", skin)).expand().top().left();
+		centerCog = new Image(skin.getDrawable("cog1"));
+		centerCog.setOrigin(Align.center);
+		shipTable.add(centerCog).pad(4);
+
+		shipTable.add(new Image(skin.getDrawable("splitpane-vertical")))
+			.expandX().fillX().right();
+
+		shipTable.row();
+
+		crewPanel = new CrewPanel(skin);
+		shipTable.add(crewPanel.getRoot()).fill().expand().uniform();
+
+		shipTable.add(new Image(skin.getDrawable("splitpane-horizontal")))
+			.expandY().fillY().bottom();
+
+		cargoPanel = new CargoPanel(skin);
+		shipTable.add(cargoPanel.getRoot()).fill().expand().uniform();
 
 		stage.addActor(shipTable);
 	}
@@ -111,12 +127,16 @@ public class ShipScreen implements Screen {
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(stage);
+		crewPanel.displayCrew(ship.listCrewMembers());
 	}
 
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+
+		centerCog.setRotation(centerCog.getRotation() + 10.0f * delta);
+
 		SpriteBatch spriteBatch = game.getSpriteBatch();
 		spriteBatch.setProjectionMatrix(camera.combined);
 		spriteBatch.begin();
@@ -128,7 +148,7 @@ public class ShipScreen implements Screen {
 
 	@Override
 	public void resize(int width, int height) {
-		stage.getViewport().setScreenSize(width, height);
+		stage.getViewport().update(width, height, true);
 		viewport.update(width, height);
 	}
 
