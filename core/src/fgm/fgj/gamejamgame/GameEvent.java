@@ -110,24 +110,28 @@ public class GameEvent {
 		damageDealt = (int)(Math.random() * maxPotentialDamage);
 		Boolean isShipDestroyed = ship.issueHullDamage(damageDealt);
 		if (isShipDestroyed) {
-			this.eventText = "Your ship took " + damageDealt + " damage and was destroyed!";
+			this.eventText = "Your ship took " + damageDealt + " damage from debris and was destroyed!";
 			this.didLose = true;
 		} else {
-			this.eventText = "Your ship took " + damageDealt + " damaged by debris!";
+			this.eventText = "Your ship took " + damageDealt + " damage from debris!";
 		}
 	}
 
 	private void handleRadiationEvent(SolarSystem solarSystem, Ship ship) {
-		if (solarSystem.solarRadiation > ship.getRadiationResistance()) {
-			Random rand = new Random();
-			int damageAmount = rand.nextInt(20);
-			Boolean isShipDestroyed = ship.issueHullDamage(damageAmount);
-			if (isShipDestroyed) {
-				this.eventText = "Your ship was destroyed - Game Over";
-				this.didLose = Boolean.TRUE;
-			} else {
-				this.eventText = "Your ship was ravaged by radiation! It caused " + damageAmount + " damage.";
+		int maxPotentialDamage = solarSystem.solarRadiation + 3 - ship.getLifeSupport().solarRadiationTolerance;
+		int damageDealt;
+		for(CrewMember cm : ship.listCrewMembers()){
+			if(cm.specialization.equals(Specialization.ENGINEER)){
+				maxPotentialDamage--;
 			}
+		}
+		damageDealt = (int)(Math.random() * maxPotentialDamage);
+		Boolean isShipDestroyed = ship.issueHullDamage(damageDealt);
+		if (isShipDestroyed) {
+			this.eventText = "Your ship took " + damageDealt + " damage from a radiation burst and was destroyed!";
+			this.didLose = true;
+		} else {
+			this.eventText = "Your ship took " + damageDealt + " damaged from a radiation burst!";
 		}
 	}
 
