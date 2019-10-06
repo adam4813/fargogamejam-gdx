@@ -283,8 +283,10 @@ public class GameEvent {
 				ship.addCargo("fuel", fuelAmount);
 			}
 
-			else {
-				this.eventText = "";
+			else if (eventKey == 2) {
+				int fuelAmount = rand.nextInt(3) + 1;
+				this.eventText = "Rats ate" + fuelAmount + " units of your fuel.";
+				ship.removeCargo("fuel", fuelAmount);
 			}
 		} else {
 			// Galaxy level events

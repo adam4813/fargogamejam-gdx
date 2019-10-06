@@ -89,6 +89,20 @@ public class Ship {
 		}
 	}
 
+	public void removeCargo(String cargoType, int amount) {
+		switch (cargoType) {
+			case "fuel":
+				this.cargoBay.decreaseFuel(amount);
+				break;
+			case "metals":
+				this.cargoBay.decreaseMetal(amount);
+				break;
+			case "water":
+				this.cargoBay.decreaseWater(amount);
+				break;
+		}
+	}
+
 	public CargoBay getCargoBay() {
 		return this.cargoBay;
 	}
