@@ -38,11 +38,11 @@ public enum IconType {
 
 	public static IconType getRandomSpecies() {
 		Random random = new Random();
-		return values()[random.nextInt(10) + 11];
+		return values()[random.nextInt(10) + 12];
 	}
 
 	public static IconType getRandomSpecialization() {
 		Random random = new Random();
-		return values()[random.nextInt(3) + 26];
+		return values()[random.nextInt(3) + 28];
 	}
 }

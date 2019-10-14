@@ -36,7 +36,7 @@ import fgm.fgj.gamejamgame.screens.shipPanels.SolarSystemPanel;
 
 public class ShipScreen implements Screen {
 	private final GameJamGame game;
-	private final Camera camera;
+	private final OrthographicCamera camera;
 	private final Stage stage;
 	private final Music music;
 
@@ -64,10 +64,9 @@ public class ShipScreen implements Screen {
 		// Camera Setup
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
-		camera = new OrthographicCamera();
-		viewport = new ExtendViewport(w, h, camera);
-		camera.position.set(viewport.getWorldWidth() / 2f, viewport.getWorldHeight() / 2f, 0);
-		camera.update();
+		camera = new OrthographicCamera(w, h);
+		camera.setToOrtho(false, w, h);
+		viewport = new ExtendViewport(camera.viewportWidth, camera.viewportHeight, camera);
 		stage.setViewport(viewport);
 
 		// Ship screen button
@@ -167,7 +166,7 @@ public class ShipScreen implements Screen {
 
 		centerCog.setRotation(centerCog.getRotation() + 10.0f * delta);
 
-		camera.update();
+		viewport.apply();
 		SpriteBatch spriteBatch = game.getSpriteBatch();
 		spriteBatch.setProjectionMatrix(camera.combined);
 		spriteBatch.begin();
@@ -179,8 +178,7 @@ public class ShipScreen implements Screen {
 
 	@Override
 	public void resize(int width, int height) {
-		stage.getViewport().update(width, height, true);
-		viewport.update(width, height);
+		viewport.update(width, height, true);
 	}
 
 	@Override

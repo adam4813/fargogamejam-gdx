@@ -1,9 +1,9 @@
 package fgm.fgj.gamejamgame.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -38,8 +38,9 @@ import static fgm.fgj.gamejamgame.StarField.starTextures;
 
 public class SolarSystemScreen implements Screen {
 	private final GameJamGame game;
-	private final Camera camera;
+	private final OrthographicCamera camera;
 	private final Stage stage;
+	private final Stage dialogStage;
 
 	private GameDialog worldInfo;
 	private GameDialog eventDialog;
@@ -59,6 +60,7 @@ public class SolarSystemScreen implements Screen {
 	public SolarSystemScreen(GameJamGame game) {
 		this.game = game;
 		stage = new Stage();
+		dialogStage = new Stage();
 		root = new Table();
 		root.setFillParent(true);
 		stage.addActor(root);
@@ -67,10 +69,9 @@ public class SolarSystemScreen implements Screen {
 		// Camera Setup
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
-		camera = new OrthographicCamera();
-		viewport = new ExtendViewport(w, h, camera);
-		camera.position.set(viewport.getMinWorldWidth() / 2f, viewport.getMinWorldHeight() / 2f, 0);
-		camera.update();
+		camera = new OrthographicCamera(w, h);
+		camera.setToOrtho(false, w, h);
+		viewport = new ExtendViewport(camera.viewportWidth, camera.viewportHeight, camera);
 		stage.setViewport(viewport);
 
 		// Ship screen button
@@ -102,7 +103,7 @@ public class SolarSystemScreen implements Screen {
 				eventTextLabel.setWrap(true);
 				eventBody.add(eventTextLabel).grow().padLeft(128);
 				//eventBody.act(1);
-				eventDialog.show(stage, gameEvent.isPositive() ? "Success" : "Uh-oh" ,eventBody );
+				eventDialog.show(dialogStage, gameEvent.isPositive() ? "Success" : "Uh-oh", eventBody);
 				targetPlantet = null;
 			}
 		});
@@ -116,6 +117,7 @@ public class SolarSystemScreen implements Screen {
 				if (gameEvent.didLose()) {
 					game.showScreen(ScreenNames.Lose);
 				}
+				targetPlantet = null;
 			}
 		});
 		worldInfo = new GameDialog(game, "Planet Info", visitButton, cancelButton);
@@ -128,7 +130,7 @@ public class SolarSystemScreen implements Screen {
 
 	@Override
 	public void show() {
-		Gdx.input.setInputProcessor(stage);
+		Gdx.input.setInputProcessor(new InputMultiplexer(dialogStage, stage));
 		populatePlanetOrbits();
 
 		music.setPosition(0);
@@ -160,6 +162,7 @@ public class SolarSystemScreen implements Screen {
 					super.clicked(event, x, y);
 					Gdx.app.log("STAR_MAP", "Going to current to the star map");
 					game.showScreen(ScreenNames.StarMap);
+					targetPlantet = null;
 				}
 			});
 			stage.addActor(actor);
@@ -200,7 +203,7 @@ public class SolarSystemScreen implements Screen {
 						body.add(settleButton);
 					}
 					body.act(1);
-					worldInfo.show(stage, planet.getName(), body);
+					worldInfo.show(dialogStage, planet.getName(), body);
 				}
 			});
 			stage.addActor(actor);
@@ -211,7 +214,7 @@ public class SolarSystemScreen implements Screen {
 	public void render(float delta) {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-		camera.update();
+		viewport.apply();
 		ShapeRenderer shapeRenderer = game.getShapeRender();
 		shapeRenderer.setProjectionMatrix(camera.combined);
 		SpriteBatch spriteBatch = game.getSpriteBatch();
@@ -236,11 +239,13 @@ public class SolarSystemScreen implements Screen {
 		// UI
 		stage.act(delta);
 		stage.draw();
+		dialogStage.act(delta);
+		dialogStage.draw();
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		stage.getViewport().update(width, height, true);
+		dialogStage.getViewport().update(width, height, true);
 		viewport.update(width, height);
 	}
 
