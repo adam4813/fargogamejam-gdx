@@ -87,7 +87,7 @@ public class GameJamGame extends Game {
 
 		// UI
 		loadTextureAtlas("data/rustyrobotui/rusty-robot-ui.atlas");
-		assetManager.load("data/rustyrobotui/rusty-robot-ui.json", Skin.class, new SkinLoader.SkinParameter("data/rustyrobotui/rusty-robot-ui.atlas"));
+		assetManager.load("data/rustyrobotui/rusty-robot-ui.json", Skin.class);
 		assetManager.finishLoading();
 		skin = getAsset("data/rustyrobotui/rusty-robot-ui.json");
 

@@ -19,7 +19,7 @@ android {
         exclude 'META-INF/robovm/ios/robovm.xml'
     }
     defaultConfig {
-        applicationId "com.greenstargames.pq"
+        applicationId "com.fgj.gamejamgame"
         minSdkVersion 14
         targetSdkVersion 28
         versionCode 1
@@ -60,12 +60,12 @@ task copyAndroidNatives() {
 
     configurations.natives.files.each { jar ->
         def outputDir = null
-        if(jar.name.endsWith("natives-arm64-v8a.jar")) outputDir = file("libs/arm64-v8a")
-        if(jar.name.endsWith("natives-armeabi-v7a.jar")) outputDir = file("libs/armeabi-v7a")
-        if(jar.name.endsWith("natives-armeabi.jar")) outputDir = file("libs/armeabi")
-        if(jar.name.endsWith("natives-x86_64.jar")) outputDir = file("libs/x86_64")
-        if(jar.name.endsWith("natives-x86.jar")) outputDir = file("libs/x86")
-        if(outputDir != null) {
+        if (jar.name.endsWith("natives-arm64-v8a.jar")) outputDir = file("libs/arm64-v8a")
+        if (jar.name.endsWith("natives-armeabi-v7a.jar")) outputDir = file("libs/armeabi-v7a")
+        if (jar.name.endsWith("natives-armeabi.jar")) outputDir = file("libs/armeabi")
+        if (jar.name.endsWith("natives-x86_64.jar")) outputDir = file("libs/x86_64")
+        if (jar.name.endsWith("natives-x86.jar")) outputDir = file("libs/x86")
+        if (outputDir != null) {
             copy {
                 from zipTree(jar)
                 into outputDir
@@ -94,5 +94,5 @@ task run(type: Exec) {
     }
 
     def adb = path + "/platform-tools/adb"
-    commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.greenstargames.pq/com.greenstargames.pq.AndroidLauncher'
+    commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.fgj.gamejamgame/AndroidLauncher'
 }
