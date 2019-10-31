@@ -1,20 +1,21 @@
 package fgm.fgj.gamejamgame;
 
-
- /**
-  * Encapsulates issues related to engines.
-  */
+ /** Represents issues related to engines. */
 public class EngineException extends Exception {
-	/**
-	 * The kinds of issues that are encapsulated by EngineExceptions.
-	 */
+	/** The kinds of issues that are represented by EngineExceptions. */
 	public enum Problems{
 		@SuppressWarnings("javadocs")
 		DESTROYED
 	}
-	@SuppressWarnings("javadocs")
+
+	/** Cannot be null.
+	 * @see Problems
+	 */
 	private final Problems type;
-	@SuppressWarnings("javadocs")
+
+	 /**
+	  * @param type {@link EngineException#type}
+	  */
 	EngineException(final Problems type){
 		if(type == null){
 			throw new IllegalArgumentException("A cargo exception cannot have a null problem.");
@@ -23,7 +24,7 @@ public class EngineException extends Exception {
 	}
 
 	/**
-	 * @return a Problems that represents the kind of issue encapsulated.
+	 * @see EngineException.Problems
 	 */
 	public final Problems getType() {
 		return this.type;

@@ -1,6 +1,6 @@
 package fgm.fgj.gamejamgame;
 
-/** Represents the kinds of atmosphere compositions that planets have and species breathe. */
+/** Represents the kinds of atmosphere compositions that planets have and species are compatible with. */
 enum AtmosphericCompositions {
 	TOXIC,
 	EARTH_LIKE,

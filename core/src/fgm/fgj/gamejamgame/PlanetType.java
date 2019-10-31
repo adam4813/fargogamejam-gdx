@@ -1,19 +1,22 @@
 package fgm.fgj.gamejamgame;
 
-import java.util.Random;
-
-/**
- * Base star types, BG types are for the background only.
- */
+/** Represents how planets are rendered. */
 public enum PlanetType {
+	@SuppressWarnings("javadocs")
 	BARREN,
+	@SuppressWarnings("javadocs")
 	EARTH_LIKE,
+	@SuppressWarnings("javadocs")
 	GAS1,
+	@SuppressWarnings("javadocs")
 	GAS2,
+	@SuppressWarnings("javadocs")
 	GAS3;
 
+	/**
+	 * @return a PlanetType at random.
+	 */
 	public static PlanetType getRandomPlanetType() {
-		Random random = new Random();
-		return values()[random.nextInt(values().length)];
+		return values()[(int)(Math.random() * values().length)];
 	}
 }

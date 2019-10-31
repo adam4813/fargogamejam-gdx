@@ -115,7 +115,11 @@ class CargoBay implements PartModules{
 	void storeResource(ResourceTypes resource, int quantity) throws CargoException{
 		switch(resource){
 			case ARTIFACT:
-				this.hasArtifact = true;
+				if(!this.hasArtifact){
+					this.hasArtifact = true;
+				}else{
+					throw new CargoException(CargoException.Problems.OVERFLOW, -1);
+				}
 				break;
 			case AMMO:
 				this.ammo = store(this.ammo, quantity, this.maxAmmo);
@@ -150,7 +154,11 @@ class CargoBay implements PartModules{
 	void depleteResource(ResourceTypes resource, int quantity) throws CargoException{
 		switch(resource){
 			case ARTIFACT:
-				this.hasArtifact = false;
+				if(this.hasArtifact){
+					this.hasArtifact = false;
+				}else{
+					throw new CargoException(CargoException.Problems.UNDERFLOW, -1);
+				}
 				break;
 			case AMMO:
 				this.ammo = deplete(this.ammo, quantity);
@@ -282,7 +290,6 @@ class CargoBay implements PartModules{
 		return Collections.unmodifiableList(this.parts);
 	}
 
-	@SuppressWarnings("javadocs")
 	@Override
 	public int getModuleLevel() {
 		int level = (this.maxAmmo + this.maxFood + this.maxFuel + this.maxGas + this.maxMetal + this.maxWater) / 125;
