@@ -4,16 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-/** Represents the world map of the game. */
+/** Represents the full game state. */
 public class Galaxy {
-	/** Represents the node that the ship is at, also serving as a root node for the solar systems. */
-	private SolarSystem shipLocation;
-	private final Ship player;
-	public final List<Species> bestiary;
+	@SuppressWarnings("javadocs")
 	private static final List<String> nameParts;
+	@SuppressWarnings("javadocs")
 	private static final List<String> firstNames;
+	@SuppressWarnings("javadocs")
 	private static final List<String> lastNames;
+
 	static{
+		/* TODO move names into a file that is loaded in so it isn't cluttering the code. */
 		nameParts = new ArrayList<>();
 		nameParts.add("GA");
 		nameParts.add("GE");
@@ -84,8 +85,15 @@ public class Galaxy {
 		lastNames.add("Yulian");
 		lastNames.add("Zorgenzzon");
 	}
+
+	@SuppressWarnings("javadocs")
+	private final Ship player;
+	@SuppressWarnings("javadocs")
+	private final List<Species> bestiary;
+	/** Represents the node that the ship is at, also serving as a root node for the solar systems. */
+	private SolarSystem shipLocation;
 	/** Instantiates the galaxy generating a new map based on the solar system quantity unless root is provided. It will generate the specified number of species if bestiary is empty or null. */
-	public Galaxy(int solarSystemQuantity, SolarSystem root, Ship player, int speciesQuantity, List<Species> bestiary){
+	Galaxy(int solarSystemQuantity, SolarSystem root, Ship player, int speciesQuantity, List<Species> bestiary){
 		if(solarSystemQuantity < 1){
 			throw new IllegalArgumentException("A galaxy must consist of at least 1 solar system.");
 		}
@@ -108,38 +116,25 @@ public class Galaxy {
 		}
 	}
 
-	/** @return the player/ship status. */
-	public Ship getShip(){
-		return player;
-	}
-
-	/** @return the root node of the galaxy */
-	public SolarSystem getShipLocation(){
-		return shipLocation;
-	}
-
-	public void setShipLocation(SolarSystem ss){
-		this.shipLocation = ss;
-	}
-
-	public Ship generateShip(){
-		List<CrewMember> crewMembers = generateCrewMembers();
-		Engine engine = new Engine(0, 0, 25, 0);
-		Weapon weapon = new Weapon(1, WeaponType.getRandomWeaponType());
-		List<AtmosphericComposition> supportedCompositions = new ArrayList<>();
-		supportedCompositions.add(crewMembers.get(0).species.atmosphericCompositionTolerance);
-		LifeSupportSystem lss = new LifeSupportSystem(supportedCompositions, 1, 2);
-		List<PartModules> parts = new ArrayList<>();
-		CargoBay cargoBay = new CargoBay(30, 30, 30, 30, 30, 30, 25, 10, 15, 25, 10, 15, parts);
-
-		return new Ship(crewMembers, engine, weapon, lss, cargoBay);
+	/** Convenience method to check if the input is within the given constraints.
+	 * @param input represents the desired value.
+	 * @param min represents the lowest allowed value.
+	 * @param max represents the highest allowed value.
+	 * @param def represents the value if the desired value is not [min..max].
+	 * @return an int equal to input if min <= input <= max, otherwise equal to def.
+	 */
+	static int initializeWithConstraints(int input, int min, int max, int def) {
+		if (input >= min && input <= max) {
+			return input;
+		}
+		return def;
 	}
 
 	/**
 	 * Builds a rudimentary name for stuff.
 	 * @return a name in a format like GEGU-874
 	 */
-	public static String generateName(){
+	private static String generateName(){
 		StringBuilder solarName = new StringBuilder();
 		int nameSize = (int)(Math.random() * 4) + 1;
 		for(int i = 0; i < nameSize; i++){
@@ -150,7 +145,7 @@ public class Galaxy {
 		return solarName.toString();
 	}
 
-	public static String generateCrewName(){
+	static String generateCrewName(){
 		StringBuilder crewName = new StringBuilder();
 		crewName.append(Galaxy.firstNames.get((int)(Math.random() * firstNames.size())));
 		crewName.append(" ");
@@ -158,11 +153,42 @@ public class Galaxy {
 		return crewName.toString();
 	}
 
+	public static GameEvent generateGameEvent(SolarSystem solarSystem, int fuelCost, Planet planet, Ship ship) {
+		return new GameEvent(solarSystem, fuelCost, planet, ship);
+	}
+
+	/** @return the player/ship status. */
+	public Ship getShip(){
+		return player;
+	}
+
+	/** @return the root node of the galaxy */
+	SolarSystem getShipLocation(){
+		return shipLocation;
+	}
+
+	void setShipLocation(SolarSystem ss){
+		this.shipLocation = ss;
+	}
+
+	private Ship generateShip(){
+		List<CrewMember> crewMembers = generateCrewMembers();
+		Engine engine = new Engine(0, 0, 25, 0);
+		Weapon weapon = new Weapon(1, WeaponType.getRandomWeaponType());
+		List<AtmosphericCompositions> supportedCompositions = new ArrayList<>();
+		supportedCompositions.add(crewMembers.get(0).species.atmosphericCompositionTolerance);
+		LifeSupportSystem lss = new LifeSupportSystem(supportedCompositions, 1, 2);
+		List<PartModules> parts = new ArrayList<>();
+		CargoBay cargoBay = new CargoBay(true,25, 25, 25, 25, 25, 25, 10, 10, 10, 20, 5, 5, parts);
+
+		return new Ship(crewMembers, engine, weapon, lss, cargoBay);
+	}
+
 	/**
 	 *
 	 * @return a randomly generated solar system WITHOUT links to other systems.
 	 */
-	public SolarSystem generateSolarSystem(Boolean hasArtifact){
+	private SolarSystem generateSolarSystem(boolean hasArtifact){
 		String name = Galaxy.generateName();
 		StarType starType = StarType.getRandomStarType();
 		float starSize = (float)(Math.random() * 3) + .5f;
@@ -170,18 +196,13 @@ public class Galaxy {
 		List<Integer> fuelCosts = new ArrayList<>();
 		List<Planet> planets = new ArrayList<>();
 		int planetQuantity = (int)(Math.random() * 15);
+		int artifactIndex = (int) (Math.random() * planetQuantity);
 		for(int i = 0; i < planetQuantity; i++){
-			planets.add(this.generatePlanet());
+			planets.add(this.generatePlanet(hasArtifact && artifactIndex == i));
 		}
 		int pirateThreat = (int) (Math.random() * 6);
 		int solarRadiation = (int) (Math.random() * 6);
 		int debrisRating = (int) (Math.random() * 6);
-		// if the solar system has the artifact, put it on a random planet
-		if (hasArtifact && planetQuantity > 0) {
-			int artifactIndex = (int) (Math.random() * planetQuantity);
-			Planet artifactPlanet = planets.get(artifactIndex);
-			artifactPlanet.plantArtifact();
-		}
 		return new SolarSystem(name, starType, starSize, links, fuelCosts, planets, pirateThreat, solarRadiation, debrisRating);
 	}
 
@@ -189,7 +210,7 @@ public class Galaxy {
 	 * Generates a galaxy by linking a bunch of solar systems.
 	 * @return a root solar system that the galaxy can be traversed from.
 	 */
-	public SolarSystem generateGalaxyMap(int solarSystemQuantity){
+	private SolarSystem generateGalaxyMap(int solarSystemQuantity){
 		/* Temporary cache for created solar systems until they are linked and a single root node can be returned. */
 		List<SolarSystem> created = new ArrayList<>();
 		/* Create the solar systems. */
@@ -197,8 +218,7 @@ public class Galaxy {
 		// One solar system gets an artifact
 		int artifactIndex = rand.nextInt(solarSystemQuantity);
 		for(int i = 0; i < solarSystemQuantity; i++){
-			Boolean addArtifact = (i == artifactIndex);
-			SolarSystem ss = this.generateSolarSystem(addArtifact);
+			SolarSystem ss = this.generateSolarSystem(i == artifactIndex);
 			created.add(ss);
 		}
 		/* Link the solar systems. */
@@ -221,33 +241,33 @@ public class Galaxy {
 
 	/**
 	 * Builds a bestiary of species available in the galaxy.
-	 * @return
+	 * @return a list of species that represent all species in the galaxy.
 	 */
 	private List<Species> generateBestiary(int speciesQuantity) {
-		List<Species> speciesList = new ArrayList();
+		List<Species> speciesList = new ArrayList<>();
 		for(int i = 0; i <= speciesQuantity; i++){
 			speciesList.add(this.generateSpecies());
 		}
 		return speciesList;
 	}
 
-	public Species generateSpecies(){
+	private Species generateSpecies(){
 		String name = generateName();
-		int gravityTolerance = (int)(Math.random() * 6);
-		AtmosphericComposition atmosphericCompositionTolerance = AtmosphericComposition.getRandomAtmosphere();
+		AtmosphericCompositions atmosphericCompositionTolerance = AtmosphericCompositions.getRandomAtmosphere();
 		int atmosphericPressureTolerance = (int)(Math.random() * 6);
 		int temperatureTolerance = (int)(Math.random() * 6);
+		int gravityTolerance = (int)(Math.random() * 6);
 		int mass = (int)(Math.random() * 6);
 		int hitPoints = (int)(Math.random() * 9) + 2;
 		int damage = (int)(Math.random() * 6);
-		return new Species(name, IconType.getRandomSpecies(), gravityTolerance, atmosphericCompositionTolerance, atmosphericPressureTolerance, temperatureTolerance, mass, hitPoints, damage);
+		return new Species(name, IconType.getRandomSpecies(), atmosphericCompositionTolerance, atmosphericPressureTolerance, temperatureTolerance, gravityTolerance, mass, hitPoints, damage);
 	}
 
 	/**
 	 * Convenience function to get a random species of those available.
-	 * @return
+	 * @return a species that represents a species from the bestiary.
 	 */
-	public Species getRandomSpeciesFromBestiary() {
+	private Species getRandomSpeciesFromBestiary() {
 		Random random = new Random();
 		return this.bestiary.get(random.nextInt(this.bestiary.size()));
 	}
@@ -255,11 +275,11 @@ public class Galaxy {
 	private List<CrewMember> generateCrewMembers() {
 		List<CrewMember> created = new ArrayList<>();
 		Species species = getRandomSpeciesFromBestiary();
-		created.add(new CrewMember(this.generateCrewName(), species, Specialization.ENGINEER, 0));
-		created.add(new CrewMember(this.generateCrewName(), species, Specialization.PILOT, 0));
-		created.add(new CrewMember(this.generateCrewName(), species, Specialization.SCIENTIST, 0));
-		created.add(new CrewMember(this.generateCrewName(), species, Specialization.getRandomSpecialization(), 0));
-		created.add(new CrewMember(this.generateCrewName(), species, Specialization.getRandomSpecialization(), 0));
+		created.add(new CrewMember(Galaxy.generateCrewName(), species, Specializations.ENGINEER, 0));
+		created.add(new CrewMember(Galaxy.generateCrewName(), species, Specializations.PILOT, 0));
+		created.add(new CrewMember(Galaxy.generateCrewName(), species, Specializations.SCIENTIST, 0));
+		created.add(new CrewMember(Galaxy.generateCrewName(), species, Specializations.getRandomSpecialization(), 0));
+		created.add(new CrewMember(Galaxy.generateCrewName(), species, Specializations.getRandomSpecialization(), 0));
 		return created;
 	}
 
@@ -267,9 +287,9 @@ public class Galaxy {
 	 * Generates a random planet and populates it with species from the bestiary.
 	 * @return a planet.
 	 */
-	public Planet generatePlanet() {
+	private Planet generatePlanet(boolean hasArtifact) {
 		String name = Galaxy.generateName();
-		AtmosphericComposition airType = AtmosphericComposition.getRandomAtmosphere();
+		AtmosphericCompositions airType = AtmosphericCompositions.getRandomAtmosphere();
 		List<Species> speciesPresent = new ArrayList<>();
 		int speciesPresentQuantity = (int)(Math.random() * 3);
 		for(int i = 0; i < speciesPresentQuantity; i++){
@@ -281,10 +301,6 @@ public class Galaxy {
 		int fuel = (int)(Math.random() * 126);
 		int metals = (int)(Math.random() * 126);
 		int water = (int)(Math.random() * 126);
-		return new Planet(name, airType, speciesPresent, gravity, atmospherePressure, temperature, fuel, metals, water);
-	}
-
-	public static GameEvent generateGameEvent(SolarSystem solarSystem, int fuelCost, Planet planet, Ship ship) {
-		return new GameEvent(solarSystem, fuelCost, planet, ship);
+		return new Planet(name, airType, speciesPresent, gravity, atmospherePressure, temperature, fuel, metals, water, hasArtifact);
 	}
 }

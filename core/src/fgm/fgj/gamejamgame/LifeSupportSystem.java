@@ -24,8 +24,8 @@ class LifeSupportSystem implements PartModules {
 			throw new IllegalArgumentException("A life support system is worthless without supported atmosphere composition.");
 		}
 		this.supportedAtmosphereCompositions = supportedAtmosphereCompositions;
-		this.solarRadiationTolerance = PartModules.initializeWithConstraints(solarRadiationTolerance, 0, 5, 2);
-		this.gasEfficiency = PartModules.initializeWithConstraints(gasEfficiency, 0, 5, 0);
+		this.solarRadiationTolerance = Galaxy.initializeWithConstraints(solarRadiationTolerance, 0, 5, 2);
+		this.gasEfficiency = Galaxy.initializeWithConstraints(gasEfficiency, 0, 5, 0);
 	}
 
 	/** @return an unmodifiable List of AtmosphericCompositions that represent the kinds of atmosphere crew may breath and be compatible with the ship. */

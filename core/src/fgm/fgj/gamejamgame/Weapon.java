@@ -17,7 +17,7 @@ class Weapon implements PartModules{
 		if(type == null){
 			throw new IllegalArgumentException("Weapon cannot have a null damageEngine type.");
 		}
-		this.damage = PartModules.initializeWithConstraints(damage, 1, 4, 1);
+		this.damage = Galaxy.initializeWithConstraints(damage, 1, 4, 1);
 		this.type = type;
 	}
 
