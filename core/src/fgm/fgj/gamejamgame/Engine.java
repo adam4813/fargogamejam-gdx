@@ -11,16 +11,16 @@ class Engine implements PartModules{
 	/** Represents the ship's sustained damage, [0..hitPoints]. */
 	private int damageTaken;
 
-	/**
+	/** Instantiates an Engine with the given parameters, unless they are out of range. Then minimal defaults are used.
 	 * @param speed {@link Engine#speed}
 	 * @param efficiency {@link Engine#efficiency}
 	 * @param hitPoints {@link Engine#hitPoints}
 	 * @param damageTaken {@link Engine#damageTaken}
 	 */
 	Engine(int speed, int efficiency, int hitPoints, int damageTaken) {
-		this.speed = Galaxy.initializeWithConstraints(speed, 0, 5, 1);
-		this.efficiency = Galaxy.initializeWithConstraints(efficiency, 0, 5, 2);
-		this.hitPoints = Galaxy.initializeWithConstraints(hitPoints, 10, 100, 25);
+		this.speed = Galaxy.initializeWithConstraints(speed, 0, 5, 0);
+		this.efficiency = Galaxy.initializeWithConstraints(efficiency, 0, 5, 0);
+		this.hitPoints = Galaxy.initializeWithConstraints(hitPoints, 10, 100, 10);
 		this.damageTaken = Galaxy.initializeWithConstraints(damageTaken, 0, hitPoints, 0);
 	}
 

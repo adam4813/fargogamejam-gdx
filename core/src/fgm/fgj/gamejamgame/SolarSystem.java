@@ -69,13 +69,17 @@ public class SolarSystem {
 	}
 
 	/** Adds a solar system that can be reached with the given fuel cost.
-	 * @param ss a newly reachable solar system, does nothing when null.
+	 * @param ss a newly reachable solar system, does nothing when null or if linking to the same solar system or if already linked.
 	 * @param fuelCost the cost in fuel to reach the solar system from the current one, does nothing when less than 1.
 	 */
 	void linkSolarSystem(SolarSystem ss, int fuelCost){
 		if(ss != null && fuelCost > 0){
-			this.linkedSolarSystems.add(ss);
-			this.fuelCosts.add(fuelCost);
+			if(ss != this){
+				if(!this.linkedSolarSystems.contains(ss)){
+					this.linkedSolarSystems.add(ss);
+					this.fuelCosts.add(fuelCost);
+				}
+			}
 		}
 	}
 

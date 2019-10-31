@@ -9,7 +9,7 @@ class Weapon implements PartModules{
 	 */
 	final WeaponType type;
 
-	/**
+	/** Instantiates a new weapon using the parameters provided unless they aren't in range, then minimal defaults are used.
 	 * @param damage {@link Weapon#damage}
 	 * @param type {@link Weapon#type}
 	 */

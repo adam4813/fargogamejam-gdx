@@ -14,7 +14,7 @@ public class Planet {
 	 * @see AtmosphericCompositions
 	 */
 	private final AtmosphericCompositions airType;
-	/** Represents the inhabitants of the planet, cannot be null. */
+	/** Represents the inhabitants of the planet, cannot be null. Each species should be compatible with the planet. */
 	private final List<Species> speciesPresent;
 	/** Represents the gravity strength of the planet, [0..5]. */
 	private final int gravity;
@@ -35,7 +35,7 @@ public class Planet {
 	 * Instantiates a new planet based on parameters given if they are within range, otherwise midpoint defaults are used.
 	 * @param name {@link Planet#name}
 	 * @param airType {@link Planet#airType}
-	 * @param speciesPresent {@link Planet#speciesPresent}
+	 * @param speciesPresent {@link Planet#speciesPresent} any species not compatible are removed from the list.
 	 * @param gravity {@link Planet#gravity}
 	 * @param atmosphericPressure {@link Planet#atmosphericPressure}
 	 * @param temperature {@link Planet#temperature}
@@ -65,10 +65,16 @@ public class Planet {
 		this.gravity = Galaxy.initializeWithConstraints(gravity, 0, 5, 2);
 		this.atmosphericPressure = Galaxy.initializeWithConstraints(atmosphericPressure, 0, 5, 2);
 		this.temperature = Galaxy.initializeWithConstraints(temperature, 0, 5, 2);
-		this.fuel = Galaxy.initializeWithConstraints(fuel, 0, 125, 0);
-		this.metal = Galaxy.initializeWithConstraints(metal, 0, 125, 0);
-		this.water = Galaxy.initializeWithConstraints(water, 0, 125, 0);
+		this.fuel = Galaxy.initializeWithConstraints(fuel, 0, 250, 0);
+		this.metal = Galaxy.initializeWithConstraints(metal, 0, 250, 0);
+		this.water = Galaxy.initializeWithConstraints(water, 0, 250, 0);
 		this.hasArtifact = hasArtifact;
+		/* Remove any species that could not survive on the planet. */
+		for(int i = speciesPresent.size() - 1; i >= 0; i--){
+			if(!this.isHabitablePlanet(speciesPresent.get(i))){
+				this.speciesPresent.remove(i);
+			}
+		}
 	}
 
 	/**
@@ -162,20 +168,33 @@ public class Planet {
 	 * @return a boolean that represents, when true, that the crew can inhabit the planet.
 	 */
 	public boolean isHabitablePlanet(Ship ship) {
-		if(ship == null){
-			throw new IllegalArgumentException("A planet cannot be habitable with a null ship.");
-		}
-		boolean isHabitable = true;
-		List<CrewMember> crewMembers = ship.getCrewMembers();
-		for(CrewMember cm : crewMembers){
-			Species s = cm.species;
-			isHabitable &= this.gravity == s.gravityTolerance;
-			isHabitable &= this.atmosphericPressure == s.atmosphericPressureTolerance;
-			isHabitable &= this.temperature == s.temperatureTolerance;
-			isHabitable &= this.airType == s.atmosphericCompositionTolerance;
-			if(!isHabitable){
-				break;
+		boolean isHabitable = false;
+		if(ship != null){
+			isHabitable = true;
+			for(CrewMember cm : ship.getCrewMembers()){
+				isHabitable &= this.isHabitablePlanet(cm.species);
+				if(!isHabitable){
+					break;
+				}
 			}
+		}
+
+
+		return isHabitable;
+	}
+
+	/** Checks whether the species could survive on the planet.
+	 * @param species represents the species to check if it is compatible with the planet.
+	 * @return a boolean that represents, when true, that the species is compatible with the planet.
+	 */
+	private boolean isHabitablePlanet(Species species){
+		boolean isHabitable = false;
+		if(species != null){
+			isHabitable = true;
+			isHabitable &= this.gravity == species.gravityTolerance;
+			isHabitable &= this.atmosphericPressure == species.atmosphericPressureTolerance;
+			isHabitable &= this.temperature == species.temperatureTolerance;
+			isHabitable &= this.airType == species.atmosphericCompositionTolerance;
 		}
 		return isHabitable;
 	}

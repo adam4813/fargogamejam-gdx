@@ -34,7 +34,7 @@ class CargoBay implements PartModules{
 	private int food;
 	/** Represents whether the artifact has been found or not. */
 	private boolean hasArtifact;
-	/** Instantiates a Cargo Bay with the provided parameters, unless they are out of range. If a parameter is out of range it defaults to a maximum of 25 and a 0 quantity.
+	/** Instantiates a Cargo Bay with the provided parameters, unless they are out of range. If a parameter is out of range it defaults to minimal defaults.
 	 * @param maxAmmo {@link CargoBay#maxAmmo}
 	 * @param maxFood {@link CargoBay#maxFood}
 	 * @param maxFuel {@link CargoBay#maxFuel}
@@ -51,17 +51,17 @@ class CargoBay implements PartModules{
 	 */
 	CargoBay(boolean hasArtifact, int maxAmmo, int maxFood, int maxFuel, int maxGas, int maxMetal, int maxWater, int ammo, int food, int fuel, int gas, int metal, int water, List<PartModules> parts) {
 		this.hasArtifact = hasArtifact;
-		this.maxAmmo = Galaxy.initializeWithConstraints(maxAmmo, 10, 100, 25);
+		this.maxAmmo = Galaxy.initializeWithConstraints(maxAmmo, 10, 100, 10);
 		this.ammo = Galaxy.initializeWithConstraints(ammo, 0, this.maxAmmo, 0);
-		this.maxFood = Galaxy.initializeWithConstraints(maxFood, 10, 100, 25);
+		this.maxFood = Galaxy.initializeWithConstraints(maxFood, 10, 100, 10);
 		this.food = Galaxy.initializeWithConstraints(food, 0, this.maxFood, 0);
-		this.maxFuel = Galaxy.initializeWithConstraints(maxFuel, 10, 100, 25);
+		this.maxFuel = Galaxy.initializeWithConstraints(maxFuel, 10, 100, 10);
 		this.fuel = Galaxy.initializeWithConstraints(fuel, 0, this.maxFuel, 0);
-		this.maxGas = Galaxy.initializeWithConstraints(maxGas, 10, 100, 25);
+		this.maxGas = Galaxy.initializeWithConstraints(maxGas, 10, 100, 10);
 		this.gas = Galaxy.initializeWithConstraints(gas, 0, this.maxGas, 0);
-		this.maxMetal = Galaxy.initializeWithConstraints(maxMetal, 10, 100, 25);
+		this.maxMetal = Galaxy.initializeWithConstraints(maxMetal, 10, 100, 10);
 		this.metal = Galaxy.initializeWithConstraints(metal, 0, this.maxMetal, 0);
-		this.maxWater = Galaxy.initializeWithConstraints(maxWater, 10, 100, 25);
+		this.maxWater = Galaxy.initializeWithConstraints(maxWater, 10, 100, 10);
 		this.water = Galaxy.initializeWithConstraints(water, 0, this.maxWater, 0);
 		if (parts == null) {
 			this.parts = new ArrayList<>();
