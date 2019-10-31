@@ -94,34 +94,33 @@ public class Galaxy {
 	private SolarSystem shipLocation;
 
 	/** Instantiates the galaxy with the given player. Generating a new map and bestiary if root or bestiary isn't provided respectively.
-	 * @param solarSystemQuantity represents the amount of solar systems to generate. Ignored if root is not null. {@link Galaxy#shipLocation}
-	 * @param root represents an existing map of solar systems to use in the galaxy. {@link Galaxy#shipLocation}
-	 * @param player {@link Galaxy#player} generates one if null.
-	 * @param speciesQuantity represents the amount of species to generate for the bestiary. Ignored if bestiary is not null. {@link Galaxy#bestiary}
 	 * @param bestiary {@link Galaxy#bestiary}
+	 * @param speciesQuantity represents the amount of species to generate for the bestiary. Ignored if bestiary is not null. {@link Galaxy#bestiary}
+	 * @param root represents an existing map of solar systems to use in the galaxy. {@link Galaxy#shipLocation}
+	 * @param solarSystemQuantity represents the amount of solar systems to generate. Ignored if root is not null. {@link Galaxy#shipLocation}
+	 * @param player {@link Galaxy#player} generates one if null.
 	 * @see Galaxy#generateGalaxyMap(int)
 	 * @see Galaxy#generateBestiary(int)
 	 * @see Galaxy#generateShip()
 	 */
-	Galaxy(int solarSystemQuantity, SolarSystem root, Ship player, int speciesQuantity, List<Species> bestiary){
-		if(root == null){
-			if(solarSystemQuantity < 1){
-				solarSystemQuantity = 1;
-			}
-			root = generateGalaxyMap(solarSystemQuantity);
-		}
+	Galaxy(List<Species> bestiary, int speciesQuantity, SolarSystem root, int solarSystemQuantity, Ship player){
 		if(bestiary == null){
 			if(speciesQuantity < 1){
 				speciesQuantity = 1;
 			}
 			bestiary = generateBestiary(speciesQuantity);
 		}
+		this.bestiary = bestiary;
+		if(root == null){
+			if(solarSystemQuantity < 1){
+				solarSystemQuantity = 1;
+			}
+			root = generateGalaxyMap(solarSystemQuantity);
+		}
+		this.shipLocation = root;
 		if(player == null){
 			player = generateShip();
 		}
-		/* TODO the order they are instantiated matters. */
-		this.shipLocation = root;
-		this.bestiary = bestiary;
 		this.player = player;
 	}
 
