@@ -1,209 +1,291 @@
 package fgm.fgj.gamejamgame;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
-public class CargoBay {
+/** Represents the storage capacity of a ship. */
+class CargoBay implements PartModules{
+	/** Represents the resource's capacity, [10..100]. */
 	private final int maxFuel;
+	/** Represents the resource's capacity, [10..100]. */
 	private final int maxMetal;
+	/** Represents the resource's capacity, [10..100]. */
 	private final int maxWater;
+	/** Represents the resource's capacity, [10..100]. */
 	private final int maxGas;
+	/** Represents the resource's capacity, [10..100]. */
 	private final int maxAmmo;
+	/** Represents the resource's capacity, [10..100]. */
 	private final int maxFood;
-	private int fuel;
-	private int metal;
-	private int water;
-	private int gas;
-	private int ammo;
-	private int food;
+	/** Represents the ship's unused modules. */
 	private final List<PartModules> parts;
-	private Boolean containsArtifact;
-
-	/**
-	 * @param value desired value
-	 * @param min lowest allowed value
-	 * @param max highest allowed value
-	 * @param def default value if desired value is out of range
-	 * @return value if valid, otherwise default
+	/** Represents the resource's current quantity, [0..maxFuel]. */
+	private int fuel;
+	/** Represents the resource's current quantity, [0..maxMetal]. */
+	private int metal;
+	/** Represents the resource's current quantity, [0..maxWater]. */
+	private int water;
+	/** Represents the resource's current quantity, [0..maxGas]. */
+	private int gas;
+	/** Represents the resource's current quantity, [0..maxAmmo]. */
+	private int ammo;
+	/** Represents the resource's current quantity, [0..maxFood]. */
+	private int food;
+	/** Represents whether the artifact has been found or not. */
+	private boolean hasArtifact;
+	/** Instantiates a Cargo Bay with the provided parameters, unless they are out of range. If a parameter is out of range it defaults to a maximum of 25 and a 0 quantity.
+	 * @param maxAmmo {@link CargoBay#maxAmmo}
+	 * @param maxFood {@link CargoBay#maxFood}
+	 * @param maxFuel {@link CargoBay#maxFuel}
+	 * @param maxGas {@link CargoBay#maxGas}
+	 * @param maxMetal {@link CargoBay#maxMetal}
+	 * @param maxWater {@link CargoBay#maxWater}
+	 * @param ammo {@link CargoBay#ammo}
+	 * @param food {@link CargoBay#food}
+	 * @param fuel {@link CargoBay#fuel}
+	 * @param gas {@link CargoBay#gas}
+	 * @param metal {@link CargoBay#metal}
+	 * @param water {@link CargoBay#water}
+	 * @param parts {@link CargoBay#parts}
 	 */
-	private int withinRangeOrDefault(int value, int min, int max, int def) {
-		if (value >= min && value <= max) {
-			return value;
-		} else {
-			return def;
-		}
-	}
-
-	/**
-	 * @param maxFuel int (25-100) indicating maximum fuel storage capacity - default 50
-	 * @param maxMetal int (5-25) indicating maximum metal storage capacity - default 15
-	 * @param maxWater int (5-50) indicating maximum water storage capacity - default 25
-	 * @param maxGas int (5-50) indicating maximum gas storage capacity - default 25
-	 * @param maxAmmo int (50-200) indicating maximum ammo storage capacity - default 100
-	 * @param maxFood int (25-100) indicating maximum food storage capacity - default 50
-	 *
-	 * @param fuel int (0-maxFuel) indicating current fuel level - default maxFuel
-	 * @param metal int (0-maxMetal) indicating current metal level - default maxMetal
-	 * @param water int (0-maxWater) indicating current water level - default maxWater
-	 * @param gas int (0-maxGas) indicating current gas level - default maxGas
-	 * @param ammo int (0-maxAmmo) indicating current ammo level - default maxAmmo
-	 * @param food int (0-maxFood) indicating current food level - default maxFood
-	 *
-	 * @param parts list of parts present in the cargo bay
-	 */
-	public CargoBay (
-		int maxFuel, int maxMetal, int maxWater, int maxGas, int maxAmmo, int maxFood,
-		int fuel, int metal, int water, int gas, int ammo, int food,
-		List<PartModules> parts
-	) {
-		this.maxFuel = this.withinRangeOrDefault(maxFuel, 10, 100, 30);
-		this.maxMetal = this.withinRangeOrDefault(maxMetal, 10, 100, 30);
-		this.maxWater = this.withinRangeOrDefault(maxWater, 10, 100, 30);
-		this.maxGas = this.withinRangeOrDefault(maxGas, 10, 100, 30);
-		this.maxAmmo = this.withinRangeOrDefault(maxAmmo, 10, 100, 30);
-		this.maxFood = this.withinRangeOrDefault(maxFood, 10, 100, 30);
-
-		this.fuel = this.withinRangeOrDefault(fuel, 0, this.maxFuel, this.maxFuel);
-		this.metal = this.withinRangeOrDefault(metal, 0, this.maxWater, this.maxMetal);
-		this.water = this.withinRangeOrDefault(water, 0, this.maxWater, this.maxWater);
-		this.gas = this.withinRangeOrDefault(gas, 0, this.maxGas, this.maxGas);
-		this.ammo = this.withinRangeOrDefault(ammo, 0, this.maxAmmo, this.maxAmmo);
-		this.food = this.withinRangeOrDefault(food, 0, this.maxFood, this.maxFood);
-
-		if (parts == null || parts.isEmpty()) {
+	CargoBay(boolean hasArtifact, int maxAmmo, int maxFood, int maxFuel, int maxGas, int maxMetal, int maxWater, int ammo, int food, int fuel, int gas, int metal, int water, List<PartModules> parts) {
+		this.hasArtifact = hasArtifact;
+		this.maxAmmo = PartModules.initializeWithConstraints(maxAmmo, 10, 100, 25);
+		this.ammo = PartModules.initializeWithConstraints(ammo, 0, this.maxAmmo, 0);
+		this.maxFood = PartModules.initializeWithConstraints(maxFood, 10, 100, 25);
+		this.food = PartModules.initializeWithConstraints(food, 0, this.maxFood, 0);
+		this.maxFuel = PartModules.initializeWithConstraints(maxFuel, 10, 100, 25);
+		this.fuel = PartModules.initializeWithConstraints(fuel, 0, this.maxFuel, 0);
+		this.maxGas = PartModules.initializeWithConstraints(maxGas, 10, 100, 25);
+		this.gas = PartModules.initializeWithConstraints(gas, 0, this.maxGas, 0);
+		this.maxMetal = PartModules.initializeWithConstraints(maxMetal, 10, 100, 25);
+		this.metal = PartModules.initializeWithConstraints(metal, 0, this.maxMetal, 0);
+		this.maxWater = PartModules.initializeWithConstraints(maxWater, 10, 100, 25);
+		this.water = PartModules.initializeWithConstraints(water, 0, this.maxWater, 0);
+		if (parts == null) {
 			this.parts = new ArrayList<>();
 		} else {
 			this.parts = parts;
 		}
 	}
 
-	/**
-	 * @param current current level
-	 * @param add amount to add
-	 * @param max maximum capacity
-	 * @return new level
+	/** Attempts to store gathered resources.
+	 * @param stored represents the resources already in the cargo bay.
+	 * @param gathered represents the resources to add to the cargo bay. Cannot be negative, will be set to 0.
+	 * @param max represents the most the cargo bay can hold.
+	 * @return an int, quantity, that represents the new resource quantity in the cargo bay.
+	 * @throws CargoException if the amount added would bring the quantity beyond the max.
 	 */
-	private int addWithinRange(int current, int add, int max) {
-		if (current + add > max) {
-			return max;
-		} else {
-			return current + add;
+	private int store(int stored, int gathered, int max) throws CargoException{
+		if(gathered < 0){
+			gathered = 0;
+		}
+		int quantity = stored + gathered;
+		if (quantity > max) {
+			throw new CargoException(CargoException.Problems.OVERFLOW, stored + gathered - max);
+		}
+		return quantity;
+	}
+
+	/** Attempts to deplete taken resources.
+	 * @param stored represents the resources already in the cargo bay.
+	 * @param taken represents the resources to remove from the cargo bay. Cannot be negative, will be set to 0.
+	 * @return an int, quantity, that represents the new resource quantity in the cargo bay.
+	 * @throws CargoException if the amount removed would bring the quantity below zero.
+	 */
+	private int deplete(int stored, int taken) throws CargoException{
+		if(taken < 0){
+			taken = 0;
+		}
+		int quantity = stored - taken;
+		if (quantity < 0) {
+			throw new CargoException(CargoException.Problems.UNDERFLOW, taken - stored);
+		}
+		return quantity;
+	}
+
+	/**
+	 * @param resource represents the type of resource being stored.
+	 * @param quantity represents the amount of the resource being stored. Ignored in the case of {@link ResourceTypes#ARTIFACT}.
+	 * @throws CargoException if capacity for the resource is exceeded or an unknown resource is used.
+	 * @see CargoBay#store(int, int, int)
+	 * @see CargoBay#storePart(PartModules)
+	 */
+	void storeResource(ResourceTypes resource, int quantity) throws CargoException{
+		switch(resource){
+			case ARTIFACT:
+				this.hasArtifact = true;
+				break;
+			case AMMO:
+				this.ammo = store(this.ammo, quantity, this.maxAmmo);
+				break;
+			case FOOD:
+				this.food = store(this.food, quantity, this.maxFood);
+				break;
+			case FUEL:
+				this.fuel = store(this.fuel, quantity, this.maxFuel);
+				break;
+			case GAS:
+				this.gas = store(this.gas, quantity, this.maxGas);
+				break;
+			case METAL:
+				this.metal = store(this.metal, quantity, this.maxMetal);
+				break;
+			case WATER:
+				this.water = store(this.water, quantity, this.maxWater);
+				break;
+			default:
+				throw new CargoException(CargoException.Problems.UNKNOWN_RESOURCE, -1);
 		}
 	}
 
 	/**
-	 * @param current current level
-	 * @param remove amount to remove
-	 * @return new level
+	 * @param resource represents the type of resource being depleted.
+	 * @param quantity represents the amount of the resource being depleted. Ignored in the case of {@link ResourceTypes#ARTIFACT}.
+	 * @throws CargoException if the resource quantity is exceeded or an unknown resource is used.
+	 * @see CargoBay#deplete(int, int)
+	 * @see CargoBay#removepart(PartModules)
 	 */
-	private int decreaseUntilZero(int current, int remove) {
-		if (current - remove < 0) {
-			return 0;
-		} else {
-			return current - remove;
+	void depleteResource(ResourceTypes resource, int quantity) throws CargoException{
+		switch(resource){
+			case ARTIFACT:
+				this.hasArtifact = false;
+				break;
+			case AMMO:
+				this.ammo = deplete(this.ammo, quantity);
+				break;
+			case FOOD:
+				this.food = deplete(this.food, quantity);
+				break;
+			case FUEL:
+				this.fuel = deplete(this.fuel, quantity);
+				break;
+			case GAS:
+				this.gas = deplete(this.gas, quantity);
+				break;
+			case METAL:
+				this.metal = deplete(this.metal, quantity);
+				break;
+			case WATER:
+				this.water = deplete(this.water, quantity);
+				break;
+			default:
+				throw new CargoException(CargoException.Problems.UNKNOWN_RESOURCE, -1);
 		}
 	}
 
-	public void increaseFuel(int newFuel) {
-		this.fuel = this.addWithinRange(this.fuel, newFuel, this.maxFuel);
-	}
-	public void decreaseFuel(int usedFuel) {
-		this.fuel = this.decreaseUntilZero(this.fuel, usedFuel);
-	}
-	public int checkFuel() {
-		return this.fuel;
-	}
-
-	public void increaseMetal(int newMetal) {
-		this.metal = this.addWithinRange(this.metal, newMetal, this.maxMetal);
-	}
-	public void decreaseMetal(int usedMetal) {
-		this.metal = this.decreaseUntilZero(this.metal, usedMetal);
-	}
-	public int checkMetal() {
-		return this.metal;
-	}
-
-	public void increaseWater(int newWater) {
-		this.water = this.addWithinRange(this.water, newWater, this.maxWater);
-	}
-	public void decreaseWater(int usedWater) {
-		this.water = this.decreaseUntilZero(this.water, usedWater);
-	}
-	public int checkWater() {
-		return this.water;
-	}
-
-	public void increaseGas(int newGas) {
-		this.gas = this.addWithinRange(this.gas, newGas, this.maxGas);
-	}
-	public void decreaseGas(int usedGas) {
-		this.gas = this.decreaseUntilZero(this.gas, usedGas);
-	}
-	public int checkGas() {
-		return this.gas;
+	/**
+	 * @param resource represents the resource of interest.
+	 * @return an int representing the quantity of the given resource in the cargo bay. Returns -1 if the resource type isn't recognized.
+	 * @see CargoBay#getStoredParts()
+	 */
+	int checkResource(ResourceTypes resource){
+		int quantity;
+		switch(resource){
+			case AMMO:
+				quantity = this.ammo;
+				break;
+			case ARTIFACT:
+				quantity = this.hasArtifact ? 1 : 0;
+				break;
+			case FOOD:
+				quantity = this.food;
+				break;
+			case FUEL:
+				quantity = this.fuel;
+				break;
+			case GAS:
+				quantity = this.gas;
+				break;
+			case METAL:
+				quantity = this.metal;
+				break;
+			case WATER:
+				quantity = this.water;
+				break;
+			default:
+				quantity = -1;
+				break;
+		}
+		return quantity;
 	}
 
-	public void increaseAmmo(int newAmmo) {
-		this.ammo = this.addWithinRange(this.ammo, newAmmo, this.maxAmmo);
-	}
-	public void decreaseAmmo(int usedAmmo) {
-		this.ammo = this.decreaseUntilZero(this.ammo, usedAmmo);
-	}
-	public int checkAmmo() {
-		return this.ammo;
-	}
-
-	public void increaseFood(int newFood) {
-		this.food = this.addWithinRange(this.food, newFood, this.maxFood);
-	}
-	public void decreaseFood(int usedFood) {
-		this.food = this.decreaseUntilZero(this.food, usedFood);
-	}
-	public int checkFood() {
-		return this.food;
-	}
-
-	public void storeArtifact() {
-		this.containsArtifact = true;
-	}
-
-	public void addPart(PartModules part) {
+	/**
+	 * @param part represents the ship module to store in the cargo bay. Cannot be null.
+	 */
+	void storePart(PartModules part) {
 		if (part == null) {
 			throw new IllegalArgumentException("Must include a part to be added");
-		} else {
-			this.parts.add(part);
 		}
-	}
-	public void removePart(PartModules part) {
-		if (part == null) {
-			throw new IllegalArgumentException("Must reference a part to be removed");
-		} else {
-			this.parts.remove(part);
-		}
-	}
-	public List<PartModules> listParts() {
-		return this.parts;
+		this.parts.add(part);
 	}
 
+	/**
+	 * @param part represents the ship module to remove from the cargo bay. Cannot be null.
+	 */
+	void removepart(PartModules part) {
+		if (part == null) {
+			throw new IllegalArgumentException("Must reference a part to be removed");
+		}
+		this.parts.remove(part);
+	}
+
+	/**
+	 * Ensures the artifact, resources, and parts are moved to the other cargo bay.
+	 * @param other represents the cargo bay to receive the cargo.
+	 */
+	void transferCargoTo(CargoBay other){
+		/* Transfer the artifact. */
+		if(this.hasArtifact){
+			try{
+				other.storeResource(ResourceTypes.ARTIFACT, 1);
+			}catch(CargoException caught){
+				/* Cannot happen since the enum is used and there is no quantity to overflow with as it is ignored. */
+			}
+		}
+		/* Store the resources in other and deplete them from this. */
+		int quantity;
+		for(ResourceTypes rt : ResourceTypes.values()){
+			if(!rt.equals(ResourceTypes.ARTIFACT)){
+				quantity = this.checkResource(rt);
+				try{
+					other.storeResource(rt, quantity);
+				}catch(CargoException caught){
+					/* Some resources are lost due to the transferred cargo bay being smaller in this capacity. */
+					try{
+						other.storeResource(rt, quantity - caught.getQuantity());
+					}catch(CargoException caught2){
+						/* Cannot happen since the quantity was adjusted by the overflow amount. */
+					}
+				}
+				try{
+					/* Ensure the resources don't remain duplicated. */
+					this.depleteResource(rt, quantity);
+				}catch(CargoException caught){
+					/* Cannot happen since the quantities are checked before. */
+				}
+			}
+		}
+		/* Store parts. */
+		for(PartModules pm : this.getStoredParts()){
+			other.storePart(pm);
+		}
+		/* Ensure the parts don't remain duplicated. */
+		this.parts.clear();
+	}
+
+	/**
+	 * @return an unmodifiable list of the parts stored.
+	 */
+	List<PartModules> getStoredParts() {
+		return Collections.unmodifiableList(this.parts);
+	}
+
+	@SuppressWarnings("javadocs")
+	@Override
 	public int getModuleLevel() {
-		int level = 0;
-		if(this.maxAmmo > 60){
-			level++;
-		}
-		if(this.maxFood > 60){
-			level++;
-		}
-		if(this.maxGas > 60){
-			level++;
-		}
-		if(this.maxMetal > 60){
-			level++;
-		}
-		if(this.maxWater > 60){
-			level++;
-		}
+		int level = (this.maxAmmo + this.maxFood + this.maxFuel + this.maxGas + this.maxMetal + this.maxWater) / 125;
 		return Math.min(level, 4);
 	}
 }

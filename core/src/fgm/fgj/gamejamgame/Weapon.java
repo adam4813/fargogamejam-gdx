@@ -1,32 +1,27 @@
 package fgm.fgj.gamejamgame;
 
-public class Weapon implements PartModules{
+/** Represents the offensive capabilities of a ship. */
+class Weapon implements PartModules{
+	/** Represents the amount of damageEngine dealt in combat events, [1..4]. */
 	final int damage;
+	/** Cannot be null.
+	 * @see WeaponType
+	 */
 	final WeaponType type;
 
-	public Weapon (int damage, WeaponType type) {
+	/**
+	 * @param damage {@link Weapon#damage}
+	 * @param type {@link Weapon#type}
+	 */
+	Weapon (int damage, WeaponType type) {
 		if(type == null){
-			throw new IllegalArgumentException("Weapon cannot have a null damage type.");
+			throw new IllegalArgumentException("Weapon cannot have a null damageEngine type.");
 		}
-		this.damage = this.withinRangeOrDefault(damage, 1, 4, 1);
+		this.damage = PartModules.initializeWithConstraints(damage, 1, 4, 1);
 		this.type = type;
 	}
 
-	/**
-	 * @param value desired value
-	 * @param min lowest allowed value
-	 * @param max highest allowed value
-	 * @param def default value if desired value is out of range
-	 * @return value if valid, otherwise default
-	 */
-	private int withinRangeOrDefault(int value, int min, int max, int def) {
-		if (value >= min && value <= max) {
-			return value;
-		} else {
-			return def;
-		}
-	}
-
+	@Override
 	public int getModuleLevel() {
 		int level = 0;
 		level += damage - 1;
