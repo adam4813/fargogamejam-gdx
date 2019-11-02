@@ -26,16 +26,14 @@ class Engine implements PartModules{
 
 	/** The ship is destroyed if damage taken is greater than or equal to hit points.
 	 * @param amount represents the damage dealt to the ship. Cannot be negative, will be set to 0.
-	 * @throws EngineException if the total damage taken is higher than the engine's hitPoints.
+	 * @return a boolean that represents, when true, that the ship has been destroyed.
 	 */
-	void damage(int amount) throws EngineException{
+	boolean damage(int amount){
 		if(amount < 0){
 			amount = 0;
 		}
 		this.damageTaken = this.damageTaken + amount;
-		if (this.damageTaken >= this.hitPoints) {
-			throw new EngineException(EngineException.Problems.DESTROYED);
-		}
+		return this.damageTaken >= this.hitPoints;
 	}
 
 	/** Damage taken cannot be lower than 0 no matter how much is repaired.

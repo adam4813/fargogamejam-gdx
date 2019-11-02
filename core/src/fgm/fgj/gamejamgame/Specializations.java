@@ -15,7 +15,7 @@ public enum Specializations {
 	 * Boosts some positive events.
 	 */
 	PILOT(IconType.SPECIALIZATION_BLUE),
-	/**
+	/** Increases the change of gathering resources from planets.
 	 * Mitigates some negative events.
 	 * Boosts some positive events.
 	 */

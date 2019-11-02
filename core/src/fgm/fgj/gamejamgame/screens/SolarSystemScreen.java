@@ -99,11 +99,11 @@ public class SolarSystemScreen implements Screen {
 				Table eventBody = new Table();
 				eventBody.align(Align.center);
 				eventBody.setFillParent(true);
-				Label eventTextLabel = new Label(gameEvent.getEventText(), skin);
+				Label eventTextLabel = new Label(gameEvent.getResultText(), skin);
 				eventTextLabel.setWrap(true);
 				eventBody.add(eventTextLabel).grow().padLeft(128);
 				//eventBody.act(1);
-				eventDialog.show(dialogStage, gameEvent.isPositive() ? "Success" : "Uh-oh", eventBody);
+				eventDialog.show(dialogStage, gameEvent.getEventText(), eventBody);
 				targetPlantet = null;
 			}
 		});

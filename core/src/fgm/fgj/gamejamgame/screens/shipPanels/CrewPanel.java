@@ -9,8 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 import java.util.List;
 
-import javax.swing.Icon;
-
 import fgm.fgj.gamejamgame.CrewMember;
 import fgm.fgj.gamejamgame.Icons;
 import fgm.fgj.gamejamgame.Species;
@@ -42,7 +40,7 @@ public class CrewPanel {
 		crewTable.add(imageStack).uniform().expand();
 		crewTable.add(new Label(crewMember.getName(), skin)).uniform().expand();
 		crewTable.add(new Label(species.getName(), skin)).uniform().expand();
-		crewTable.add(new Label(String.valueOf(crewMember.getHP()), skin)).uniform().expand();
+		crewTable.add(new Label(String.valueOf(crewMember.getCurrentHitPoints()), skin)).uniform().expand();
 		crewTable.row();
 	}
 

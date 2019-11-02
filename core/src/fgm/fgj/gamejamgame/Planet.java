@@ -84,6 +84,24 @@ public class Planet {
 		return name;
 	}
 
+	/** Attempts to store replenished resources.
+	 * @param stored represents the resources already on the planet.
+	 * @param replenished represents the resources to add to the planet. Cannot be negative, will be set to 0.
+	 * @param max represents the most the planet can hold.
+	 * @return an int, quantity, that represents the new resource quantity on the planet.
+	 * @throws CargoException if the amount added would bring the quantity beyond the max.
+	 */
+	private int store(int stored, int replenished, int max) throws CargoException{
+		if(replenished < 0){
+			replenished = 0;
+		}
+		int quantity = stored + replenished;
+		if (quantity > max) {
+			throw new CargoException(CargoException.Problems.OVERFLOW, stored + replenished - max);
+		}
+		return quantity;
+	}
+
 	/** Attempts to deplete taken resources.
 	 * @param stored represents the resources already in the planet.
 	 * @param taken represents the resources to remove from the planet.
@@ -101,28 +119,117 @@ public class Planet {
 		return quantity;
 	}
 
+	/**
+	 * @param resource represents the type of resource being replenished.
+	 * @param quantity represents the amount of the resource being replenished. Ignored in the case of {@link ResourceTypes#ARTIFACT}.
+	 * @return an int representing the amount of overflow. -1 if an unknown resource type was used.
+	 * @see Planet#store(int, int, int)
+	 */
+	int replenishResource(ResourceTypes resource, int quantity){
+		int overflow = 0;
+		switch(resource){
+			case ARTIFACT:
+				if(!this.hasArtifact){
+					this.hasArtifact = true;
+				}else{
+					overflow = 1;
+				}
+				break;
+			case FUEL:
+				try{
+					this.fuel = store(this.fuel, quantity, 1000);
+				}catch(CargoException caught){
+					try{
+						this.fuel = store(this.fuel, quantity - caught.getQuantity(), 1000);
+						overflow = caught.getQuantity();
+					}catch(CargoException notCaught){
+						/* The value has been adjusted and cannot overflow. */
+					}
+				}
+				break;
+			case METAL:
+				try{
+					this.metal = store(this.metal, quantity, 1000);
+				}catch(CargoException caught){
+					try{
+						this.metal = store(this.metal, quantity - caught.getQuantity(), 1000);
+						overflow = caught.getQuantity();
+					}catch(CargoException notCaught){
+						/* The value has been adjusted and cannot overflow. */
+					}
+				}
+				break;
+			case WATER:
+				try{
+					this.water = store(this.water, quantity, 1000);
+				}catch(CargoException caught){
+					try{
+						this.water = store(this.water, quantity - caught.getQuantity(), 1000);
+						overflow = caught.getQuantity();
+					}catch(CargoException notCaught){
+						/* The value has been adjusted and cannot overflow. */
+					}
+				}
+				break;
+			default:
+				overflow = -1;
+				break;
+		}
+		return overflow;
+	}
+
 	/** @see Planet#deplete(int, int) */
-	void depleteResource(ResourceTypes resource, int quantity) throws CargoException{
+	int depleteResource(ResourceTypes resource, int quantity){
+		int underflow = 0;
 		switch(resource){
 			case ARTIFACT:
 				if(this.hasArtifact){
 					this.hasArtifact = false;
 				}else{
-					throw new CargoException(CargoException.Problems.UNDERFLOW, -1);
+					underflow = 1;
 				}
 				break;
 			case FUEL:
-				this.fuel = deplete(this.fuel, quantity);
+				try{
+					this.fuel = deplete(this.fuel, quantity);
+				}catch(CargoException caught){
+					try{
+						this.fuel = deplete(this.fuel, quantity - caught.getQuantity());
+						underflow = caught.getQuantity();
+					}catch(CargoException notCaught){
+						/* The value has been adjusted and cannot underflow. */
+					}
+				}
 				break;
 			case METAL:
-				this.metal = deplete(this.metal, quantity);
+				try{
+					this.metal = deplete(this.metal, quantity);
+				}catch(CargoException caught){
+					try{
+						this.metal = deplete(this.metal, quantity - caught.getQuantity());
+						underflow = caught.getQuantity();
+					}catch(CargoException notCaught){
+						/* The value has been adjusted and cannot underflow. */
+					}
+				}
 				break;
 			case WATER:
-				this.water = deplete(this.water, quantity);
+				try{
+					this.water = deplete(this.water, quantity);
+				}catch(CargoException caught){
+					try{
+						this.water = deplete(this.water, quantity - caught.getQuantity());
+						underflow = caught.getQuantity();
+					}catch(CargoException notCaught){
+						/* The value has been adjusted and cannot underflow. */
+					}
+				}
 				break;
 			default:
-				throw new CargoException(CargoException.Problems.UNKNOWN_RESOURCE, -1);
+				underflow = -1;
+				break;
 		}
+		return underflow;
 	}
 
 	/**
@@ -156,7 +263,7 @@ public class Planet {
 	Species getMostViolentSpecies() {
 		Species mostViolentSpecies = null;
 		for (Species species : this.speciesPresent) {
-			if (mostViolentSpecies == null || species.damage > mostViolentSpecies.damage) {
+			if (species.damage > ((mostViolentSpecies == null) ? 0 : mostViolentSpecies.damage)) {
 				mostViolentSpecies = species;
 			}
 		}

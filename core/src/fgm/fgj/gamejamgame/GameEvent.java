@@ -1,493 +1,493 @@
 package fgm.fgj.gamejamgame;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
-import static fgm.fgj.gamejamgame.Specialization.ENGINEER;
-import static fgm.fgj.gamejamgame.Specialization.PILOT;
-import static fgm.fgj.gamejamgame.Specialization.SCIENTIST;
-
+/** Represents how the game state is manipulated. */
 public class GameEvent {
-	final EventContext eventContext;
-	String eventText;
-	boolean didLose;
-	boolean isPositive;
+	/** Represents the kinds of events that may occur. */
+	private enum Context{
+		NO_CREW_REMAINING(false, true, "There isn't a crew remaining to operate the ship!", "Our journey has come to an unfortunate end."),
+		SHIP_DESTROYED(false, true, "Our ship has been destroyed!", "Our journey has come to an unfortunate end."),
+		NO_GAS_REMAINING(false, true, "Our crew had insufficient gas to breathe!", "Our journey has come to an unfortunate end."),
+		NO_FUEL_REMAINING(false, true, "Our ship ran out of fuel!", "Our journey has come to an unfortunate end."),
+		FOUND_HABITABLE_PLANET(true, false, "This planet... is a lot like our home!", "Our journey has come to an end, we've found a new home!"/*, "Eh, there might be better homes."*/),
+		FOUND_ARTIFACT(false, false, "Our crew has found a mysterious artifact!", "Take the artifact."),
+		AMBUSH(false, false, "Something is engaging us!", "Fight them!"),
+		GATHER_PLANET_RESOURCES(false, false, "Our crew has detected resources!", "Have our scientists gather what they can."/*, "Have our scientists focus on fuels", "Have our scientists focus on metals", "Have our scientists focus on water"*/),
+		PIRATE_ATTACK(false, false, "Pirates are engaging us!", "Fight them!"/*, "Try to escape."*/),
+		DEBRIS_STRIKE(false, false, "Debris is on a collision trajectory with us!","Maneuver away."),
+		RADIATION_BURST(false, false, "Our crew is suffering in a strong radiation field!", "Scramble your engineers to bolster your life support systems."),
+		PEACEFUL(false, false, "It's quiet...", "Just how I like it.", "Too quiet...");
+		/** Represents the text displayed in the UI for context so the player can make an informed decision on their provided options, cannot be null or "". */
+		private final String eventText;
+		/** Represents the text displayed in the UI to indicate the options the player may choose, which change how the event is executed. Cannot be null or empty. */
+		private final List<String> options;
+		/** Represents, when true, that the UI should display the lose screen. */
+		private final boolean isLosingContext;
+		/** Represents, when true, that the UI should display the win screen. */
+		private final boolean isWinningContext;
 
-	private SolarSystem solarSystem;
-	private Planet planet;
-	private Ship ship;
+		/** Instantiates event context with the given parameters.
+		 * @param isWinningContext {@link Context#isWinningContext}
+		 * @param isLosingContext {@link Context#isLosingContext}
+		 * @param eventText {@link Context#eventText}
+		 * @param options {@link Context#options}
+		 */
+		Context(final boolean isWinningContext, final boolean isLosingContext, final String eventText, String ...options){
+			if(eventText == null){
+				throw new IllegalArgumentException("A game event's context text cannot be null.");
+			}
+			if(eventText.equals("")){
+				throw new IllegalArgumentException("A game event's context text cannot be empty.");
+			}
+			if(options.length < 1){
+				throw new IllegalArgumentException("A game event's context must have at least 1 option.");
+			}
+			this.eventText = eventText;
+			this.options = new ArrayList<>();
+			this.isWinningContext = isWinningContext;
+			this.isLosingContext = isLosingContext;
+			for(String option : options){
+				if(option == null){
+					throw new IllegalArgumentException("A game event's context option cannot be null.");
+				}
+				if(option.equals("")){
+					throw new IllegalArgumentException("A game event's context option cannot be empty.");
+				}
+				this.options.add(option);
+			}
+		}
 
-	public boolean didLose(){
-		return this.didLose;
+		/** @return {@link Context#isWinningContext} */
+		boolean isWinningContext(){
+			return this.isWinningContext;
+		}
+
+		/** @return {@link Context#isLosingContext} */
+		boolean isLosingContext(){
+			return this.isLosingContext;
+		}
+
+		/** @return {@link Context#eventText} */
+		String getEventText(){
+			return this.eventText;
+		}
+
+		/** @return an unmodifiable list for {@link Context#options} */
+		List<String> getOptions(){
+			return Collections.unmodifiableList(this.options);
+		}
 	}
 
-	public boolean isPositive(){
-		return this.isPositive && !this.didLose;
-	}
+	/** Cannot be null.
+	 * @see Context
+	 */
+	private final Context context;
+	/** Represents the text displayed in the UI after an option was executed. */
+	private String resultText;
+	/** Represents a reference to execute on the same ship used to create the event, cannot be null.
+	 * Note that the game isn't thread-safe so the original reference may be modified between the game event's instantiation and execution.
+	 * Due to the nature of the game it is safe to assume they are in the same state though.
+	 * @see Ship
+	 */
+	private final Ship ship;
+	/** Represents a reference to execute on the same solarSystem system used to create the event.
+	 * Note that the game isn't thread-safe so the original reference may be modified between the game event's instantiation and execution.
+	 * Due to the nature of the game it is safe to assume they are in the same state though.
+	 * @see SolarSystem
+	 */
+	private final SolarSystem solarSystem;
+	/** Represents a reference to execute on the same planet used to create the event.
+	 * Note that the game isn't thread-safe so the original reference may be modified between the game event's instantiation and execution.
+	 * Due to the nature of the game it is safe to assume they are in the same state though.
+	 * @see Planet
+	 */
+	private final Planet planet;
+	/** Represents, when true, that the event has been executed and shouldn't be used again. This is to prevent accidental repeats of events and potential cheaters from using the event more than once. */
+	private boolean executed;
 
-	public GameEvent(SolarSystem solarSystem, int fuelCost, Planet planet, Ship ship) {
-		this.eventText = "Nothing happened.";
-		this.isPositive = true;
+	/** Instantiates a new game event based on the game state provided.
+	 * @param solarSystem represents the solarSystem system the player resides in for event generation. May be manipulated to resolve the event.
+	 * @param fuelCost represents the cost of traveling that generated the event.
+	 * @param planet represents the planet the player resides in for event generation. May be manipulated to resolve the event.
+	 * @param ship represents the player for event generation. May be manipulated to resolve the event.
+	 */
+	GameEvent(SolarSystem solarSystem, int fuelCost, Planet planet, Ship ship) {
+		/* TODO instantiate the event context but do not carry out its effect. */
+		/* Cargo errors include using the wrong resource type (-1) or overflows and underflows of values greater than 0.
+		* Underflows will often be game losing. */
+		int cargoError;
 		if (ship == null) {
 			throw new IllegalArgumentException("A game event cannot occur with a null ship.");
 		}
+		this.executed = false;
+		this.solarSystem = solarSystem;
+		this.planet = planet;
 		this.ship = ship;
-		if(solarSystem == null && planet == null){
-			this.eventContext = EventContext.GALAXY;
-			ship.getCargoBay().decreaseFuel(1);
-		}else if(planet == null){
-			this.solarSystem = solarSystem;
-			this.eventContext = EventContext.SOLAR_SYSTEM;
-			if(fuelCost > 0){
-				ship.getCargoBay().decreaseFuel(fuelCost);
+		this.resultText = "Choose an option.";
+		/* Each crew member consumes 1 gas, but is reduced by life support. */
+		cargoError = ship.removeCargo(ResourceTypes.GAS, ship.getCrewMembers().size() - ship.getLifeSupportGasEfficiency());
+		if(cargoError > 0){
+			/* The player loses if they don't have enough gas to sustain their crew. */
+			this.context = Context.NO_GAS_REMAINING;
+			return;
+		}
+		/* Prioritize losing events. */
+		if(ship.getCrewMembers().isEmpty()){
+			this.context = Context.NO_CREW_REMAINING;
+			return;
+		}
+		if(ship.damageEngine(0)){
+			this.context = Context.SHIP_DESTROYED;
+			return;
+		}
+		if(solarSystem != null && planet != null){
+			/* TODO prioritize 'planet' only events */
+			ship.setPirateThreat(+1);
+			int pirateThreat = ship.getPirateThreat() + solarSystem.pirateThreat;
+			Species mostViolent = planet.getMostViolentSpecies();
+			int roll = (int)(Math.random() * 60);
+			/* Visiting planets in a solarSystem system always take 1 fuel. */
+			cargoError = ship.removeCargo(ResourceTypes.FUEL, 1);
+			if(cargoError > 0){
+				this.context = Context.NO_FUEL_REMAINING;
+				return;
+			}
+			if(planet.checkResource(ResourceTypes.ARTIFACT) != 0){
+				this.context = Context.FOUND_ARTIFACT;
+				return;
+			}
+			if(planet.isHabitablePlanet(ship)){
+				this.context = Context.FOUND_HABITABLE_PLANET;
+				return;
+			}
+			if(roll < ((mostViolent != null) ? mostViolent.damage * 3 : 0)){
+				this.context = Context.AMBUSH;
+				return;
+			}else if(roll < ((mostViolent != null) ? mostViolent.damage * 3 : 0) + pirateThreat){
+				this.context = Context.PIRATE_ATTACK;
+				return;
 			}else{
-				throw new IllegalArgumentException("Fuel costs to visit another solar system cannot be less than 1.");
+				this.context = Context.GATHER_PLANET_RESOURCES;
+				return;
+			}
+		}else if(solarSystem != null){
+			/* TODO prioritize 'solarSystem system' only events */
+			int roll = (int)(Math.random() * 60);
+			ship.setPirateThreat(-ship.getEngineSpeed());
+			int pirateThreat = ship.getPirateThreat() + solarSystem.pirateThreat;
+			cargoError = ship.removeCargo(ResourceTypes.FUEL, fuelCost - ship.getEngineEfficiency());
+			if(cargoError > 0){
+				this.context = Context.NO_FUEL_REMAINING;
+				return;
+			}
+			if(roll < pirateThreat ){
+				this.context = Context.PIRATE_ATTACK;
+				return;
+			}else if(roll < solarSystem.debrisRating + pirateThreat){
+				this.context = Context.DEBRIS_STRIKE;
+				return;
+			}else if(roll < solarSystem.solarRadiation + solarSystem.debrisRating + pirateThreat){
+				this.context = Context.RADIATION_BURST;
+				return;
 			}
 		}else{
-			this.solarSystem = solarSystem;
-			this.planet = planet;
-			this.eventContext = EventContext.PLANET;
-			ship.getCargoBay().decreaseFuel(1);
-		}
-
-		int randomValue = (int)(Math.random() * 100);
-		if(planet != null && planet.hasArtifact()){
-			handleArtifactEvent();
-		}else if(randomValue < solarSystem.pirateThreat) {
-			handlePirateEvent();
-		}else if(randomValue < solarSystem.debrisRating + solarSystem.pirateThreat) {
-			handleDebrisEvent();
-		}else if(randomValue < solarSystem.solarRadiation + solarSystem.pirateThreat + solarSystem.debrisRating) {
-			handleRadiationEvent();
-		}else if(planet != null && planet.getMostViolentSpecies() != null && randomValue < planet.getMostViolentSpecies().damage + solarSystem.solarRadiation + solarSystem.pirateThreat + solarSystem.debrisRating) {
-			if (eventContext == EventContext.PLANET) {
-				handleAmbushEvent();
-			} else {
-				handleRandomEvent(eventContext);
-			}
-		}else if (randomValue < 70) {
-			if (eventContext == EventContext.PLANET) {
-				handleResourceCollection();
-			} else {
-				handleRandomEvent(eventContext);
-			}
-		}else if (randomValue < 95) {
-			handleRandomEvent(eventContext);
-		}else {
-			this.isPositive = true;
-			this.eventText = "Your voyage was uneventful.";
-		}
-	}
-
-	private void handleRandomEvent(EventContext eventContext) {
-		this.eventText = "Nothing happened.";
-		this.isPositive = true;
-		Random rand = new Random();
-		int eventKey = rand.nextInt(6);
-
-		if (eventContext == EventContext.PLANET) {
-			switch (eventKey) {
-				case 0:
-					handleRuinsEvent();
-					break;
-				case 1:
-					handleEarthquakeEvent();
-					break;
-				case 2:
-					handleDesertionEvent();
-					break;
-				case 3:
-					handleRecruitmentEvent();
-					break;
-				case 4:
-					handleTradeEvent();
-					break;
-				case 5:
-					handleExtraEatingEvent();
-					break;
-				case 6:
-					handleAmmoProductEvent();
-					break;
-			}
-		} else if (eventContext == EventContext.SOLAR_SYSTEM) {
-			switch (eventKey) {
-				case 0:
-					handleSolarStormEvent();
-					break;
-				case 1:
-					handleSalvageFuelEvent();
-					break;
-				case 2:
-					handleRatsEvent();
-					break;
-				case 3:
-					handleAbandonedCargoEvent();
-					break;
-				case 4:
-					handleTradeEvent();
-					break;
-				case 5:
-					handleCrewMemberExchange();
-					break;
-			}
-		}
-	}
-
-	private void handleArtifactEvent() {
-		this.eventText = "You found the rare artifact!";
-		this.isPositive = true;
-		this.ship.getCargoBay().storeArtifact();
-	}
-
-	private void handlePirateEvent() {
-		this.isPositive = false;
-		int maxResourcesTaken = 7 - this.ship.getEngineSpeed();
-		for(CrewMember cm : this.ship.listCrewMembers()){
-			if(cm.specialization.equals(PILOT)){
-				/* Each pilot increases the maneuverability of the ship. */
-				maxResourcesTaken--;
-			}
-		}
-		if(maxResourcesTaken > this.ship.getDamagePerAmmo()){
-			int takenMetal = (int)(Math.random() * maxResourcesTaken);
-			int takenWater= (int)(Math.random() * maxResourcesTaken);
-			int takenAmmo = (int)(Math.random() * maxResourcesTaken);
-			int takenFood = (int)(Math.random() * maxResourcesTaken);
-			int takenFuel = (int)(Math.random() * maxResourcesTaken);
-			this.ship.getCargoBay().decreaseMetal(takenMetal);
-			this.ship.getCargoBay().decreaseWater(takenWater);
-			this.ship.getCargoBay().decreaseAmmo(takenAmmo);
-			this.ship.getCargoBay().decreaseFood(takenFood);
-			this.ship.getCargoBay().decreaseFuel(takenFuel);
-			this.eventText = "Space pirates overwhelmed your weapons and engines. They've taken " + takenMetal + " metals " + takenWater + " water " + takenAmmo + " ammo " + takenFood + " food " + "and " + takenFuel + " fuel";
-		}else{
-			this.eventText = "You encountered space pirates and fended them off with your weapons and out maneuvered them before they took anything!";
-		}
-	}
-
-	private void handleDebrisEvent() {
-		this.isPositive = false;
-		// If crew has pilot, reduce potential damage amount
-		int maxPotentialDamage = 8;
-		int damageDealt;
-		for(CrewMember cm : this.ship.listCrewMembers()){
-			if(cm.specialization.equals(PILOT)){
-				maxPotentialDamage--;
-			}
-		}
-		damageDealt = (int)(Math.random() * maxPotentialDamage);
-		Boolean isShipDestroyed = this.ship.issueHullDamage(damageDealt);
-		if (isShipDestroyed) {
-			this.eventText = "Your ship took " + damageDealt + " damage from debris and was destroyed!";
-			this.didLose = true;
-		} else {
-			this.eventText = "Your ship took " + damageDealt + " damage from debris!";
-		}
-	}
-
-	private void handleRadiationEvent() {
-		this.isPositive = false;
-		int maxPotentialDamage = this.solarSystem.solarRadiation + 3 - this.ship.getLifeSupport().solarRadiationTolerance;
-		int damageDealt;
-		for(CrewMember cm : this.ship.listCrewMembers()){
-			if(cm.specialization.equals(Specialization.ENGINEER)){
-				maxPotentialDamage--;
-			}
-		}
-		damageDealt = (int)(Math.random() * maxPotentialDamage);
-		Boolean isShipDestroyed = this.ship.issueHullDamage(damageDealt);
-		if (isShipDestroyed) {
-			this.eventText = "Your ship took " + damageDealt + " damage from a radiation burst and was destroyed!";
-			this.didLose = true;
-		} else {
-			this.eventText = "Your ship took " + damageDealt + " damage from a radiation burst!";
-		}
-	}
-
-	private void handleResourceCollection() {
-		this.isPositive = true;
-		int potentialResources = 5;
-		for(CrewMember cm : this.ship.listCrewMembers()){
-			if(cm.specialization.equals(Specialization.SCIENTIST)){
-				potentialResources++;
-			}
-		}
-		int metalHarvestAmount = (int)(Math.random() * potentialResources);
-		int waterHarvestAmount = (int)(Math.random() * potentialResources);
-		int fuelHarvestAmount = (int)(Math.random() * potentialResources);
-		this.planet.metals -= metalHarvestAmount;
-		if(this.planet.metals < 0){
-			/* They've collected the last of the metals. */
-			metalHarvestAmount -= this.planet.metals;
-			this.planet.metals = 0;
-		}
-		ship.getCargoBay().increaseMetal(metalHarvestAmount);
-
-		this.planet.water -= waterHarvestAmount;
-		if(this.planet.water < 0){
-			/* They've collected the last of the water. */
-			waterHarvestAmount -= this.planet.water;
-			this.planet.water = 0;
-		}
-		ship.getCargoBay().increaseWater(waterHarvestAmount);
-
-		this.planet.fuel -= fuelHarvestAmount;
-		if(this.planet.fuel < 0){
-			/* They've collected the last of the fuel. */
-			fuelHarvestAmount -= this.planet.fuel;
-			this.planet.fuel = 0;
-		}
-		this.ship.getCargoBay().increaseFuel(waterHarvestAmount);
-		this.eventText = "You collected " + metalHarvestAmount + " metals, " + waterHarvestAmount + " water, and " + fuelHarvestAmount + " fuel from the planet.";
-	}
-
-	private void handleAmbushEvent() {
-		this.isPositive = false;
-		Species ambushingSpecies = this.planet.getMostViolentSpecies();
-		// Get random crew member to the ambush will injure or kill
-		List<CrewMember> aliveCrewMembers = this.ship.listCrewMembers();
-		Random rand = new Random();
-		int randomCrewMemberIndex = rand.nextInt(aliveCrewMembers.size());
-		CrewMember randomCrewMember = aliveCrewMembers.get(randomCrewMemberIndex);
-		String crewMemberName = randomCrewMember.name;
-		if (randomCrewMember.dealDamage(ambushingSpecies.damage)) {
-			this.ship.removeCrewMember(randomCrewMember);
-			this.eventText = "Crew member '" + crewMemberName + "' was killed. ";
-		} else {
-			this.eventText = "Crew member '" + crewMemberName + "' was injured. ";
-		}
-
-		int ammoRequired = (int) (ambushingSpecies.hitPoints / this.ship.getDamagePerAmmo());
-		int currentAmmo = this.ship.getCargoBay().checkAmmo();
-		if (currentAmmo < ammoRequired) {
-			this.eventText += "Ran out of ammo, no food acquired. ";
-		} else {
-			if (currentAmmo == ammoRequired) {
-				this.eventText += "Ran out of ammo. ";
-			}
-			this.ship.getCargoBay().increaseFood(ambushingSpecies.mass);
-			this.eventText += "Acquired " + ambushingSpecies.mass + " food.";
-		}
-		this.ship.getCargoBay().decreaseAmmo(ammoRequired);
-	}
-
-	private void handleRecruitmentEvent() {
-		List<Species> speciesPresent = this.planet.speciesPresent;
-		Species crewSpecies = this.ship.getCrewSpecies();
-		if (speciesPresent.contains(crewSpecies)) {
-			this.ship.addCrewMember(1);
-		}
-		this.eventText = "You recruited a new crew member";
-		this.isPositive = true;
-	}
-
-	private void handleDesertionEvent() {
-		Random rand = new Random();
-
-		List<Species> speciesPresent = this.planet.speciesPresent;
-		Species crewSpecies = this.ship.getCrewSpecies();
-
-		if (speciesPresent.contains(crewSpecies)) {
-			List<CrewMember> aliveCrewMembers = this.ship.listCrewMembers();
-			if (aliveCrewMembers.size() > 2) {
-				int randomCrewMemberIndex = rand.nextInt(aliveCrewMembers.size());
-				CrewMember randomCrewMember = aliveCrewMembers.get(randomCrewMemberIndex);
-				String crewMemberName = randomCrewMember.name;
-				this.ship.removeCrewMember(randomCrewMember);
-
-				this.eventText = "Crew member '" + crewMemberName + "' deserted. ";
+			/* TODO prioritize 'galaxy' only events */
+			cargoError = ship.removeCargo(ResourceTypes.FUEL, fuelCost - ship.getEngineEfficiency());
+			if(cargoError > 0){
+				this.context = Context.NO_FUEL_REMAINING;
 				return;
 			}
 		}
-		this.eventText = "Crew members seem happy.";
-		this.isPositive = false;
+		/* TODO prioritze anytime events. */
+		this.context = Context.PEACEFUL;
 	}
 
-	private void handleTradeEvent() {
-		Random rand = new Random();
-		int giveResourceIndex = rand.nextInt(6);
-		int giveUnits = rand.nextInt(4) + 1;
-		String giveResource;
-		switch (giveResourceIndex) {
-			case 0: giveResource = "fuel"; this.ship.getCargoBay().increaseFuel(giveUnits); break;
-			case 1: giveResource = "metal"; this.ship.getCargoBay().increaseMetal(giveUnits); break;
-			case 2: giveResource = "water"; this.ship.getCargoBay().increaseWater(giveUnits); break;
-			case 3: giveResource = "gas"; this.ship.getCargoBay().increaseGas(giveUnits); break;
-			case 4: giveResource = "ammo"; this.ship.getCargoBay().increaseAmmo(giveUnits); break;
-			case 5: default: giveResource = "food"; this.ship.getCargoBay().increaseFood(giveUnits); break;
-		}
-		int receiveResourceIndex = rand.nextInt(6);
-		int receiveUnits = rand.nextInt(4) + 1;
-		String receiveResource;
-		switch (receiveResourceIndex) {
-			case 0: receiveResource = "food"; this.ship.getCargoBay().decreaseFuel(giveUnits); break;
-			case 1: receiveResource = "ammo"; this.ship.getCargoBay().decreaseMetal(giveUnits); break;
-			case 2: receiveResource = "gas"; this.ship.getCargoBay().decreaseWater(giveUnits); break;
-			case 3: receiveResource = "water"; this.ship.getCargoBay().decreaseGas(giveUnits); break;
-			case 4: receiveResource = "metal"; this.ship.getCargoBay().decreaseAmmo(giveUnits); break;
-			case 5: default: receiveResource = "fuel"; this.ship.getCargoBay().decreaseFood(giveUnits); break;
-		}
-		if (this.planet != null) {
-			this.eventText = "You traded with the planet '" + this.planet.getName() + ".' ";
-		} else {
-			this.eventText = "You encountered another ship and traded with them. ";
-		}
-		this.eventText += "You gave them " + giveUnits + " " + giveResource + " and received " + receiveUnits + " " + receiveResource + ".";
-		this.isPositive = true;
+	/** @return {@link Context#isLosingContext()} */
+	public boolean didLose(){
+		return this.context.isLosingContext();
 	}
 
-	private void handleCrewMemberExchange() {
-		List<CrewMember> crewMembers = this.ship.listCrewMembers();
-		List<CrewMember> engineers = new ArrayList<>();
-		List<CrewMember> pilots = new ArrayList<>();
-		List<CrewMember> scientists = new ArrayList<>();
-		for (CrewMember crewMember: crewMembers) {
-			switch (crewMember.specialization) {
-				case ENGINEER: engineers.add(crewMember); break;
-				case PILOT: pilots.add(crewMember); break;
-				case SCIENTIST: scientists.add(crewMember); break;
+	/** @return {@link Context#isWinningContext()} */
+	public boolean didWin(){
+		return this.context.isWinningContext();
+	}
+
+	/** Executes the event using the option provided if it hasn't been executed before..
+	 * @param index represents the option used to execute the event.
+	 * @see GameEvent#executed
+	 */
+	public void execute(int index){
+		if(!this.executed){
+			this.executed = true;
+			this.resultText = "Error. GameEvent Context is not recognized.";
+			switch(this.context){
+				case NO_CREW_REMAINING:
+				case NO_GAS_REMAINING:
+				case NO_FUEL_REMAINING:
+				case SHIP_DESTROYED:
+					/* TODO Trigger/Signal the end of the game so that the UI displays the lose screen. */
+					break;
+				case FOUND_HABITABLE_PLANET:
+					/* TODO Trigger/Signal the end of the game so that the UI displays the win screen. */
+					break;
+				case FOUND_ARTIFACT:
+					this.executeFoundArtifact(index);
+					break;
+				case AMBUSH:
+					this.executeAmbush(index);
+					break;
+				case GATHER_PLANET_RESOURCES:
+					this.executeGatherPlanetResources(index);
+					break;
+				case PIRATE_ATTACK:
+					this.executePirateAttack(index);
+					break;
+				case DEBRIS_STRIKE:
+					this.executeDebrisStrike(index);
+					break;
+				case RADIATION_BURST:
+					this.executeRadiationBurst(index);
+					break;
+				case PEACEFUL:
+					this.executePeaceful(index);
+					break;
+				default:
+					/* The GameEvent's context isn't recognized. */
+					break;
 			}
 		}
-		String tradeAwayName = "";
-		String tradeAwaySpecialization = "";
-		String tradeToSpecialization = "";
-		String tradeToName = Galaxy.generateCrewName();
-		if (engineers.size() > 1) {
-			if (pilots.size() == 0) {
-				tradeAwayName = engineers.get(1).name;
-				tradeAwaySpecialization = "engineer";
-				tradeToSpecialization = "pilot";
-				this.ship.addCrewMember(new CrewMember(tradeToName, engineers.get(1).species, PILOT, 0));
-				this.ship.removeCrewMember(engineers.get(1));
-			} else if (scientists.size() == 0) {
-				tradeAwayName = engineers.get(1).name;
-				tradeAwaySpecialization = "engineer";
-				tradeToSpecialization = "scientist";
-				this.ship.addCrewMember(new CrewMember(tradeToName, engineers.get(1).species, SCIENTIST, 0));
-				this.ship.removeCrewMember(engineers.get(1));
-			}
-		} else if (pilots.size() > 1) {
-			if (engineers.size() == 0) {
-				tradeAwayName = pilots.get(1).name;
-				tradeAwaySpecialization = "pilot";
-				tradeToSpecialization = "engineer";
-				this.ship.addCrewMember(new CrewMember(tradeToName, pilots.get(1).species, ENGINEER, 0));
-				this.ship.removeCrewMember(pilots.get(1));
-			} else if (scientists.size() == 0) {
-				tradeAwayName = pilots.get(1).name;
-				tradeAwaySpecialization = "pilot";
-				tradeToSpecialization = "scientist";
-				this.ship.addCrewMember(new CrewMember(tradeToName, pilots.get(1).species, SCIENTIST, 0));
-				this.ship.removeCrewMember(pilots.get(1));
-			}
-		} else if (scientists.size() > 1) {
-			if (engineers.size() == 0) {
-				tradeAwayName = scientists.get(1).name;
-				tradeAwaySpecialization = "scientist";
-				tradeToSpecialization = "engineer";
-				this.ship.addCrewMember(new CrewMember(tradeToName, scientists.get(1).species, ENGINEER, 0));
-				this.ship.removeCrewMember(scientists.get(1));
-			} else if (pilots.size() == 0) {
-				tradeAwayName = scientists.get(1).name;
-				tradeAwaySpecialization = "scientist";
-				tradeToSpecialization = "pilot";
-				this.ship.addCrewMember(new CrewMember(tradeToName, scientists.get(1).species, PILOT, 0));
-				this.ship.removeCrewMember(scientists.get(1));
-			}
-		}
-		if (tradeAwayName != "" && tradeToName != "" && tradeToSpecialization != "" && tradeAwaySpecialization != "") {
-			this.eventText = "A passing ship noticed you had no " + tradeToSpecialization
-				+ ", so they offered a crew member exchange and gave you '" + tradeToName
-				+ "' in exchange for your extra " + tradeAwaySpecialization + " named '" + tradeAwayName + ".'";
-		} else {
-			this.eventText = "You tried to initiate a crew member exchange, but it didn't work out.";
-		}
 	}
 
-	public void handleAmmoProductEvent() {
-		Random rand = new Random();
-		int metals = this.ship.getCargoBay().checkMetal();
-		if (metals == 0) {
-			this.eventText = "You tried to trade metal for ammo, but you didn't have any metal.";
-		} else {
-			int metalToTrade = rand.nextInt(metals) + 1;
-			for(CrewMember cm : this.ship.listCrewMembers()){
-				if(cm.specialization.equals(Specialization.SCIENTIST)){
-					metalToTrade++;
-				}
-			}
-			int addedAmmo = metalToTrade * 2;
-			this.ship.getCargoBay().decreaseMetal(metalToTrade);
-			this.ship.getCargoBay().increaseAmmo(addedAmmo);
-			this.eventText = "You traded " + metalToTrade + " metal for " + addedAmmo + " ammo.";
-		}
-	}
-
-	private void handleRuinsEvent() {
-		int metalAmount = new Random().nextInt(5) + 1;
-		if (metalAmount == 1) {
-			this.eventText = "You found some ancient ruins. There was " + metalAmount + " unit of metal inside";
-		} else {
-			this.eventText = "You found some ancient ruins. There were " + metalAmount + " units of metal inside";
-		}
-		this.isPositive = true;
-		this.ship.getCargoBay().increaseMetal(metalAmount);
-	}
-
-	private void handleEarthquakeEvent() {
-		int damageAmount = new Random().nextInt(10) + 1;
-		Boolean isShipDestroyed = this.ship.issueHullDamage(damageAmount);
-		this.isPositive = false;
-		if (isShipDestroyed) {
-			this.eventText = "An earthquake occurred. Your ship took" + damageAmount + " damage and was destroyed.";
-			this.didLose = Boolean.TRUE;
-		} else {
-			this.eventText = "An earthquake occurred. Your ship took" + damageAmount + " damage.";
-		}
-	}
-
-	private void handleExtraEatingEvent() {
-		Random rand = new Random();
-		List<CrewMember> crewMembers = this.ship.listCrewMembers();
-		int crewMemberIndex = rand.nextInt(crewMembers.size());
-		int foodEaten = rand.nextInt(3) + 1;
-		this.eventText = "Crew member '" + crewMembers.get(crewMemberIndex).getName() + "' returned from planet '" + this.planet.getName() + "' famished and ate " + foodEaten + " extra food from the cargo bay.";
-		this.ship.getCargoBay().decreaseFood(foodEaten);
-		this.isPositive = false;
-	}
-
-	private void handleSolarStormEvent() {
-		this.eventText = "There is a solar storm. You must leave this system temporarily.";
-		this.isPositive = false;
-	}
-
-	private void handleSalvageFuelEvent() {
-		int fuelAmount = new Random().nextInt(3) + 1;
-		this.eventText = "You found an abandoned coal bunker floating in space. You were able to salvage " + fuelAmount + " units of fuel from it.";
-		this.ship.getCargoBay().increaseFuel(fuelAmount);
-		this.isPositive = true;
-	}
-
-	private void handleRatsEvent() {
-		int foodAmount = new Random().nextInt(3) + 1;
-		this.eventText = "Rats ate " + foodAmount + " units of your food.";
-		this.ship.getCargoBay().decreaseFood(foodAmount);
-		this.isPositive = false;
-	}
-
-	private void handleAbandonedCargoEvent() {
-		this.eventText = "You found an abandoned ship adrift in space and ransacked its cargo bay!";
-		this.ship.getCargoBay().increaseMetal((int)(Math.random() * 6));
-		this.ship.getCargoBay().increaseWater((int)(Math.random() * 6));
-		this.ship.getCargoBay().increaseAmmo((int)(Math.random() * 6));
-		this.ship.getCargoBay().increaseFood((int)(Math.random() * 6));
-		this.ship.getCargoBay().increaseFuel((int)(Math.random() * 6));
-		this.isPositive = true;
-	}
-
+	/** @return {@link Context#getEventText()} */
 	public String getEventText() {
-		return this.eventText;
+		return this.context.getEventText();
 	}
 
+	/** @return {@link Context#getOptions()} */
+	public List<String> getOptions(){
+		return this.context.getOptions();
+	}
+
+	/** @return {@link GameEvent#resultText} */
+	public String getResultText(){
+		return this.resultText;
+	}
+
+	/** Removes the artifact from the planet and puts it into cargo.
+	 * @param index is ignored due to there being one outcome. */
+	private void executeFoundArtifact(int index) {
+		/* TODO consider:
+		 * Allowing the artifact to 'warp' the ship to a new galaxy.
+		 * It could be traded for a level 5 module.
+		 * Unlocks a secret ending when the game ends with the artifact in cargo.
+		 * Provides an extra life when a game losing condition is met while the artifact is present in inventory. */
+		switch (index){
+			case 0:
+			default:
+				int cargoError = ship.addCargo(ResourceTypes.ARTIFACT, 1);
+				if(cargoError > 0){
+					/* The cargo already had a artifact. */
+					this.resultText = "You cannot carry two artifacts.";
+					break;
+				}
+				cargoError = planet.depleteResource(ResourceTypes.ARTIFACT, 1);
+				if(cargoError > 0){
+					/* The planet doesn't have the artifact. This would be caused by a threading issue or events occurring before this was executed. */
+					this.resultText = "The planet no longer has an artifact!?";
+					break;
+				}
+				this.resultText = "You've collected the artifact!";
+				break;
+		}
+	}
+
+	/** A crew member is attacked and must defend himself.
+	 * @param index is ignored due to there being one outcome.
+	 */
+	private void executeAmbush(int index) {
+		switch(index){
+			case 0:
+			default:
+				int cargoError = 0;
+				CrewMember ambushedCrewMember = this.ship.getCrewMembers().get((int)(Math.random() * this.ship.getCrewMembers().size()));
+				Species ambushingSpecies = this.planet.getMostViolentSpecies();
+				this.resultText = ambushedCrewMember.getName() + " is ambushed!";
+				/* Pit the two in mortal combat until one dies. */
+				int ambushingSpeciesDamageTaken = 0;
+				while(ambushingSpeciesDamageTaken < ambushingSpecies.hitPoints && !ambushedCrewMember.damage(ambushingSpecies.damage)){
+					this.resultText += "\n" + ambushedCrewMember.getName() + " takes " + ambushingSpecies.damage + " damage.";
+					ambushingSpeciesDamageTaken += ambushedCrewMember.getSpecies().damage;
+					this.resultText += "\n" + ambushedCrewMember.getName() + " deals " + ambushedCrewMember.getSpecies().damage + " damage.";
+				}
+				/* After combat see if the crew member is dead. */
+				if(ambushedCrewMember.damage(0)){
+					this.ship.removeCrewMember(ambushedCrewMember);
+					this.resultText += "\n" + ambushedCrewMember.getName() + "' was defeated.";
+				}else{
+					this.resultText += "\n" + ambushedCrewMember.getName() + "' was victorious and";
+					cargoError = this.ship.addCargo(ResourceTypes.FOOD, ambushingSpecies.mass);
+					this.resultText += " got " + (ambushingSpecies.mass - cargoError) + " food.";
+				}
+				break;
+		}
+	}
+
+	/** Collects a random amount of resources that can be improved by having more scientists.
+	 * @param index case 0 collects fuel, case 1 collects metal, case 2 collects water, other cases collect no resources. For backwards compatibility it flows into all of them for case 0.
+	 */
+	private void executeGatherPlanetResources(int index) {
+		int cargoError = 0;
+		int potentialResources = 5 + this.ship.getSpecializationQuantity(Specializations.SCIENTIST);
+		this.resultText = "Our crew collected: ";
+		switch(index){
+			case 0:
+				/* TODO make a method that can one line this. It depletes checking for underflow, then adds checking for overflow, then replenishes what was overflowed. */
+				int fuelHarvestAmount = (int)(Math.random() * potentialResources);
+				cargoError = this.planet.depleteResource(ResourceTypes.FUEL, fuelHarvestAmount);
+				cargoError = this.ship.addCargo(ResourceTypes.FUEL, fuelHarvestAmount - cargoError);
+				this.planet.replenishResource(ResourceTypes.FUEL, cargoError);
+				this.resultText += fuelHarvestAmount - cargoError + " fuel ";
+				/* TODO break when there are options supported by the UI. */
+			case 1:
+				int metalHarvestAmount = (int)(Math.random() * potentialResources);
+				cargoError = this.planet.depleteResource(ResourceTypes.METAL, metalHarvestAmount);
+				cargoError = this.ship.addCargo(ResourceTypes.METAL, metalHarvestAmount - cargoError);
+				this.planet.replenishResource(ResourceTypes.METAL, cargoError);
+				this.resultText += metalHarvestAmount - cargoError + " metal ";
+				/* TODO break when there are options supported by the UI. */
+			case 2:
+				int waterHarvestAmount = (int)(Math.random() * potentialResources);
+				cargoError = this.planet.depleteResource(ResourceTypes.WATER, waterHarvestAmount);
+				cargoError = this.ship.addCargo(ResourceTypes.WATER, waterHarvestAmount - cargoError);
+				this.planet.replenishResource(ResourceTypes.WATER, cargoError);
+				this.resultText += waterHarvestAmount - cargoError + " water ";
+				break;
+			default:
+				/* TODO Maybe hunt for food? */
+				this.resultText += "no resources ";
+				break;
+		}
+		this.resultText += "from the planet.";
+	}
+
+	/** Cargo is taken if the player loses against the pirates.
+	 * @param index case 0 is a ship battle, case 1 pits pirate threat against speed, pilots, and damage where remaining threat is the amount of resources taken. case 2 is crew combat.
+	 */
+	private void executePirateAttack(int index) {
+		StringBuilder sb = new StringBuilder();
+		int pirateThreat = this.ship.getPirateThreat() + this.solarSystem.pirateThreat;
+		int cargoError = 0;
+		switch (index){
+			case 0:
+				/* TODO Fight them! Similar to the ambush event except combat with the ship. */
+			case 1:
+				/* Attempt to escape. */
+				int maxResourcesTaken = pirateThreat - this.ship.getEngineSpeed() - this.ship.getSpecializationQuantity(Specializations.PILOT) - this.ship.getDamagePerAmmo();
+				if(maxResourcesTaken > 0){
+					int taken = (int)(Math.random() * maxResourcesTaken);
+					sb.append("Pirates overwhelmed our weapons and engines.");
+					for(int i = 0; i < taken; i++){
+						int resourceType = (int)(Math.random() * 5);
+						switch(resourceType){
+							case 0:
+								cargoError = this.ship.removeCargo(ResourceTypes.AMMO, 1);
+								if(cargoError == 0){
+									sb.append("\nPirates took 1 Ammo");
+								}
+								break;
+							case 1:
+								this.ship.removeCargo(ResourceTypes.FOOD, 1);
+								if(cargoError == 0){
+									sb.append("\nPirates took 1 Food");
+								}
+								break;
+							case 2:
+								this.ship.removeCargo(ResourceTypes.FUEL, 1);
+								if(cargoError == 0){
+									sb.append("\nPirates took 1 Fuel");
+								}
+								break;
+							case 3:
+								this.ship.removeCargo(ResourceTypes.METAL, 1);
+								if(cargoError == 0){
+									sb.append("\nPirates took 1 Metal");
+								}
+								break;
+							default:
+								this.ship.removeCargo(ResourceTypes.WATER, 1);
+								if(cargoError == 0){
+									sb.append("\nPirates took 1 Water");
+								}
+								break;
+						}
+					}
+				}else{
+					sb.append("Our cargo was protected by our weaons and maneuvers!");
+				}
+				break;
+			case 2:
+				/* TODO Ambush them when they board! Similar to the ambush event. */
+				break;
+			default:
+				break;
+		}
+		this.resultText = sb.toString();
+	}
+
+	/** Up to debris rating in damage mitigated by pilots.
+	 * @param index is ignored due to there being one outcome.
+	 */
+	private void executeDebrisStrike(int index) {
+		switch(index){
+			default:
+				int maxPotentialDamage = this.solarSystem.debrisRating - this.ship.getSpecializationQuantity(Specializations.PILOT);
+				int damageDealt = (int)(Math.random() * maxPotentialDamage);
+				boolean isShipDestroyed = this.ship.damageEngine(damageDealt);
+				if (isShipDestroyed) {
+					this.resultText = "Our ship took " + damageDealt + " damage from debris and was destroyed!";
+					/* TODO Trigger/Signal the end of the game so that the UI displays the lose screen. */
+				} else {
+					this.resultText = "Our ship took " + damageDealt + " damage from debris!";
+				}
+				break;
+		}
+
+	}
+
+	/** Up to solar radiation in damage mitigated by radiation resistance and engineers.
+	 * @param index is ignored due to there being one outcome.
+	 */
+	private void executeRadiationBurst(int index) {
+		switch(index){
+			default:
+				int maxPotentialDamage = this.solarSystem.solarRadiation - this.ship.getLifeSupportRadiationResistance() - this.ship.getSpecializationQuantity(Specializations.ENGINEER);
+				int damageDealt = (int)(Math.random() * maxPotentialDamage);
+				boolean isShipDestroyed = this.ship.damageEngine(damageDealt);
+				if (isShipDestroyed) {
+					this.resultText = "Your ship took " + damageDealt + " damageEngine from a radiation burst and was destroyed!";
+					/* TODO Trigger/Signal the end of the game so that the UI displays the lose screen. */
+				} else {
+					this.resultText = "Your ship took " + damageDealt + " damageEngine from a radiation burst!";
+				}
+				break;
+		}
+	}
+
+	/** Nothing game state wise happens but should generate flavor text to keep things interesting.
+	 * @param index is ignored due to there being one outcome.
+	 */
+	private void executePeaceful(int index){
+		switch(index){
+			case 0:
+				resultText = "Nothing happened.";
+				break;
+			case 1:
+				/* TODO Miscellaneous flavor text*/
+			default:
+				break;
+		}
+	}
 }

@@ -28,6 +28,8 @@ public class Ship {
 	 * @see Weapon
 	 */
 	private Weapon weapon;
+	/** Represents pirates tracking the ship increasing the likeliness for a pirate encounter, [0..10]. */
+	private int pirateThreat;
 
 	/** Instantiates (builds) a new ship with the given modules and crew.
 	 * @param crewMembers {@link Ship#crewMembers}
@@ -36,7 +38,7 @@ public class Ship {
 	 * @param lss {@link Ship#lifeSupport}
 	 * @param cargoBay {@link Ship#cargoBay}
 	 */
-	public Ship(List<CrewMember> crewMembers, Engine engine, Weapon weapon, LifeSupportSystem lss, CargoBay cargoBay) {
+	public Ship(List<CrewMember> crewMembers, Engine engine, Weapon weapon, LifeSupportSystem lss, CargoBay cargoBay, int pirateThreat) {
 		if (crewMembers == null) {
 			throw new IllegalArgumentException("A ship cannot be operated with a null crew.");
 		} else if (crewMembers.isEmpty()) {
@@ -59,16 +61,17 @@ public class Ship {
 		this.weapon = weapon;
 		this.lifeSupport = lss;
 		this.cargoBay = cargoBay;
+		this.pirateThreat = Galaxy.initializeWithConstraints(pirateThreat, 0, 10, 0);
 	}
 
 	/** @see CargoBay#storeResource(ResourceTypes, int) */
-	public void addCargo(ResourceTypes type, int quantity) throws CargoException{
-		this.cargoBay.storeResource(type, quantity);
+	public int addCargo(ResourceTypes type, int quantity){
+		return this.cargoBay.storeResource(type, quantity);
 	}
 
 	/** @see CargoBay#depleteResource(ResourceTypes, int) */
-	public void removeCargo(ResourceTypes type, int quantity) throws CargoException{
-		this.cargoBay.depleteResource(type, quantity);
+	public int removeCargo(ResourceTypes type, int quantity){
+		return this.cargoBay.depleteResource(type, quantity);
 	}
 
 	/** @see CargoBay#checkResource(ResourceTypes) */
@@ -123,8 +126,8 @@ public class Ship {
 	}
 
 	/** @see Engine#damage(int) */
-	public void damageEngine(int damageAmount) throws EngineException{
-		this.engine.damage(damageAmount);
+	public boolean damageEngine(int damageAmount){
+		return this.engine.damage(damageAmount);
 	}
 
 	/** @see Engine#repair(int) */
@@ -148,7 +151,7 @@ public class Ship {
 	}
 
 	/** @see Engine#getCurrentHitPoints() */
-	public int getEngineCurrentHitPoints() throws EngineException{
+	public int getEngineCurrentHitPoints(){
 		return this.engine.getCurrentHitPoints();
 	}
 
@@ -163,7 +166,7 @@ public class Ship {
 	}
 
 	/** @see LifeSupportSystem#getSupportedAtmosphereCompositions() */
-	public List<AtmosphericCompositions> getSupportedAtmosphericCompositions(){
+	public List<AtmosphericCompositions> getLifeSupportedAtmosphericCompositions(){
 		return this.lifeSupport.getSupportedAtmosphereCompositions();
 	}
 
@@ -202,11 +205,27 @@ public class Ship {
 		return crewSpecies;
 	}
 
-	/** @param crewMember represents the new recruit to add to the crew, does nothing when null. */
+	/** @param crewMember represents the new recruit to add to the crew, does nothing when null or if incompatible with atmospheric compositions. */
 	void addCrewMember(CrewMember crewMember) {
 		if (crewMember != null) {
-			this.crewMembers.add(crewMember);
+			if(this.getLifeSupportedAtmosphericCompositions().contains(crewMember.getSpecies().atmosphericCompositionTolerance)){
+				this.crewMembers.add(crewMember);
+			}
 		}
+	}
+
+	/** Convenience method that counts the crew members with the provided specialization.
+	 * @param spec represents the desired specialization.
+	 * @return an int, quantity, that represents the amount of crew members with the spec specialization.
+	 */
+	int getSpecializationQuantity(Specializations spec){
+		int quantity = 0;
+		for(CrewMember cm : this.crewMembers){
+			if(cm.specialization.equals(spec)){
+				quantity++;
+			}
+		}
+		return quantity;
 	}
 
 	/** @see PartModules#getModuleLevel() */
@@ -227,5 +246,17 @@ public class Ship {
 	/** @see PartModules#getModuleLevel() */
 	public int getWeaponModuleLevel(){
 		return this.weapon.getModuleLevel();
+	}
+
+	/** @return {@link Ship#pirateThreat} */
+	int getPirateThreat(){
+		return this.pirateThreat;
+	}
+
+	/** Modifies the ship's pirate threat according to the provided delta.
+	 * @param delta represents the difference from the current value. Positive or negative values are usable.
+	 */
+	void setPirateThreat(int delta){
+		this.pirateThreat = Galaxy.initializeWithConstraints(this.pirateThreat + delta, 0, 10, (delta > 0) ? 10 : 0);
 	}
 }

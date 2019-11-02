@@ -157,10 +157,10 @@ public class StarMapScreen implements Screen {
 			Table eventBody = new Table();
 			eventBody.align(Align.center);
 			eventBody.setFillParent(true);
-			Label eventTextLabel = new Label(gameEvent.getEventText(), game.getSkin());
+			Label eventTextLabel = new Label(gameEvent.getResultText(), game.getSkin());
 			eventTextLabel.setWrap(true);
 			eventBody.add(eventTextLabel).grow().padLeft(128);
-			eventDialog.show(dialogStage, gameEvent.isPositive() ? "Success" : "Uh-oh", eventBody);
+			eventDialog.show(dialogStage, gameEvent.getEventText(), eventBody);
 		}
 		firstTime = false;
 	}

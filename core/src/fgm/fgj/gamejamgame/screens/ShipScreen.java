@@ -3,7 +3,6 @@ package fgm.fgj.gamejamgame.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -148,9 +147,9 @@ public class ShipScreen implements Screen {
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(stage);
-		crewPanel.displayCrew(ship.listCrewMembers());
+		crewPanel.displayCrew(ship.getCrewMembers());
 		modulesPanel.displayModules(game, ship);
-		resourcePanel.displayResources(ship.getCargoBay());
+		resourcePanel.displayResources(ship);
 		TextureRegion textureRegion = Icons.getIcon(IconType.STARMAP_BUTTON);
 		starMapButton.setDrawable(new TextureRegionDrawable(textureRegion));
 

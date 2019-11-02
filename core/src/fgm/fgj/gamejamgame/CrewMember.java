@@ -51,6 +51,16 @@ public class CrewMember {
 		return this.damageTaken >= this.species.hitPoints;
 	}
 
+	/**
+	 * @param amount represents the damage to remove from the crew member, negative values are set to 0.
+	 */
+	void restore(int amount){
+		if(amount < 0){
+			amount = 0;
+		}
+		this.damageTaken = Math.max(this.damageTaken - amount, 0);
+	}
+
 	/** @see CrewMember#name */
 	public String getName() {
 		return name;

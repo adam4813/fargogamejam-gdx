@@ -26,11 +26,13 @@ class CargoBay implements PartModules{
 	private int metal;
 	/** Represents the resource's current quantity, [0..maxWater]. */
 	private int water;
-	/** Represents the resource's current quantity, [0..maxGas]. */
+	/** Represents the resource's current quantity, [0..maxGas].
+	 * Sustains crew members of compatible atmospheric compositions. */
 	private int gas;
 	/** Represents the resource's current quantity, [0..maxAmmo]. */
 	private int ammo;
-	/** Represents the resource's current quantity, [0..maxFood]. */
+	/** Represents the resource's current quantity, [0..maxFood].
+	 * Removes damage from crew members. */
 	private int food;
 	/** Represents whether the artifact has been found or not. */
 	private boolean hasArtifact;
@@ -108,79 +110,193 @@ class CargoBay implements PartModules{
 	/**
 	 * @param resource represents the type of resource being stored.
 	 * @param quantity represents the amount of the resource being stored. Ignored in the case of {@link ResourceTypes#ARTIFACT}.
-	 * @throws CargoException if capacity for the resource is exceeded or an unknown resource is used.
+	 * @return an int representing the amount of overflow. -1 if an unknown resource type was used.
 	 * @see CargoBay#store(int, int, int)
 	 * @see CargoBay#storePart(PartModules)
 	 */
-	void storeResource(ResourceTypes resource, int quantity) throws CargoException{
+	int storeResource(ResourceTypes resource, int quantity){
+		int overflow = 0;
 		switch(resource){
 			case ARTIFACT:
 				if(!this.hasArtifact){
 					this.hasArtifact = true;
 				}else{
-					throw new CargoException(CargoException.Problems.OVERFLOW, -1);
+					overflow = 1;
 				}
 				break;
 			case AMMO:
-				this.ammo = store(this.ammo, quantity, this.maxAmmo);
+				try{
+					this.ammo = store(this.ammo, quantity, this.maxAmmo);
+				}catch(CargoException caught){
+					try{
+						this.ammo = store(this.ammo, quantity - caught.getQuantity(), this.maxAmmo);
+						overflow = caught.getQuantity();
+					}catch(CargoException notCaught){
+						/* The value has been adjusted and cannot overflow. */
+					}
+				}
 				break;
 			case FOOD:
-				this.food = store(this.food, quantity, this.maxFood);
+				try{
+					this.food = store(this.food, quantity, this.maxFood);
+				}catch(CargoException caught){
+					try{
+						this.food = store(this.food, quantity - caught.getQuantity(), this.maxFood);
+						overflow = caught.getQuantity();
+					}catch(CargoException notCaught){
+						/* The value has been adjusted and cannot overflow. */
+					}
+				}
 				break;
 			case FUEL:
-				this.fuel = store(this.fuel, quantity, this.maxFuel);
+				try{
+					this.fuel = store(this.fuel, quantity, this.maxFuel);
+				}catch(CargoException caught){
+					try{
+						this.fuel = store(this.fuel, quantity - caught.getQuantity(), this.maxFuel);
+						overflow = caught.getQuantity();
+					}catch(CargoException notCaught){
+						/* The value has been adjusted and cannot overflow. */
+					}
+				}
 				break;
 			case GAS:
-				this.gas = store(this.gas, quantity, this.maxGas);
+				try{
+					this.gas = store(this.gas, quantity, this.maxGas);
+				}catch(CargoException caught){
+					try{
+						this.gas = store(this.gas, quantity - caught.getQuantity(), this.maxGas);
+						overflow = caught.getQuantity();
+					}catch(CargoException notCaught){
+						/* The value has been adjusted and cannot overflow. */
+					}
+				}
 				break;
 			case METAL:
-				this.metal = store(this.metal, quantity, this.maxMetal);
+				try{
+					this.metal = store(this.metal, quantity, this.maxMetal);
+				}catch(CargoException caught){
+					try{
+						this.metal = store(this.metal, quantity - caught.getQuantity(), this.maxMetal);
+						overflow = caught.getQuantity();
+					}catch(CargoException notCaught){
+						/* The value has been adjusted and cannot overflow. */
+					}
+				}
 				break;
 			case WATER:
-				this.water = store(this.water, quantity, this.maxWater);
+				try{
+					this.water = store(this.water, quantity, this.maxWater);
+				}catch(CargoException caught){
+					try{
+						this.water = store(this.water, quantity - caught.getQuantity(), this.maxWater);
+						overflow = caught.getQuantity();
+					}catch(CargoException notCaught){
+						/* The value has been adjusted and cannot overflow. */
+					}
+				}
 				break;
 			default:
-				throw new CargoException(CargoException.Problems.UNKNOWN_RESOURCE, -1);
+				overflow = -1;
+				break;
 		}
+		return overflow;
 	}
 
 	/**
 	 * @param resource represents the type of resource being depleted.
 	 * @param quantity represents the amount of the resource being depleted. Ignored in the case of {@link ResourceTypes#ARTIFACT}.
-	 * @throws CargoException if the resource quantity is exceeded or an unknown resource is used.
+	 * @return an int representing the amount of underflow. -1 if an unknown resource type was used.
 	 * @see CargoBay#deplete(int, int)
 	 * @see CargoBay#removepart(PartModules)
 	 */
-	void depleteResource(ResourceTypes resource, int quantity) throws CargoException{
+	int depleteResource(ResourceTypes resource, int quantity){
+		int underflow = 0;
 		switch(resource){
 			case ARTIFACT:
 				if(this.hasArtifact){
 					this.hasArtifact = false;
 				}else{
-					throw new CargoException(CargoException.Problems.UNDERFLOW, -1);
+					underflow = 1;
 				}
 				break;
 			case AMMO:
-				this.ammo = deplete(this.ammo, quantity);
+				try{
+					this.ammo = deplete(this.ammo, quantity);
+				}catch(CargoException caught){
+					try{
+						this.ammo = deplete(this.ammo, quantity - caught.getQuantity());
+						underflow = caught.getQuantity();
+					}catch(CargoException notCaught){
+						/* The value has been adjusted and cannot underflow. */
+					}
+				}
 				break;
 			case FOOD:
-				this.food = deplete(this.food, quantity);
+				try{
+					this.food = deplete(this.food, quantity);
+				}catch(CargoException caught){
+					try{
+						this.food = deplete(this.food, quantity - caught.getQuantity());
+						underflow = caught.getQuantity();
+					}catch(CargoException notCaught){
+						/* The value has been adjusted and cannot underflow. */
+					}
+				}
 				break;
 			case FUEL:
-				this.fuel = deplete(this.fuel, quantity);
+				try{
+					this.fuel = deplete(this.fuel, quantity);
+				}catch(CargoException caught){
+					try{
+						this.fuel = deplete(this.fuel, quantity - caught.getQuantity());
+						underflow = caught.getQuantity();
+					}catch(CargoException notCaught){
+						/* The value has been adjusted and cannot underflow. */
+					}
+				}
 				break;
 			case GAS:
-				this.gas = deplete(this.gas, quantity);
+				try{
+					this.gas = deplete(this.gas, quantity);
+				}catch(CargoException caught){
+					try{
+						this.gas = deplete(this.gas, quantity - caught.getQuantity());
+						underflow = caught.getQuantity();
+					}catch(CargoException notCaught){
+						/* The value has been adjusted and cannot underflow. */
+					}
+				}
 				break;
 			case METAL:
-				this.metal = deplete(this.metal, quantity);
+				try{
+					this.metal = deplete(this.metal, quantity);
+				}catch(CargoException caught){
+					try{
+						this.metal = deplete(this.metal, quantity - caught.getQuantity());
+						underflow = caught.getQuantity();
+					}catch(CargoException notCaught){
+						/* The value has been adjusted and cannot underflow. */
+					}
+				}
 				break;
 			case WATER:
-				this.water = deplete(this.water, quantity);
+				try{
+					this.water = deplete(this.water, quantity);
+				}catch(CargoException caught){
+					try{
+						this.water = deplete(this.water, quantity - caught.getQuantity());
+						underflow = caught.getQuantity();
+					}catch(CargoException notCaught){
+						/* The value has been adjusted and cannot underflow. */
+					}
+				}
 				break;
 			default:
-				throw new CargoException(CargoException.Problems.UNKNOWN_RESOURCE, -1);
+				underflow = -1;
+				break;
 		}
+		return underflow;
 	}
 
 	/**
@@ -246,33 +362,15 @@ class CargoBay implements PartModules{
 	void transferCargoTo(CargoBay other){
 		/* Transfer the artifact. */
 		if(this.hasArtifact){
-			try{
-				other.storeResource(ResourceTypes.ARTIFACT, 1);
-			}catch(CargoException caught){
-				/* Cannot happen since the enum is used and there is no quantity to overflow with as it is ignored. */
-			}
+			other.storeResource(ResourceTypes.ARTIFACT, 1);
 		}
 		/* Store the resources in other and deplete them from this. */
 		int quantity;
 		for(ResourceTypes rt : ResourceTypes.values()){
 			if(!rt.equals(ResourceTypes.ARTIFACT)){
 				quantity = this.checkResource(rt);
-				try{
-					other.storeResource(rt, quantity);
-				}catch(CargoException caught){
-					/* Some resources are lost due to the transferred cargo bay being smaller in this capacity. */
-					try{
-						other.storeResource(rt, quantity - caught.getQuantity());
-					}catch(CargoException caught2){
-						/* Cannot happen since the quantity was adjusted by the overflow amount. */
-					}
-				}
-				try{
-					/* Ensure the resources don't remain duplicated. */
-					this.depleteResource(rt, quantity);
-				}catch(CargoException caught){
-					/* Cannot happen since the quantities are checked before. */
-				}
+				other.storeResource(rt, quantity);
+				this.depleteResource(rt, quantity);
 			}
 		}
 		/* Store parts. */

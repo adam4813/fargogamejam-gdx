@@ -174,7 +174,7 @@ public class GameJamGame extends Game {
 		loadTexture("data/scenes/credits.png");
 	}
 
-	private final Galaxy galaxy = new Galaxy(130, null,null, 1, null);
+	private final Galaxy galaxy = new Galaxy(null, 1,null, 130, null);
 
 	public ArrayList<StarMapStar> getNearbyStars() {
 		ArrayList<StarMapStar> stars = new ArrayList<>();

@@ -171,7 +171,10 @@ public class Galaxy {
 	 * @return a game event that modifies the game's state.
 	 */
 	public static GameEvent generateGameEvent(SolarSystem solarSystem, int fuelCost, Planet planet, Ship ship) {
-		return new GameEvent(solarSystem, fuelCost, planet, ship);
+		GameEvent ge = new GameEvent(solarSystem, fuelCost, planet, ship);
+		/* TODO temporarily execute on the first option until the UI can handle option selection. */
+		ge.execute(0);
+		return ge;
 	}
 
 	/** @see Galaxy#player */
@@ -233,7 +236,7 @@ public class Galaxy {
 		return this.bestiary.get((int)(Math.random() * this.bestiary.size()));
 	}
 
-	/** Convenience method to instantiate 5 crew members of a single species. At least one of each specialization will be among them.
+	/** Convenience method to instantiate 3 crew members of a single species. At least one of each specialization will be among them.
 	 * @return a list of CrewMember that represents a ship crew.
 	 * @see Specializations
 	 * @see CrewMember#CrewMember(String, Species, Specializations, int)
@@ -245,15 +248,13 @@ public class Galaxy {
 		created.add(new CrewMember(Galaxy.generateCrewName(), species, Specializations.ENGINEER, 0));
 		created.add(new CrewMember(Galaxy.generateCrewName(), species, Specializations.PILOT, 0));
 		created.add(new CrewMember(Galaxy.generateCrewName(), species, Specializations.SCIENTIST, 0));
-		created.add(new CrewMember(Galaxy.generateCrewName(), species, Specializations.getRandomSpecialization(), 0));
-		created.add(new CrewMember(Galaxy.generateCrewName(), species, Specializations.getRandomSpecialization(), 0));
 		return created;
 	}
 
 	/** Instantiates a minimal default ship and generates a new crew for the ship. It is stocked with essential resources to start the player's journey.
 	 * @return a Ship that represents the player's avatar.
 	 * @see Galaxy#generateCrewMembers()
-	 * @see Ship#Ship(List, Engine, Weapon, LifeSupportSystem, CargoBay)
+	 * @see Ship#Ship(List, Engine, Weapon, LifeSupportSystem, CargoBay, int)
 	 */
 	private Ship generateShip(){
 		List<CrewMember> crewMembers = generateCrewMembers();
@@ -263,8 +264,8 @@ public class Galaxy {
 		supportedCompositions.add(crewMembers.get(0).species.atmosphericCompositionTolerance);
 		LifeSupportSystem lss = new LifeSupportSystem(supportedCompositions, 0, 0);
 		List<PartModules> parts = new ArrayList<>();
-		CargoBay cargoBay = new CargoBay(false,10, 10, 10, 10, 10, 10, 6, 10, 10, 10, 4, 0, parts);
-		return new Ship(crewMembers, engine, weapon, lss, cargoBay);
+		CargoBay cargoBay = new CargoBay(false,10, 10, 10, 10, 10, 10, 6, 0, 10, 10, 4, 0, parts);
+		return new Ship(crewMembers, engine, weapon, lss, cargoBay, 0);
 	}
 
 	/** Convenience method to generate a planet with random attributes.
