@@ -4,7 +4,6 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -16,16 +15,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fgm.fgj.gamejamgame.screens.CreditsScreen;
+import fgm.fgj.gamejamgame.screens.EndGameScreen;
 import fgm.fgj.gamejamgame.screens.GameScreen;
 import fgm.fgj.gamejamgame.screens.IntroScreen;
 import fgm.fgj.gamejamgame.screens.LoadingScreen;
-import fgm.fgj.gamejamgame.screens.LoseScreen;
 import fgm.fgj.gamejamgame.screens.ShipScreen;
 import fgm.fgj.gamejamgame.screens.SolarSystemScreen;
 import fgm.fgj.gamejamgame.screens.StarMapScreen;
 import fgm.fgj.gamejamgame.screens.TitleScreen;
 import fgm.fgj.gamejamgame.screens.TransitionScreen;
-import fgm.fgj.gamejamgame.screens.WinScreen;
 
 public class GameJamGame extends Game {
 	public static final int SCREEN_WIDTH = 1440;
@@ -36,6 +34,7 @@ public class GameJamGame extends Game {
 	public SpriteBatch getSpriteBatch() {
 		return spriteBatch;
 	}
+
 	public ShapeRenderer getShapeRender() {
 		return shapeRenderer;
 	}
@@ -109,8 +108,12 @@ public class GameJamGame extends Game {
 		screens.put(ScreenNames.StarMap, new StarMapScreen(this));
 		screens.put(ScreenNames.SolarSystem, new SolarSystemScreen(this));
 		screens.put(ScreenNames.Ship, new ShipScreen(this));
-		screens.put(ScreenNames.Lose, new LoseScreen(this));
-		screens.put(ScreenNames.Win, new WinScreen(this));
+		screens.put(ScreenNames.Lose, new EndGameScreen(this,
+			Gdx.audio.newMusic(Gdx.files.internal("data/music/endingLose01.wav")),
+			getAsset("data/scenes/sceneLose.png"), false));
+		screens.put(ScreenNames.Win, new EndGameScreen(this,
+			Gdx.audio.newMusic(Gdx.files.internal("data/music/endingWin01.wav")),
+			getAsset("data/scenes/sceneWin.png"), true));
 		screens.put(ScreenNames.Intro, new IntroScreen(this));
 		screens.put(ScreenNames.Transition, new TransitionScreen(this));
 		screens.put(ScreenNames.Credits, new CreditsScreen(this));
@@ -174,7 +177,7 @@ public class GameJamGame extends Game {
 		loadTexture("data/scenes/credits.png");
 	}
 
-	private final Galaxy galaxy = new Galaxy(130, null,null, 1, null);
+	private final Galaxy galaxy = new Galaxy(130, null, null, 1, null);
 
 	public ArrayList<StarMapStar> getNearbyStars() {
 		ArrayList<StarMapStar> stars = new ArrayList<>();

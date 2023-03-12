@@ -1,0 +1,12 @@
+here are the states where we should play music.
+
+Intro - During Title Scene/Intro Scene					x
+Star Map - During the Star Map Window					x
+Solar Map - During the Solar Map Window					x
+Ship - During the Ship Details Window					x
+Event Good - Played During a Positive Event				x
+Event Bad - Played During a Negative Event				x
+Critical State - Played when the Ship is in a 'Critical State'		x
+Ending Win - Played during the Win Scene				x
+Ending Lose - Played during the Loss Scene				x
+Transition - Played during the Transition Scene				x

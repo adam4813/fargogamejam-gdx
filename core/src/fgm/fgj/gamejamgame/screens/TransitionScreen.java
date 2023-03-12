@@ -27,33 +27,31 @@ import static fgm.fgj.gamejamgame.GameJamGame.SCREEN_WIDTH;
 public class TransitionScreen extends ScreenAdapter {
 	private static final float TRANSITION_TIME = 3.0f;
 	private final Stage stage;
+	private Music music;
 
 	private float displayTime = 0f;
 
 	private GameJamGame game;
 	private StarField backgroundStars;
-	private Music music;
 
 	public TransitionScreen(GameJamGame game) {
 		this.game = game;
 		stage = new Stage();
-		//stage.setDebugAll(true);
-		music = Gdx.audio.newMusic(Gdx.files.internal("data/music/endingLose01.wav"));
-		music.setLooping(true);
-	}
-
-	@Override
-	public void show() {
-		stage.clear();
 		Table root = new Table();
 		root.setFillParent(true);
-		Gdx.input.setInputProcessor(stage);
 		backgroundStars = new StarField(40);
 		Animation loseAnimation = AnimatedSprite.buildAnimation(game.getAsset("data/scenes/sceneTransition.png"),1280, 720, 8, .2f );
 		AnimatedImage image = new AnimatedImage(loseAnimation, false);
 		image.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 		root.add(image).center();
 		stage.addActor(root);
+		music = Gdx.audio.newMusic(Gdx.files.internal("data/music/endingLose01.wav"));
+		music.setLooping(true);
+	}
+
+	@Override
+	public void show() {
+		Gdx.input.setInputProcessor(stage);
 		music.play();
 	}
 
@@ -69,7 +67,6 @@ public class TransitionScreen extends ScreenAdapter {
 		}
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		stage.getViewport().apply();
 		SpriteBatch spriteBatch = game.getSpriteBatch();
 		spriteBatch.begin();
 		backgroundStars.draw(spriteBatch, delta);

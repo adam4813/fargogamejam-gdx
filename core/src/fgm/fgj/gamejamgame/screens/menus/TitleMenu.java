@@ -93,7 +93,7 @@ public class TitleMenu {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				super.clicked(event, x, y);
-				game.showScreen(ScreenNames.Intro);
+				game.showScreen(ScreenNames.StarMap);
 			}
 		});
 		playButton.getDrawable().setMinHeight(128);
